@@ -71,96 +71,248 @@
             
             <!-- Users Table -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-                <asp:GridView ID="gvUsers" runat="server" AutoGenerateColumns="false" 
-                    CssClass="min-w-full divide-y divide-gray-200"
-                    GridLines="None"
-                    AlternatingRowStyle-CssClass="bg-gray-50"
-                    RowStyle-CssClass="bg-white"
-                    HeaderStyle-CssClass="bg-gray-50"
-                    OnRowCommand="gvUsers_RowCommand"
-                    OnRowDataBound="gvUsers_RowDataBound"
-                    AllowPaging="true"
-                    PageSize="10"
-                    OnPageIndexChanging="gvUsers_PageIndexChanging"
-                    PagerStyle-CssClass="bg-white border-t border-gray-200 px-4 py-3 sm:px-6 text-center"
-                    PagerSettings-Mode="NumericFirstLast"
-                    PagerSettings-FirstPageText="First"
-                    PagerSettings-LastPageText="Last"
-                    PagerSettings-PageButtonCount="5">
-                    <Columns>
-                        <asp:BoundField DataField="UserId" HeaderText="ID" 
-                            HeaderStyle-CssClass="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            ItemStyle-CssClass="px-6 py-4 whitespace-nowrap text-sm text-gray-500" />
-                            
-                        <asp:BoundField DataField="Username" HeaderText="Username" 
-                            HeaderStyle-CssClass="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            ItemStyle-CssClass="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" />
-                            
-                        <asp:BoundField DataField="Email" HeaderText="Email" 
-                            HeaderStyle-CssClass="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            ItemStyle-CssClass="px-6 py-4 whitespace-nowrap text-sm text-gray-500" />
-                            
-                        <asp:BoundField DataField="DateCreated" HeaderText="Created On" DataFormatString="{0:MM/dd/yyyy}"
-                            HeaderStyle-CssClass="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            ItemStyle-CssClass="px-6 py-4 whitespace-nowrap text-sm text-gray-500" />
-                            
-                        <asp:TemplateField HeaderText="Status" 
-                            HeaderStyle-CssClass="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            ItemStyle-CssClass="px-6 py-4 whitespace-nowrap">
-                            <ItemTemplate>
-                                <span id="statusBadge" runat="server">
-                                    <%# Convert.ToBoolean(Eval("IsActive")) ? "Active" : "Inactive" %>
-                                </span>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        
-                        <asp:TemplateField HeaderText="Actions" 
-                            HeaderStyle-CssClass="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            ItemStyle-CssClass="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
-                            <ItemTemplate>
-                                <div class="flex justify-end space-x-2">
-                                    <asp:LinkButton ID="btnViewDetails" runat="server" 
-                                        CommandName="ViewDetails" 
-                                        CommandArgument='<%# Eval("UserId") %>'
-                                        CssClass="text-indigo-600 hover:text-indigo-900"
-                                        ToolTip="View Details">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    </asp:LinkButton>
-                                    
-                                    <asp:LinkButton ID="btnResetPassword" runat="server" 
-                                        CommandName="ResetPassword" 
-                                        CommandArgument='<%# Eval("UserId") %>'
-                                        CssClass="text-blue-600 hover:text-blue-900"
-                                        ToolTip="Reset Password">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                                        </svg>
-                                    </asp:LinkButton>
-                                    
-                                    <asp:LinkButton ID="btnToggleStatus" runat="server" 
-                                        CommandName="ToggleStatus" 
-                                        CommandArgument='<%# Eval("UserId") %>'
-                                        CssClass='<%# Convert.ToBoolean(Eval("IsActive")) ? "text-red-600 hover:text-red-900" : "text-green-600 hover:text-green-900" %>'
-                                        ToolTip='<%# Convert.ToBoolean(Eval("IsActive")) ? "Deactivate User" : "Activate User" %>'>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d='<%# Convert.ToBoolean(Eval("IsActive")) 
-                                                ? "M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" 
-                                                : "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" %>' />
-                                        </svg>
-                                    </asp:LinkButton>
+                <asp:ListView ID="lvUsers" runat="server" 
+                    OnItemCommand="lvUsers_ItemCommand"
+                    OnItemDataBound="lvUsers_ItemDataBound">
+                    <LayoutTemplate>
+                        <div class="min-w-full">
+                            <!-- Table Header -->
+                            <div class="bg-gray-50 border-b border-gray-200">
+                                <div class="grid grid-cols-12 gap-2 px-6 py-3">
+                                    <div class="col-span-1">
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">ID</span>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Username</span>
+                                    </div>
+                                    <div class="col-span-3">
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Email</span>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Created On</span>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Status</span>
+                                    </div>
+                                    <div class="col-span-2 text-right">
+                                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</span>
+                                    </div>
                                 </div>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
+                            </div>
+                            
+                            <!-- Table Body -->
+                            <div id="itemPlaceholder" runat="server"></div>
+                            
+                            <!-- Pagination Controls -->
+                            <div class="bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between">
+                                <div class="flex-1 flex justify-between sm:hidden">
+                                    <asp:DataPager ID="DataPager1" runat="server" PagedControlID="lvUsers" PageSize="10" class="relative inline-flex items-center"
+                                        OnInit="DataPager_Init" OnPagePropertiesChanging="DataPager_PagePropertiesChanging">
+                                        <Fields>
+                                            <asp:NextPreviousPagerField 
+                                                ButtonType="Link" 
+                                                ShowFirstPageButton="false" 
+                                                ShowLastPageButton="false"
+                                                ShowNextPageButton="false"
+                                                ShowPreviousPageButton="true"
+                                                PreviousPageText="&laquo; Previous"
+                                                ButtonCssClass="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" />
+                                            <asp:NextPreviousPagerField 
+                                                ButtonType="Link" 
+                                                ShowFirstPageButton="false" 
+                                                ShowLastPageButton="false"
+                                                ShowNextPageButton="true"
+                                                ShowPreviousPageButton="false"
+                                                NextPageText="Next &raquo;"
+                                                ButtonCssClass="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" />
+                                        </Fields>
+                                    </asp:DataPager>
+                                </div>
+                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            <span>Showing page</span>
+                                            <asp:DataPager ID="DataPager2" runat="server" PagedControlID="lvUsers" PageSize="10"
+                                                OnInit="DataPager_Init" OnPagePropertiesChanging="DataPager_PagePropertiesChanging">
+                                                <Fields>
+                                                    <asp:TemplatePagerField>
+                                                        <PagerTemplate>
+                                                            <span class="font-medium"><%# (Container.StartRowIndex / Container.PageSize) + 1 %></span>
+                                                            <span>of</span>
+                                                            <span class="font-medium"><%# Math.Ceiling((double)Container.TotalRowCount / Container.PageSize) %></span>
+                                                        </PagerTemplate>
+                                                    </asp:TemplatePagerField>
+                                                </Fields>
+                                            </asp:DataPager>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                            <asp:DataPager ID="DataPager3" runat="server" PagedControlID="lvUsers" PageSize="10"
+                                                OnInit="DataPager_Init" OnPagePropertiesChanging="DataPager_PagePropertiesChanging">
+                                                <Fields>
+                                                    <asp:NextPreviousPagerField 
+                                                        ButtonType="Link" 
+                                                        ShowFirstPageButton="true" 
+                                                        ShowLastPageButton="false"
+                                                        ShowNextPageButton="false"
+                                                        ShowPreviousPageButton="false"
+                                                        FirstPageText="&laquo;"
+                                                        ButtonCssClass="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" />
+                                                    <asp:NumericPagerField 
+                                                        ButtonType="Link" 
+                                                        CurrentPageLabelCssClass="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-indigo-50 text-sm font-medium text-indigo-600 hover:bg-gray-50"
+                                                        NumericButtonCssClass="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                                        ButtonCount="5" />
+                                                    <asp:NextPreviousPagerField 
+                                                        ButtonType="Link" 
+                                                        ShowFirstPageButton="false" 
+                                                        ShowLastPageButton="true"
+                                                        ShowNextPageButton="false"
+                                                        ShowPreviousPageButton="false"
+                                                        LastPageText="&raquo;"
+                                                        ButtonCssClass="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" />
+                                                </Fields>
+                                            </asp:DataPager>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </LayoutTemplate>
+                    
+                    <ItemTemplate>
+                        <div class="border-b border-gray-200 bg-white">
+                            <div class="grid grid-cols-12 gap-2 px-6 py-4 hover:bg-gray-50">
+                                <div class="col-span-1 whitespace-nowrap text-sm text-gray-500">
+                                    <%# Eval("UserId") %>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <%# Eval("Username") %>
+                                </div>
+                                <div class="col-span-3 whitespace-nowrap text-sm text-gray-500">
+                                    <%# Eval("Email") %>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap text-sm text-gray-500">
+                                    <%# Eval("DateCreated", "{0:MM/dd/yyyy}") %>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap">
+                                    <span id="statusBadge" runat="server" class='<%# Convert.ToBoolean(Eval("IsActive")) ? "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" : "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800" %>'>
+                                        <%# Convert.ToBoolean(Eval("IsActive")) ? "Active" : "Inactive" %>
+                                    </span>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap text-sm font-medium text-right">
+                                    <div class="flex justify-end space-x-2">
+                                        <asp:LinkButton ID="btnViewDetails" runat="server" 
+                                            CommandName="ViewDetails" 
+                                            CommandArgument='<%# Eval("UserId") %>'
+                                            CssClass="text-indigo-600 hover:text-indigo-900"
+                                            ToolTip="View Details">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        </asp:LinkButton>
+                                        
+                                        <asp:LinkButton ID="btnResetPassword" runat="server" 
+                                            CommandName="ResetPassword" 
+                                            CommandArgument='<%# Eval("UserId") %>'
+                                            CssClass="text-blue-600 hover:text-blue-900"
+                                            ToolTip="Reset Password">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                            </svg>
+                                        </asp:LinkButton>
+                                        
+                                        <asp:LinkButton ID="btnToggleStatus" runat="server" 
+                                            CommandName="ToggleStatus" 
+                                            CommandArgument='<%# Eval("UserId") %>'
+                                            CssClass='<%# Convert.ToBoolean(Eval("IsActive")) ? "text-red-600 hover:text-red-900" : "text-green-600 hover:text-green-900" %>'
+                                            ToolTip='<%# Convert.ToBoolean(Eval("IsActive")) ? "Deactivate User" : "Activate User" %>'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d='<%# Convert.ToBoolean(Eval("IsActive")) 
+                                                    ? "M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" 
+                                                    : "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" %>' />
+                                            </svg>
+                                        </asp:LinkButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                    
+                    <AlternatingItemTemplate>
+                        <div class="border-b border-gray-200 bg-gray-50">
+                            <div class="grid grid-cols-12 gap-2 px-6 py-4 hover:bg-gray-100">
+                                <div class="col-span-1 whitespace-nowrap text-sm text-gray-500">
+                                    <%# Eval("UserId") %>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <%# Eval("Username") %>
+                                </div>
+                                <div class="col-span-3 whitespace-nowrap text-sm text-gray-500">
+                                    <%# Eval("Email") %>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap text-sm text-gray-500">
+                                    <%# Eval("DateCreated", "{0:MM/dd/yyyy}") %>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap">
+                                    <span id="Span1" runat="server" class='<%# Convert.ToBoolean(Eval("IsActive")) ? "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" : "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800" %>'>
+                                        <%# Convert.ToBoolean(Eval("IsActive")) ? "Active" : "Inactive" %>
+                                    </span>
+                                </div>
+                                <div class="col-span-2 whitespace-nowrap text-sm font-medium text-right">
+                                    <div class="flex justify-end space-x-2">
+                                        <asp:LinkButton ID="LinkButton1" runat="server" 
+                                            CommandName="ViewDetails" 
+                                            CommandArgument='<%# Eval("UserId") %>'
+                                            CssClass="text-indigo-600 hover:text-indigo-900"
+                                            ToolTip="View Details">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        </asp:LinkButton>
+                                        
+                                        <asp:LinkButton ID="LinkButton2" runat="server" 
+                                            CommandName="ResetPassword" 
+                                            CommandArgument='<%# Eval("UserId") %>'
+                                            CssClass="text-blue-600 hover:text-blue-900"
+                                            ToolTip="Reset Password">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                            </svg>
+                                        </asp:LinkButton>
+                                        
+                                        <asp:LinkButton ID="LinkButton3" runat="server" 
+                                            CommandName="ToggleStatus" 
+                                            CommandArgument='<%# Eval("UserId") %>'
+                                            CssClass='<%# Convert.ToBoolean(Eval("IsActive")) ? "text-red-600 hover:text-red-900" : "text-green-600 hover:text-green-900" %>'
+                                            ToolTip='<%# Convert.ToBoolean(Eval("IsActive")) ? "Deactivate User" : "Activate User" %>'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d='<%# Convert.ToBoolean(Eval("IsActive")) 
+                                                    ? "M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" 
+                                                    : "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" %>' />
+                                            </svg>
+                                        </asp:LinkButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </AlternatingItemTemplate>
+                    
                     <EmptyDataTemplate>
-                        <div class="text-center py-6 px-4">
-                            <p class="text-gray-500">No users found matching the criteria.</p>
+                        <div class="bg-white">
+                            <div class="text-center py-10 px-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+                                <p class="mt-1 text-sm text-gray-500">No users found matching the criteria.</p>
+                            </div>
                         </div>
                     </EmptyDataTemplate>
-                </asp:GridView>
+                </asp:ListView>
             </div>
             
             <!-- User Details Modal -->
@@ -365,98 +517,25 @@
         </div>
     </form>
    <script type="text/javascript">
-    // Global variables
-    let searchTimeout;
-    let currentUsersLoading = false;
+       // Only keep initialization and loading indicator
+       document.addEventListener('DOMContentLoaded', function () {
+           console.log('DOM Loaded - Search functionality will use standard postback');
 
-    // Initialize event listeners when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM Loaded - Setting up search functionality');
-        setupSearchEvents();
-    });
-
-    // Setup event listeners for search functionality
-    function setupSearchEvents() {
-        // Get the search text box
-        var searchBox = document.getElementById('<%= txtSearch.ClientID %>');
-        var statusDropdown = document.getElementById('<%= ddlStatus.ClientID %>');
-        var searchButton = document.getElementById('<%= btnSearch.ClientID %>');
-        var resetButton = document.getElementById('<%= btnReset.ClientID %>');
-        
-        if (searchBox) {
-            console.log('Found search box: ' + searchBox.id);
-            // Add event listener for Enter key only (no live search)
-            searchBox.addEventListener('keydown', function(e) {
-                // If user presses Enter, trigger search immediately
-                if (e.key === 'Enter') {
-                    console.log('Enter key pressed - triggering search');
-                    e.preventDefault(); // Prevent form submission
-                    searchUsers();
-                    return;
-                }
-            });
-        } else {
-            console.error('Search box not found');
-        }
-        
-        // Remove the live search functionality for status dropdown
-        // Only keep the search button functionality
-        
-        if (searchButton) {
-            console.log('Found search button: ' + searchButton.id);
-            // Replace default click behavior with our client-side handler
-            searchButton.addEventListener('click', function(e) {
-                console.log('Search button clicked');
-                e.preventDefault(); // Prevent default form submission
-                searchUsers();
-            });
-        } else {
-            console.error('Search button not found');
-        }
-        
-        if (resetButton) {
-            console.log('Found reset button: ' + resetButton.id);
-            resetButton.addEventListener('click', function(e) {
-                console.log('Reset button clicked');
-                // Allow default behavior for reset
-            });
-        }
-    }
-
-    // Function to search users
-    function searchUsers() {
-        if (currentUsersLoading) {
-            console.log('Search already in progress, ignoring this request');
-            return;
-        }
-        
-        currentUsersLoading = true;
-        console.log('Performing user search');
-        
-        var searchText = document.getElementById('<%= txtSearch.ClientID %>').value || '';
-        var statusValue = document.getElementById('<%= ddlStatus.ClientID %>').value || 'true';
-        
-        console.log('Search params:', { searchText, statusValue });
-        
-        // Show loading message in GridView
-        var gridView = document.querySelector('[id$="gvUsers"]');
-        if (gridView) {
-            // Set a loading indicator for the grid
-            if (gridView.getElementsByTagName('tbody').length > 0) {
-                var tbody = gridView.getElementsByTagName('tbody')[0];
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Loading users...</td></tr>';
-            }
-        }
-        
-        // Call server-side search using __doPostBack
-        __doPostBack('<%= btnSearch.UniqueID %>', '');
-
-           // Reset loading flag after a timeout
-           setTimeout(function () {
-               currentUsersLoading = false;
-           }, 5000); // 5 second timeout
-       }
+           // Only add Enter key functionality - let button clicks go through normal postback
+           var searchBox = document.getElementById('<%= txtSearch.ClientID %>');
+           if (searchBox) {
+               searchBox.addEventListener('keydown', function (e) {
+                   // If Enter pressed, use standard form submission
+                   if (e.key === 'Enter') {
+                       console.log('Enter key pressed - using default form submission');
+                       // Form will submit naturally due to DefaultButton="btnSearch"
+                   }
+               });
+           }
+       });
    </script>
  
 </asp:Content>
+
+
 

@@ -105,6 +105,7 @@ namespace OnlinePastryShop.Pages
                             p.NAME, 
                             p.DESCRIPTION, 
                             p.PRICE, 
+                            p.COSTPRICE,
                             p.STOCKQUANTITY, 
                             p.ISLATEST,
                             p.ISACTIVE,
@@ -142,6 +143,7 @@ namespace OnlinePastryShop.Pages
                                     int productId = Convert.ToInt32(reader["PRODUCTID"]);
                                     bool hasImage = Convert.ToInt32(reader["HAS_IMAGE"]) == 1;
                                     decimal price = Convert.ToDecimal(reader["PRICE"]);
+                                    decimal costPrice = reader["COSTPRICE"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["COSTPRICE"]);
                                     int stockQuantity = Convert.ToInt32(reader["STOCKQUANTITY"]);
                                     string name = reader["NAME"].ToString();
                                     string description = reader["DESCRIPTION"] == DBNull.Value ? "" : reader["DESCRIPTION"].ToString();
@@ -176,6 +178,7 @@ namespace OnlinePastryShop.Pages
                                         Name = name,
                                         Description = description,
                                         Price = price,
+                                        CostPrice = costPrice,
                                         StockQuantity = stockQuantity,
                                         IsLatest = isLatest,
                                         IsActive = isActive,
@@ -331,6 +334,7 @@ namespace OnlinePastryShop.Pages
                                     Name = reader["Name"].ToString(),
                                     Description = reader["Description"]?.ToString(),
                                     Price = Convert.ToDecimal(reader["Price"]),
+                                    CostPrice = reader["CostPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["CostPrice"]),
                                     StockQuantity = Convert.ToInt32(reader["StockQuantity"]),
                                     ImageBase64 = reader["Image"] != DBNull.Value ?
                                         Convert.ToBase64String((byte[])reader["Image"]) : null,
@@ -357,10 +361,10 @@ namespace OnlinePastryShop.Pages
         // Simple product add method with direct string-based SQL construction
         [WebMethod]
         public static object AddProductSimple(string name, string description, string price,
-            string stockQuantity, string imageBase64, string categoryId, bool isLatest)
+            string costPrice, string stockQuantity, string imageBase64, string categoryId, bool isLatest)
         {
             System.Diagnostics.Debug.WriteLine("=========== BEGIN AddProductSimple ===========");
-            System.Diagnostics.Debug.WriteLine($"Input parameters: name='{name}', price='{price}', stockQty='{stockQuantity}', categoryId='{categoryId}'");
+            System.Diagnostics.Debug.WriteLine($"Input parameters: name='{name}', price='{price}', costPrice='{costPrice}', stockQty='{stockQuantity}', categoryId='{categoryId}'");
 
             // Response data structure
             Dictionary<string, object> response = new Dictionary<string, object>();
@@ -403,6 +407,17 @@ namespace OnlinePastryShop.Pages
                 if (!decimal.TryParse(price, out priceValue) || priceValue <= 0)
                 {
                     return new { status = "error", message = "Please enter a valid price greater than zero." };
+                }
+
+                decimal costPriceValue;
+                if (!decimal.TryParse(costPrice, out costPriceValue) || costPriceValue <= 0)
+                {
+                    return new { status = "error", message = "Please enter a valid cost price greater than zero." };
+                }
+
+                if (costPriceValue >= priceValue)
+                {
+                    return new { status = "error", message = "Cost price must be less than selling price." };
                 }
 
                 int stockValue;
@@ -560,10 +575,10 @@ namespace OnlinePastryShop.Pages
                             // Use named parameters with OracleDbType
                             string insertSql = @"
                                 INSERT INTO Products (
-                                    Name, Description, Price, StockQuantity, 
+                                    Name, Description, Price, CostPrice, StockQuantity, 
                                     Image, IsActive, IsLatest
                                 ) VALUES (
-                                    :Name, :Description, :Price, :StockQuantity,
+                                    :Name, :Description, :Price, :CostPrice, :StockQuantity,
                                     :Image, 1, :IsLatest
                                 ) RETURNING ProductId INTO :ProductId";
 
@@ -578,6 +593,7 @@ namespace OnlinePastryShop.Pages
 
                                 // Convert price to decimal and use OracleDbType.Decimal
                                 cmd.Parameters.Add("Price", OracleDbType.Decimal).Value = priceValue;
+                                cmd.Parameters.Add("CostPrice", OracleDbType.Decimal).Value = costPriceValue;
 
                                 cmd.Parameters.Add("StockQuantity", OracleDbType.Int32).Value = stockValue;
                                 cmd.Parameters.Add("Image", OracleDbType.Blob).Value = imageBytes != null ? (object)imageBytes : DBNull.Value;
@@ -737,7 +753,7 @@ namespace OnlinePastryShop.Pages
         // Update existing product with the same improved parameter handling approach
         [WebMethod]
         public static object UpdateProduct(int productId, string name, string description,
-            decimal price, int stockQuantity, string imageBase64, int categoryId, bool isLatest)
+            decimal price, decimal costPrice, int stockQuantity, string imageBase64, int categoryId, bool isLatest)
         {
             try
             {
@@ -745,6 +761,21 @@ namespace OnlinePastryShop.Pages
                 if (stockQuantity > 1000)
                 {
                     return new { status = "error", message = "Stock quantity cannot exceed 1000 items." };
+                }
+
+                if (costPrice <= 0)
+                {
+                    return new { status = "error", message = "Cost price must be greater than zero." };
+                }
+
+                if (price <= 0)
+                {
+                    return new { status = "error", message = "Price must be greater than zero." };
+                }
+
+                if (costPrice >= price)
+                {
+                    return new { status = "error", message = "Cost price must be less than selling price." };
                 }
 
                 if (!string.IsNullOrEmpty(description))
@@ -825,6 +856,7 @@ namespace OnlinePastryShop.Pages
                                     Name = :Name, 
                                     Description = :Description, 
                                     Price = :Price, 
+                                    CostPrice = :CostPrice,
                                     StockQuantity = :StockQuantity, 
                                     IsLatest = :IsLatest
                                 WHERE ProductId = :ProductId";
@@ -840,7 +872,9 @@ namespace OnlinePastryShop.Pages
 
                                 // Handle price with OracleDbType.Decimal directly - same as in AddProduct
                                 cmd.Parameters.Add("Price", OracleDbType.Decimal).Value = price;
+                                cmd.Parameters.Add("CostPrice", OracleDbType.Decimal).Value = costPrice;
                                 System.Diagnostics.Debug.WriteLine($"Price parameter type: {cmd.Parameters["Price"].OracleDbType}, Value: {cmd.Parameters["Price"].Value}");
+                                System.Diagnostics.Debug.WriteLine($"CostPrice parameter type: {cmd.Parameters["CostPrice"].OracleDbType}, Value: {cmd.Parameters["CostPrice"].Value}");
 
                                 cmd.Parameters.Add("StockQuantity", OracleDbType.Int32).Value = stockQuantity;
                                 cmd.Parameters.Add("IsLatest", OracleDbType.Int32).Value = isLatest ? 1 : 0;
@@ -1113,6 +1147,7 @@ namespace OnlinePastryShop.Pages
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
+        public decimal CostPrice { get; set; }
         public int StockQuantity { get; set; }
         public bool IsLatest { get; set; }
         public string CategoryName { get; set; }

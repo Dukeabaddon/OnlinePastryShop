@@ -77,13 +77,24 @@
         
         <!-- Products List -->
         <div class="bg-white rounded-lg shadow">
+            <!-- Filter indicator for live search -->
+            <div id="liveSearchIndicator" class="px-4 py-2 text-sm text-blue-700 bg-blue-50 border-b border-blue-100 hidden">
+                <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    <span id="filterMessage">Filtering products as you type...</span>
+                </span>
+            </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -95,22 +106,25 @@
                 </table>
             </div>
             <!-- Pagination -->
-            <div class="px-6 py-4 flex items-center justify-between border-t">
+            <div class="bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between">
                 <div class="flex-1 flex justify-between sm:hidden">
-                    <button type="button" id="prevPageMobile" class="btn-pagination">Previous</button>
-                    <button type="button" id="nextPageMobile" class="btn-pagination">Next</button>
+                    <button type="button" id="prevPageMobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">&laquo; Previous</button>
+                    <button type="button" id="nextPageMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next &raquo;</button>
                 </div>
                 <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                     <div>
-                        <p class="text-sm text-gray-700" id="paginationInfo">
-                            Showing <span id="startCount">0</span> to <span id="endCount">0</span> of <span id="totalCount">0</span> results
+                        <p class="text-sm text-gray-700">
+                            <span>Showing page </span>
+                            <span id="currentPageDisplay" class="font-medium">1</span>
+                            <span> of </span>
+                            <span id="totalPagesDisplay" class="font-medium">1</span>
                         </p>
                     </div>
                     <div>
-                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" id="pagination">
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" id="pagination" aria-label="Pagination">
                             <!-- Pagination buttons will be dynamically inserted here -->
                         </nav>
-                </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -144,6 +158,11 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Price (₱) <span class="text-red-500 required-indicator">*</span></label>
                             <input type="number" id="productPrice" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0.01" max="10000" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Cost Price (₱) <span class="text-red-500 required-indicator">*</span></label>
+                            <input type="number" id="productCostPrice" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0.01" max="10000" step="0.01" required>
+                            <p class="text-xs text-gray-500 mt-1">The purchase price (should be less than selling price)</p>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity <span class="text-red-500 required-indicator">*</span></label>
@@ -210,7 +229,7 @@
                     <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
                         Cancel
                     </button>
-                    <button type="button" onclick="confirmDelete()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
+                    <button type="button" onclick="deleteProduct()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
                         Permanently Delete
                     </button>
                 </div>
@@ -253,10 +272,7 @@
 
             // Setup event listeners
             document.getElementById('searchInput').addEventListener('keyup', function (e) {
-                if (e.key === 'Enter') {
-                    currentPage = 1;
-                    loadProducts();
-                }
+                debounceSearch();
             });
             document.getElementById('categoryFilter').addEventListener('change', function () {
                 currentPage = 1;
@@ -283,7 +299,7 @@
             // Show loading state
             document.getElementById('productsList').innerHTML = `
                 <tr>
-                    <td colspan="6" class="px-6 py-4 text-center">
+                    <td colspan="8" class="px-6 py-4 text-center">
                         Loading products...
                     </td>
                 </tr>
@@ -314,7 +330,8 @@
                 url: 'Products.aspx/GetProducts'
             });
 
-            fetch('Products.aspx/GetProducts', {
+            // Return the promise so we can chain .then() after loadProducts()
+            return fetch('Products.aspx/GetProducts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -350,17 +367,23 @@
                     renderProducts(result.Products);
                     updatePagination(result.TotalCount);
                     loadDashboardStats();
+
+                    // Return the result so we can chain further processing
+                    return result;
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     debugLog('Error loading products:', error.message, true);
                     document.getElementById('productsList').innerHTML = `
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-red-500">
+                        <td colspan="8" class="px-6 py-4 text-center text-red-500">
                             Error loading products: ${error.message}
                         </td>
                     </tr>
                 `;
+
+                    // Re-throw the error to be handled by the caller if needed
+                    throw error;
                 });
         }
 
@@ -438,23 +461,43 @@
                 `;
 
                 try {
+                    // Calculate profit and margin
+                    const profit = product.Price - product.CostPrice;
+                    const profitMargin = product.Price > 0 ? ((profit / product.Price) * 100).toFixed(1) : 0;
+
+                    const tr = document.createElement('tr');
+                    tr.classList.add('hover:bg-gray-50');
+                    tr.dataset.productId = product.ProductId;
                     tr.innerHTML = `
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 ${imageCell}
                                 <div>
-                                    <div class="font-medium text-gray-900">${product.Name}</div>
-                                    <div class="text-gray-500 text-sm">${product.Description || ''}</div>
+                                    <div class="text-sm font-medium text-gray-900">${product.Name}</div>
+                                    <div class="text-xs text-gray-500">${product.Description || ''}</div>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4">${product.CategoryName}</td>
+                        <td class="px-6 py-4">₱${product.CostPrice.toFixed(2)}</td>
                         <td class="px-6 py-4">₱${product.Price.toFixed(2)}</td>
+                        <td class="px-6 py-4">
+                            <div>₱${profit.toFixed(2)}</div>
+                            <div class="text-xs text-gray-500">${profitMargin}% margin</div>
+                        </td>
                         <td class="px-6 py-4">${product.StockQuantity}</td>
                         <td class="px-6 py-4">${getStockStatusBadge(product.StockQuantity)}</td>
                         <td class="px-6 py-4 text-right">
-                            <button type="button" onclick="openEditModal(${product.ProductId})" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                            <button type="button" onclick="openDeleteModal(${product.ProductId})" class="text-red-600 hover:text-red-900">Delete</button>
+                            <button type="button" class="text-blue-600 hover:text-blue-900 mr-3" onclick="openEditModal(${product.ProductId})">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                </svg>
+                            </button>
+                            <button type="button" class="text-red-600 hover:text-red-900" onclick="confirmDelete(${product.ProductId}, '${product.Name.replace(/'/g, "\\'")}')">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
                         </td>
                     `;
                     fragment.appendChild(tr);
@@ -658,9 +701,83 @@
 
         function debounceSearch() {
             clearTimeout(debounceTimer);
+
+            const searchInput = document.getElementById('searchInput');
+            const searchValue = searchInput ? searchInput.value.trim() : '';
+            const searchIcon = document.querySelector('#searchInput + span');
+            const liveSearchIndicator = document.getElementById('liveSearchIndicator');
+            const filterMessage = document.getElementById('filterMessage');
+
+            // Only show filtering UI if there's actually something in the search box
+            if (searchValue.length > 0) {
+                // Show the live search indicator with custom message
+                if (liveSearchIndicator && filterMessage) {
+                    liveSearchIndicator.classList.remove('hidden');
+                    filterMessage.textContent = `Filtering products for "${searchValue}"...`;
+                }
+
+                // Add a visual indication that search is in progress
+                if (searchInput) {
+                    searchInput.classList.add('bg-blue-50', 'border-blue-300');
+                }
+
+                if (searchIcon) {
+                    searchIcon.innerHTML = `
+                        <svg class="w-5 h-5 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    `;
+                }
+            } else {
+                // Hide the indicator if search is empty
+                if (liveSearchIndicator) {
+                    liveSearchIndicator.classList.add('hidden');
+                }
+            }
+
             debounceTimer = setTimeout(() => {
                 currentPage = 1;
-                loadProducts();
+                loadProducts().then(() => {
+                    // Restore the search input and icon after loading
+                    if (searchInput) {
+                        searchInput.classList.remove('bg-blue-50', 'border-blue-300');
+                    }
+
+                    if (searchIcon) {
+                        searchIcon.innerHTML = `
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        `;
+                    }
+
+                    // Keep the filter indicator visible if there's a search term
+                    if (searchValue.length === 0 && liveSearchIndicator) {
+                        liveSearchIndicator.classList.add('hidden');
+                    } else if (liveSearchIndicator && filterMessage) {
+                        // Update message to show the search is complete
+                        filterMessage.textContent = `Showing results for "${searchValue}"`;
+                    }
+                }).catch(() => {
+                    // Restore styling on error
+                    if (searchInput) {
+                        searchInput.classList.remove('bg-blue-50', 'border-blue-300');
+                    }
+
+                    if (searchIcon) {
+                        searchIcon.innerHTML = `
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        `;
+                    }
+
+                    // Hide the filter indicator on error
+                    if (liveSearchIndicator) {
+                        liveSearchIndicator.classList.add('hidden');
+                    }
+                });
             }, 300);
         }
 
@@ -730,6 +847,7 @@
             document.getElementById('productName').value = '';
             document.getElementById('productDescription').value = '';
             document.getElementById('productPrice').value = '';
+            document.getElementById('productCostPrice').value = '';
             document.getElementById('productStock').value = '';
             document.getElementById('productCategory').value = '';
             document.getElementById('isLatest').checked = false;
@@ -754,6 +872,7 @@
             document.getElementById('productName').value = product.Name || '';
             document.getElementById('productDescription').value = product.Description || '';
             document.getElementById('productPrice').value = product.Price || 0;
+            document.getElementById('productCostPrice').value = product.CostPrice || 0;
             document.getElementById('productStock').value = product.StockQuantity || 0;
             document.getElementById('productCategory').value = product.CategoryId || ''; // Make sure to convert 0 to empty string if needed
             document.getElementById('isLatest').checked = product.IsLatest || false;
@@ -793,6 +912,7 @@
                 name: document.getElementById('productName').value,
                 description: document.getElementById('productDescription').value,
                 price: document.getElementById('productPrice').value,
+                costPrice: document.getElementById('productCostPrice').value,
                 stock: document.getElementById('productStock').value,
                 category: document.getElementById('productCategory').value,
                 isLatest: document.getElementById('isLatest').checked,
@@ -857,6 +977,7 @@
             const name = document.getElementById('productName').value;
             const description = document.getElementById('productDescription').value;
             const price = document.getElementById('productPrice').value; // Keep as string for new method
+            const costPrice = document.getElementById('productCostPrice').value; // Keep as string for new method
             const stockQuantity = document.getElementById('productStock').value; // Keep as string for new method
             const categoryId = document.getElementById('productCategory').value; // Keep as string for new method
             const isLatest = document.getElementById('isLatest').checked;
@@ -866,6 +987,7 @@
                 name,
                 description,
                 price,  // Keep as string for simple method
+                costPrice,  // Keep as string for simple method
                 stockQuantity, // Keep as string for simple method
                 categoryId, // Keep as string for simple method
                 isLatest,
@@ -878,6 +1000,7 @@
 
                 // For update operations, we need numeric values
                 formData.price = parseFloat(price);
+                formData.costPrice = parseFloat(costPrice);
                 formData.stockQuantity = parseInt(stockQuantity);
                 formData.categoryId = categoryId ? parseInt(categoryId) : 0;
             }
@@ -930,6 +1053,18 @@
             // Check if price is valid
             if (!price || isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
                 showModalError('Please enter a valid price greater than zero');
+                return;
+            }
+
+            // Check if cost price is valid
+            if (!costPrice || isNaN(parseFloat(costPrice)) || parseFloat(costPrice) <= 0) {
+                showModalError('Please enter a valid cost price greater than zero');
+                return;
+            }
+
+            // Check if cost price is less than selling price
+            if (parseFloat(costPrice) >= parseFloat(price)) {
+                showModalError('Cost price must be less than selling price');
                 return;
             }
 
@@ -1004,10 +1139,34 @@
                 });
         }
 
-        function confirmDelete() {
+        function confirmDelete(productId, productName) {
+            // If event exists, prevent default behavior
+            if (window.event) {
+                window.event.preventDefault();
+                window.event.stopPropagation();
+            }
+
+            // Set the product ID to the global variable
+            selectedProductId = productId;
+
+            // Update the modal text if we have a product name
+            if (productName) {
+                const modalText = document.querySelector('#deleteModal p.text-gray-500');
+                if (modalText) {
+                    modalText.textContent = `Are you sure you want to permanently delete "${productName}"?`;
+                }
+            }
+
+            // Show the delete modal
+            document.getElementById('deleteModal').classList.remove('hidden');
+
+            return false; // Prevent default
+        }
+
+        function deleteProduct() {
             if (!selectedProductId) return;
 
-            const deleteButton = document.querySelector('#deleteModal button[onclick="confirmDelete()"]');
+            const deleteButton = document.querySelector('#deleteModal button[onclick="deleteProduct()"]');
             const originalText = deleteButton.textContent;
             deleteButton.textContent = 'Deleting...';
             deleteButton.disabled = true;
@@ -1169,19 +1328,27 @@
         function updatePagination(totalCount) {
             const totalPages = Math.ceil(totalCount / pageSize);
             const paginationContainer = document.getElementById('pagination');
-            const startCount = totalCount === 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
-            const endCount = Math.min(currentPage * pageSize, totalCount);
 
-            // Update count display
-            document.getElementById('startCount').textContent = startCount;
-            document.getElementById('endCount').textContent = endCount;
-            document.getElementById('totalCount').textContent = totalCount;
+            // Update page display
+            document.getElementById('currentPageDisplay').textContent = currentPage;
+            document.getElementById('totalPagesDisplay').textContent = totalPages;
 
             // Clear existing pagination
             paginationContainer.innerHTML = '';
 
+            // First page button (like in Users page)
+            const firstPageButton = createPaginationButton('&laquo;', currentPage > 1, false, 'rounded-l-md');
+            firstPageButton.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage = 1;
+                    loadProducts();
+                }
+            };
+            paginationContainer.appendChild(firstPageButton);
+
             // Previous button
-            const prevButton = createPaginationButton('Previous', currentPage > 1);
+            const prevButton = createPaginationButton('', currentPage > 1);
+            prevButton.innerHTML = '<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>';
             prevButton.onclick = () => {
                 if (currentPage > 1) {
                     currentPage--;
@@ -1208,7 +1375,8 @@
             }
 
             // Next button
-            const nextButton = createPaginationButton('Next', currentPage < totalPages);
+            const nextButton = createPaginationButton('', currentPage < totalPages);
+            nextButton.innerHTML = '<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>';
             nextButton.onclick = () => {
                 if (currentPage < totalPages) {
                     currentPage++;
@@ -1216,6 +1384,16 @@
                 }
             };
             paginationContainer.appendChild(nextButton);
+
+            // Last page button (like in Users page)
+            const lastPageButton = createPaginationButton('&raquo;', currentPage < totalPages, false, 'rounded-r-md');
+            lastPageButton.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage = totalPages;
+                    loadProducts();
+                }
+            };
+            paginationContainer.appendChild(lastPageButton);
 
             // Update mobile pagination buttons
             const prevPageMobile = document.getElementById('prevPageMobile');
@@ -1239,23 +1417,31 @@
             };
         }
 
-        function createPaginationButton(text, enabled, isCurrentPage = false) {
+        function createPaginationButton(text, enabled, isCurrentPage = false, extraClasses = '') {
             const button = document.createElement('button');
             button.type = 'button';
 
-            let className = 'relative inline-flex items-center px-4 py-2 text-sm font-medium border ';
+            let className = 'relative inline-flex items-center px-4 py-2 border ';
 
             if (isCurrentPage) {
-                className += 'z-10 bg-[#D43B6A] text-white border-[#D43B6A]';
+                className += 'border-gray-300 bg-indigo-50 text-sm font-medium text-indigo-600 hover:bg-gray-50';
             } else if (enabled) {
-                className += 'bg-white text-gray-500 hover:bg-gray-50 border-gray-300';
+                if (text === '&laquo;' || text === '&raquo;') {
+                    className += 'border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 px-2 py-2';
+                } else {
+                    className += 'border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50';
+                }
             } else {
-                className += 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-300';
+                className += 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed';
+            }
+
+            if (extraClasses) {
+                className += ' ' + extraClasses;
             }
 
             button.className = className;
             button.disabled = !enabled;
-            button.textContent = text;
+            button.innerHTML = text; // Using innerHTML for &laquo; and &raquo;
 
             return button;
         }

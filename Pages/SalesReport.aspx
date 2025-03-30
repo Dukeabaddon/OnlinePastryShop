@@ -7,589 +7,493 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="AdminContent" runat="server">
     <form runat="server">
-    <div class="container mx-auto p-4">
-        <!-- Error Message -->
-        <asp:Label ID="lblErrorMessage" runat="server" 
-                   CssClass="text-red-500 text-center mb-4" 
-                   Visible="false"></asp:Label>
-
-        <asp:Label ID="lblMessage" runat="server" Visible="false" CssClass="text-red-500"></asp:Label>
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
         
-        <!-- Dashboard Header with Time Selector -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-[#D43B6A] mb-4 md:mb-0">Pastry Shop Dashboard</h1>
+        <!-- Chart Data Initialization -->
+        <script type="text/javascript">
+            // Global object to hold chart data from server
+            var chartData = {};
+        </script>
+        
+        <div class="container mx-auto p-4">
+            <!-- Error Message -->
+            <asp:Label ID="lblErrorMessage" runat="server" 
+                       CssClass="text-red-500 text-center block mb-4" 
+                       Visible="false"></asp:Label>
             
-            <div class="flex flex-wrap gap-3 items-center">
-                <!-- Time Period Selector -->
-                <div class="relative">
-                    <asp:DropDownList ID="TimeRangeSelector" runat="server" CssClass="pl-3 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D43B6A] focus:border-[#D43B6A]" AutoPostBack="true" OnSelectedIndexChanged="TimeRangeSelector_SelectedIndexChanged">
-                        <asp:ListItem Value="daily" Text="Daily"></asp:ListItem>
-                        <asp:ListItem Value="weekly" Text="Weekly" Selected="True"></asp:ListItem>
-                        <asp:ListItem Value="monthly" Text="Monthly"></asp:ListItem>
-                        <asp:ListItem Value="yearly" Text="Yearly"></asp:ListItem>
-                    </asp:DropDownList>
+            <!-- Success Message -->
+            <asp:Label ID="lblSuccessMessage" runat="server" 
+                       CssClass="text-green-500 text-center block mb-4" 
+                       Visible="false"></asp:Label>
+            
+            <!-- Dashboard Header with Time Selector -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-[#D43B6A] mb-4 md:mb-0">Sales Report Dashboard</h1>
+                
+                <!-- Time Range Controls -->
+                <div class="flex flex-col sm:flex-row gap-2 items-end w-full md:w-auto">
+                    <div class="flex-1 md:flex-none">
+                        <label for="TimeRangeSelector" class="block text-sm font-medium text-gray-700 mb-1">Time Range</label>
+                        <asp:DropDownList ID="TimeRangeSelector" runat="server" 
+                                         AutoPostBack="true" 
+                                         OnSelectedIndexChanged="TimeRangeSelector_SelectedIndexChanged" 
+                                         CssClass="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <asp:ListItem Text="Daily" Value="Daily" />
+                            <asp:ListItem Text="Weekly" Value="Weekly" Selected="True" />
+                            <asp:ListItem Text="Monthly" Value="Monthly" />
+                            <asp:ListItem Text="Yearly" Value="Yearly" />
+                            <asp:ListItem Text="Custom Range" Value="Custom" />
+                        </asp:DropDownList>
+                    </div>
+                    
+                    <!-- Custom Date Range Controls -->
+                    <div id="customDateRange" runat="server" class="flex flex-col sm:flex-row gap-2 w-full md:w-auto mt-2 sm:mt-0">
+                        <div class="flex-1 md:flex-none">
+                            <label for="txtStartDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                            <asp:TextBox ID="txtStartDate" runat="server" TextMode="Date" 
+                                       CssClass="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></asp:TextBox>
+                        </div>
+                        <div class="flex-1 md:flex-none">
+                            <label for="txtEndDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                            <asp:TextBox ID="txtEndDate" runat="server" TextMode="Date" 
+                                       CssClass="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></asp:TextBox>
+                        </div>
+                        <div class="flex-none flex items-end">
+                            <asp:Button ID="btnFilterReport" runat="server" Text="Apply Filter" 
+                                      OnClick="btnFilterReport_Click" 
+                                      CssClass="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#D43B6A] hover:bg-[#c02f5c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Message for no data -->
+            <asp:Label ID="lblMessage" runat="server" CssClass="text-gray-500 text-center block my-8" Visible="false">
+                No sales data available for the selected time period.
+            </asp:Label>
+            
+            <!-- KPI Cards Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Total Revenue Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-[#D43B6A]">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Total Revenue</p>
+                            <h3 class="text-2xl font-bold"><%= TotalRevenue %></h3>
+                            <div class="flex items-center mt-2">
+                                <svg class="<%= RevenueGrowthClass %> h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="<%= RevenueGrowthIcon %>" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="<%= RevenueGrowthClass %> ml-1 text-sm"><%= RevenueGrowth %></span>
+                                <span class="text-gray-400 text-xs ml-1">vs previous period</span>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-pink-50 rounded-full">
+                            <svg class="h-6 w-6 text-[#D43B6A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Date Range Picker -->
-                <div class="flex items-center space-x-4 mb-4">
-                    <div>
-                        <label for="txtStartDate" class="block text-sm font-medium text-gray-700">Start Date</label>
-                        <asp:TextBox ID="txtStartDate" runat="server" CssClass="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" Type="date"></asp:TextBox>
-                    </div>
-                    <div>
-                        <label for="txtEndDate" class="block text-sm font-medium text-gray-700">End Date</label>
-                        <asp:TextBox ID="txtEndDate" runat="server" CssClass="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" Type="date"></asp:TextBox>
-                    </div>
-                    <div class="self-end">
-                        <asp:Button ID="btnFilterReport" runat="server" Text="Apply Filter" OnClick="btnFilterReport_Click" CssClass="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" />
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- KPI Cards (expanded with more relevant metrics) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium mb-1">Period Revenue</p>
-                        <h2 class="text-2xl font-bold text-gray-800"><%# TotalRevenue %></h2>
-                        <div class="mt-1 inline-flex items-center px-2 py-1 rounded-full text-xs <%# Convert.ToDecimal(RevenueGrowth) >= 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800" %>">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%# Convert.ToDecimal(RevenueGrowth) >= 0 ? "M5 10l7-7m0 0l7 7m-7-7v18" : "M19 14l-7 7m0 0l-7-7m7 7V3" %>" />
+                <!-- Order Count Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Total Orders</p>
+                            <h3 class="text-2xl font-bold"><%= TotalSales %></h3>
+                            <div class="flex items-center mt-2">
+                                <svg class="<%= SalesGrowthClass %> h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="<%= SalesGrowthIcon %>" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="<%= SalesGrowthClass %> ml-1 text-sm"><%= SalesGrowth %></span>
+                                <span class="text-gray-400 text-xs ml-1">vs previous period</span>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-full">
+                            <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                             </svg>
-                            <%# Math.Abs(Convert.ToDecimal(RevenueGrowth)).ToString("0.0") %>% vs previous
                         </div>
                     </div>
-                    <div class="p-3 bg-blue-50 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                </div>
+                
+                <!-- Items Per Order Card (replacing Average Order Value) -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">Items Per Order</p>
+                            <h3 class="text-2xl font-bold"><%= ItemsPerOrder %></h3>
+                            <div class="flex items-center mt-2">
+                                <svg class="<%= ItemsPerOrderChangeClass %> h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="<%= ItemsPerOrderIcon %>" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="<%= ItemsPerOrderChangeClass %> ml-1 text-sm"><%= ItemsPerOrderChange %></span>
+                                <span class="text-gray-400 text-xs ml-1">vs previous period</span>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-purple-50 rounded-full">
+                            <svg class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium mb-1">Total Orders</p>
-                        <h2 class="text-2xl font-bold text-gray-800"><%# TotalSales %></h2>
-                        <div class="mt-1 inline-flex items-center px-2 py-1 rounded-full text-xs <%# Convert.ToDecimal(SalesGrowth) >= 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800" %>">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%# Convert.ToDecimal(SalesGrowth) >= 0 ? "M5 10l7-7m0 0l7 7m-7-7v18" : "M19 14l-7 7m0 0l-7-7m7 7V3" %>" />
-                            </svg>
-                            <%# Math.Abs(Convert.ToDecimal(SalesGrowth)).ToString("0.0") %>% vs previous
-                        </div>
+            <!-- Main Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Sales Trend Chart -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Sales Trend (<%= ChartPeriodText %>)</h3>
                     </div>
-                    <div class="p-3 bg-green-50 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                        </svg>
+                    <div class="h-72">
+                        <canvas id="salesTrendChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Revenue by Category -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Revenue by Category</h3>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="categoryRevenueChart"></canvas>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium mb-1">Avg Order Value</p>
-                        <h2 class="text-2xl font-bold text-gray-800"><%# AverageOrderValue %></h2>
-                        <div class="mt-1 inline-flex items-center px-2 py-1 rounded-full text-xs <%# Convert.ToDecimal(AvgOrderValueChange) >= 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800" %>">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%# AvgOrderValueIcon %>" />
-                            </svg>
-                            <%# Math.Abs(Convert.ToDecimal(AvgOrderValueChange)).ToString("0.0") %>% vs previous
-                        </div>
+            <!-- Secondary Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Top Selling Products -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Top Selling Products</h3>
                     </div>
-                    <div class="p-3 bg-purple-50 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
+                    <div class="h-72">
+                        <canvas id="topProductsChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Inventory Status -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Inventory Status</h3>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="inventoryStatusChart"></canvas>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Main Charts Section - 2-column Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <!-- Sales Trend Chart (Line) -->
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex justify-between items-center">
-                    <span>Sales Trend</span>
-                    <span class="text-sm text-gray-500"><%# ChartPeriodText %></span>
-                </h3>
-                <canvas id="salesTrendChart" height="250"></canvas>
-            </div>
-
-            <!-- Revenue by Category (Pie) -->
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Revenue by Category</h3>
-                <canvas id="categoryRevenueChart" height="250"></canvas>
-            </div>
-
-            <!-- Top Selling Products (Bar) -->
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Selling Products</h3>
-                <canvas id="topProductsChart" height="250"></canvas>
-            </div>
-
-            <!-- Stock Status Overview (Doughnut) -->
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Inventory Status</h3>
-                <canvas id="inventoryStatusChart" height="250"></canvas>
-            </div>
-        </div>
-
-        <!-- Product Feedback Section (New) -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8 hover:shadow-lg transition-shadow duration-300">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
-                Product Ratings & Performance
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average Rating</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Reviews</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sales Conversion</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <!-- Sample data - this would be replaced with data from a ProductRatings repeater -->
-                        <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">Chocolate Cake</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="text-sm text-gray-900 mr-2">4.8</div>
-                                    <div class="flex text-yellow-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">42</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">68%</div>
-                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 68%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">Red Velvet Cake</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="text-sm text-gray-900 mr-2">4.2</div>
-                                    <div class="flex text-yellow-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">35</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">62%</div>
-                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 62%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">Vanilla Cupcake</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="text-sm text-gray-900 mr-2">3.9</div>
-                                    <div class="flex text-yellow-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">28</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">54%</div>
-                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                                    <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 54%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            
+            <!-- Product Performance Table -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Product Performance</h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Product
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Avg. Rating
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Reviews
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Conversion Rate
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% if (ProductRatings != null) { %>
+                                <% foreach (var product in ProductRatings) { %>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900"><%= product.ProductName %></div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="text-sm text-gray-900 mr-2"><%= product.AverageRating.ToString("0.0") %></div>
+                                                <div class="flex text-yellow-400">
+                                                    <% for (int i = 1; i <= 5; i++) { %>
+                                                        <% if (i <= Math.Floor(product.AverageRating)) { %>
+                                                            <!-- Full star -->
+                                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                                            </svg>
+                                                        <% } else if (i <= Math.Ceiling(product.AverageRating) && product.AverageRating % 1 != 0) { %>
+                                                            <!-- Half star -->
+                                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                                <defs>
+                                                                    <linearGradient id="half<%= product.ProductName.GetHashCode() %>_<%= i %>">
+                                                                        <stop offset="50%" stop-color="currentColor"/>
+                                                                        <stop offset="50%" stop-color="#CBD5E0"/>
+                                                                    </linearGradient>
+                                                                </defs>
+                                                                <path fill="url(#half<%= product.ProductName.GetHashCode() %>_<%= i %>)" d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                                            </svg>
+                                                        <% } else { %>
+                                                            <!-- Empty star -->
+                                                            <svg class="h-4 w-4 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                                            </svg>
+                                                        <% } %>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <%= product.TotalReviews %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <div class="mt-2">
+                                                <div class="flex justify-between mb-1">
+                                                    <span class="text-xs font-medium text-gray-700">Conversion rate</span>
+                                                    <span class="text-xs font-medium text-gray-700"><%= product.ConversionRate %>%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                    <div class="bg-blue-600 h-2.5 rounded-full conversion-bar" data-conversion="<%= product.ConversionRate %>"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                        No product performance data available.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
     </form>
-
-    <!-- Chart.js Integration -->
+    
+    <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0/dist/chartjs-adapter-luxon.min.js"></script>
-   <script>
-       // Set default dates (last week)
-       document.addEventListener('DOMContentLoaded', function () {
-           const now = new Date();
-           const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    
+    <!-- Chart Initialization -->
+    <script type="text/javascript">
+        let salesTrendChart = null;
+        let categoryRevenueChart = null;
+        let topProductsChart = null;
+        let inventoryStatusChart = null;
 
-           // Format dates for input fields: YYYY-MM-DD
-           const txtEndDate = document.getElementById('<%= txtEndDate.ClientID %>');
-            const txtStartDate = document.getElementById('<%= txtStartDate.ClientID %>');
-            
-            if (txtEndDate) txtEndDate.value = now.toISOString().split('T')[0];
-            if (txtStartDate) txtStartDate.value = lastWeek.toISOString().split('T')[0];
-            
-            // Initialize charts
-            initCharts();
-        });
-        
-        function initCharts() {
-            console.log("Initializing charts...");
-            
-            // Helper function to safely parse JSON or return an empty array/object
-            function safeJSONParse(jsonStr, defaultValue = []) {
-                try {
-                    if (!jsonStr || jsonStr === '') return defaultValue;
-                    return JSON.parse(jsonStr);
-                } catch (e) {
-                    console.error("JSON parse error:", e, "for string:", jsonStr);
-                    return defaultValue;
-                }
-            }
-            
-            // Sales Trend Chart (Line chart)
-            const salesTrendCtx = document.getElementById('salesTrendChart');
-            if (salesTrendCtx) {
-                console.log("Initializing Sales Trend Chart");
-                try {
-                    const salesLabels = safeJSONParse('<%= SalesTrendLabels %>', []);
-                    const salesData = safeJSONParse('<%= SalesTrendData %>', []);
-                    
-                    console.log("Sales Trend Data:", { labels: salesLabels, data: salesData });
-                    
-                    const salesTrendChart = new Chart(salesTrendCtx.getContext('2d'), {
+        // Function to initialize or reinitialize all charts
+        function initializeCharts() {
+            try {
+                console.log('Initializing charts with server data');
+
+                // Destroy existing charts if they exist
+                if (salesTrendChart) salesTrendChart.destroy();
+                if (categoryRevenueChart) categoryRevenueChart.destroy();
+                if (topProductsChart) topProductsChart.destroy();
+                if (inventoryStatusChart) inventoryStatusChart.destroy();
+
+                // Set conversion rate bar widths
+                document.querySelectorAll('.conversion-bar').forEach(function (bar) {
+                    const conversion = parseFloat(bar.getAttribute('data-conversion') || 0);
+                    const width = Math.min(conversion, 100);
+                    console.log('Setting conversion bar width to: ' + width + '%');
+                    bar.style.width = width + '%';
+                });
+
+                // Access the chart data from global variables set by server
+                const salesTrendLabels = chartData.salesTrendLabels || [];
+                const salesTrendData = chartData.salesTrendData || [];
+                const categoryNames = chartData.categoryNames || [];
+                const categoryRevenueData = chartData.categoryRevenueData || [];
+                const topProductNames = chartData.topProductNames || [];
+                const topProductQuantities = chartData.topProductQuantities || [];
+                const inventoryStatusData = chartData.inventoryStatusData || [0, 0, 0];
+
+                console.log('Chart data loaded:', {
+                    salesTrendLabels,
+                    salesTrendData,
+                    categoryNames,
+                    categoryRevenueData
+                });
+
+                // Sales Trend Chart
+                const salesTrendCtx = document.getElementById('salesTrendChart');
+                if (salesTrendCtx) {
+                    salesTrendChart = new Chart(salesTrendCtx, {
                         type: 'line',
-           data: {
-                            labels: salesLabels,
-            datasets: [{
-                                label: 'Sales',
-                                data: salesData,
-                                borderColor: '#D43B6A',
-                                backgroundColor: 'rgba(212, 59, 106, 0.1)',
+                        data: {
+                            labels: salesTrendLabels,
+                            datasets: [{
+                                label: 'Revenue',
+                                data: salesTrendData,
+                                backgroundColor: 'rgba(212, 59, 106, 0.2)',
+                                borderColor: 'rgba(212, 59, 106, 1)',
                                 borderWidth: 2,
                                 tension: 0.3,
-                                fill: true,
-                                pointBackgroundColor: '#D43B6A',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                                legend: {
-                                    display: false,
-                                },
-                tooltip: {
-                                    mode: 'index',
-                                    intersect: false,
-                    callbacks: {
-                                        label: function(context) {
-                                            return `Sales: ${context.raw}`;
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return '$' + value;
                                         }
                                     }
                                 }
                             },
-                            scales: {
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    grid: {
-                                        color: 'rgba(0, 0, 0, 0.05)'
-                                    }
-                }
-            }
-        }
-    });
-                } catch (error) {
-                    console.error("Error initializing Sales Trend Chart:", error);
-                }
-            } else {
-                console.warn("Sales Trend Chart canvas not found");
-            }
-            
-            // Revenue by Category Chart (Pie chart)
-            const categoryRevenueCtx = document.getElementById('categoryRevenueChart');
-            if (categoryRevenueCtx) {
-                console.log("Initializing Category Revenue Chart");
-                try {
-                    const categoryNames = safeJSONParse('<%= CategoryNames %>', []);
-                    const categoryData = safeJSONParse('<%= CategoryRevenueData %>', []);
-                    
-                    console.log("Category Revenue Data:", { labels: categoryNames, data: categoryData });
-                    
-                    const categoryRevenueChart = new Chart(categoryRevenueCtx.getContext('2d'), {
-            type: 'pie',
-            data: {
-                            labels: categoryNames,
-            datasets: [{
-                                data: categoryData,
-                                backgroundColor: [
-                                    '#D43B6A', // Pink
-                                    '#3B82F6', // Blue
-                                    '#10B981', // Green
-                                    '#F59E0B', // Yellow
-                                    '#8B5CF6', // Purple
-                                    '#EC4899', // Pink
-                                    '#6366F1'  // Indigo
-                                ],
-                                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                                legend: {
-                                    position: 'right',
-                                    labels: {
-                                        boxWidth: 15,
-                                        padding: 15,
-                                        font: {
-                                            size: 12
-                                        }
-                                    }
-                                },
-                tooltip: {
-                    callbacks: {
-                                        label: function(context) {
-                                            const label = context.label || '';
-                                            const value = context.raw || 0;
-                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                            const percentage = Math.round((value / total) * 100);
-                                            return `${label}: ₱${value} (${percentage}%)`;
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            return 'Revenue: $' + context.raw;
                                         }
                                     }
                                 }
                             }
                         }
                     });
-                } catch (error) {
-                    console.error("Error initializing Category Revenue Chart:", error);
+                } else {
+                    console.error('Sales trend chart canvas not found');
                 }
-            } else {
-                console.warn("Category Revenue Chart canvas not found");
-            }
-            
-            // Top Products Chart (Bar chart)
-            const topProductsCtx = document.getElementById('topProductsChart');
-            if (topProductsCtx) {
-                console.log("Initializing Top Products Chart");
-                try {
-                    const productNames = safeJSONParse('<%= TopProductNames %>', []);
-                    const productData = safeJSONParse('<%= TopProductQuantities %>', []);
-                    
-                    console.log("Top Products Data:", { labels: productNames, data: productData });
-                    
-                    const topProductsChart = new Chart(topProductsCtx.getContext('2d'), {
+
+                // Category Revenue Chart
+                const categoryRevenueCtx = document.getElementById('categoryRevenueChart');
+                if (categoryRevenueCtx) {
+                    categoryRevenueChart = new Chart(categoryRevenueCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: categoryNames,
+                            datasets: [{
+                                data: categoryRevenueData,
+                                backgroundColor: [
+                                    'rgba(212, 59, 106, 0.8)',
+                                    'rgba(54, 162, 235, 0.8)',
+                                    'rgba(75, 192, 192, 0.8)',
+                                    'rgba(255, 206, 86, 0.8)',
+                                    'rgba(153, 102, 255, 0.8)',
+                                    'rgba(255, 159, 64, 0.8)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            const value = context.raw;
+                                            const label = context.label || '';
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = Math.round((value / total) * 100);
+                                            return label + ': $' + value + ' (' + percentage + '%)';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Category revenue chart canvas not found');
+                }
+
+                // Top Products Chart
+                const topProductsCtx = document.getElementById('topProductsChart');
+                if (topProductsCtx) {
+                    topProductsChart = new Chart(topProductsCtx, {
                         type: 'bar',
                         data: {
-                            labels: productNames,
+                            labels: topProductNames,
                             datasets: [{
                                 label: 'Units Sold',
-                                data: productData,
-                                backgroundColor: 'rgba(212, 59, 106, 0.7)',
-                                borderColor: 'rgba(212, 59, 106, 1)',
+                                data: topProductQuantities,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
                                 borderWidth: 1
                             }]
                         },
                         options: {
                             indexAxis: 'y',
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: {
                                     display: false
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return `Units Sold: ${context.raw}`;
-                                        }
-                                    }
                                 }
                             },
                             scales: {
                                 x: {
-                                    beginAtZero: true,
-                                    grid: {
-                                        display: false
-                                    }
-                                },
-                                y: {
-                                    grid: {
-                                        display: false
-                                    }
+                                    beginAtZero: true
                                 }
                             }
                         }
                     });
-                } catch (error) {
-                    console.error("Error initializing Top Products Chart:", error);
+                } else {
+                    console.error('Top products chart canvas not found');
                 }
-            } else {
-                console.warn("Top Products Chart canvas not found");
-            }
-            
-            // Inventory Status Chart (Doughnut chart)
-            const inventoryCtx = document.getElementById('inventoryStatusChart');
-            if (inventoryCtx) {
-                console.log("Initializing Inventory Status Chart");
-                try {
-                    const inventoryData = safeJSONParse('<%= InventoryStatusData %>', [0, 0, 0]);
-                    
-                    console.log("Inventory Status Data:", inventoryData);
-                    
-                    const inventoryChart = new Chart(inventoryCtx.getContext('2d'), {
+
+                // Inventory Status Chart
+                const inventoryStatusCtx = document.getElementById('inventoryStatusChart');
+                if (inventoryStatusCtx) {
+                    inventoryStatusChart = new Chart(inventoryStatusCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Out of Stock', 'Low Stock', 'In Stock'],
+                            labels: ['In Stock', 'Low Stock', 'Out of Stock'],
                             datasets: [{
-                                data: inventoryData,
+                                label: 'Inventory Status',
+                                data: inventoryStatusData,
                                 backgroundColor: [
-                                    'rgba(239, 68, 68, 0.7)', // Red (out of stock)
-                                    'rgba(245, 158, 11, 0.7)', // Yellow (low stock)
-                                    'rgba(16, 185, 129, 0.7)'  // Green (in stock)
+                                    'rgba(75, 192, 192, 0.7)',
+                                    'rgba(255, 206, 86, 0.7)',
+                                    'rgba(255, 99, 132, 0.7)'
                                 ],
                                 borderColor: [
-                                    'rgba(239, 68, 68, 1)',
-                                    'rgba(245, 158, 11, 1)',
-                                    'rgba(16, 185, 129, 1)'
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(255, 99, 132, 1)'
                                 ],
                                 borderWidth: 1
                             }]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
-                legend: {
-                                    position: 'right',
-                    labels: {
-                                        boxWidth: 15,
-                                        padding: 15,
-                        font: {
-                                            size: 12
-                                        }
-                                    }
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            const label = context.label || '';
-                                            const value = context.raw || 0;
-                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                            const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                                            return `${label}: ${value} products (${percentage}%)`;
+                                legend: {
+                                    position: 'right'
+                                }
+                            }
                         }
-                    }
+                    });
+                } else {
+                    console.error('Inventory status chart canvas not found');
                 }
+            } catch (error) {
+                console.error('Error initializing charts:', error);
             }
         }
-    });
-                } catch (error) {
-                    console.error("Error initializing Inventory Status Chart:", error);
-                }
-            } else {
-                console.warn("Inventory Status Chart canvas not found");
-            }
-            
-            // Handle date filter changes
-            const btnFilterReport = document.getElementById('<%= btnFilterReport.ClientID %>');
-            if (btnFilterReport) {
-                btnFilterReport.addEventListener('click', function(e) {
-                    // We'll let the server-side event handler deal with this
-                    console.log("Filter button clicked");
-                });
-            }
-            
-            // Time range selector change handler
-            const timeRangeSelector = document.getElementById('<%= TimeRangeSelector.ClientID %>');
-            if (timeRangeSelector) {
-                console.log("TimeRangeSelector connected:", timeRangeSelector);
-                timeRangeSelector.addEventListener('change', function() {
-                    console.log("Time range changed to: " + this.value);
-                    // Form will auto-postback due to AutoPostBack="true"
-                });
-            } else {
-                console.warn("TimeRangeSelector not found");
-            }
-            
-            // Display debug info in console
-            console.log("Chart initialization completed");
-            console.log("Data binding values:");
-            console.log("Total Revenue:", '<%= TotalRevenue %>');
-            console.log("Total Sales:", '<%= TotalSales %>');
-            console.log("Average Order Value:", '<%= AverageOrderValue %>');
-            console.log("Sales Growth:", '<%= SalesGrowth %>%');
-            console.log("Revenue Growth:", '<%= RevenueGrowth %>%');
-            console.log("AVG Order Value Change:", '<%= AvgOrderValueChange %>%');
-       }
-   </script>
+
+        // Wait for DOM content to be loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize charts when the page loads
+            initializeCharts();
+        });
+    </script>
 </asp:Content>

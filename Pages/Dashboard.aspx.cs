@@ -15,14 +15,6 @@ namespace OnlinePastryShop.Pages
 {
     public partial class Dashboard : System.Web.UI.Page
     {
-        // Control declarations - these must match the control IDs in the ASPX file
-        protected DropDownList TimeRangeSelector;
-        protected PlaceHolder EmptyLowStockMessage;
-        protected PlaceHolder EmptyPendingOrdersMessage;
-        protected Repeater TopProductsRepeater;
-        protected Repeater LowStockRepeater;
-        protected Repeater PendingOrdersRepeater;
-
         // Dashboard metrics properties for data binding in the UI
         public string DailyRevenue { get; set; }
         public string DailyRevenueChange { get; set; }
@@ -264,28 +256,28 @@ namespace OnlinePastryShop.Pages
                     {
                         case "today":
                             // Use TRUNC to get just the date part of ORDERDATE for comparison with today
-                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
-                            prevDateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
+                            dateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE)";
+                            prevDateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1";
                             timeRangeLabel = "Today";
                             break;
                         case "yesterday":
-                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
-                            prevDateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 2";
+                            dateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1";
+                            prevDateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2";
                             timeRangeLabel = "Yesterday";
                             break;
                         case "week":
-                            dateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 7";
-                            prevDateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 14 AND O.ORDERDATE < TRUNC(SYSDATE) - 7";
+                            dateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 7";
+                            prevDateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 14 AND ORDERDATE < TRUNC(SYSDATE) - 7";
                             timeRangeLabel = "This Week";
                             break;
                         case "month":
-                            dateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 30";
-                            prevDateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 60 AND O.ORDERDATE < TRUNC(SYSDATE) - 30";
+                            dateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 30";
+                            prevDateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 60 AND ORDERDATE < TRUNC(SYSDATE) - 30";
                             timeRangeLabel = "This Month";
                             break;
                         default:
-                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
-                            prevDateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
+                            dateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE)";
+                            prevDateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1";
                             timeRangeLabel = "Today";
                             break;
                     }
@@ -1525,17 +1517,17 @@ namespace OnlinePastryShop.Pages
             dt.Columns.Add("QuantitySold", typeof(int));
             dt.Columns.Add("Revenue", typeof(decimal));
 
-            // Add sample rows
-            dt.Rows.Add("Chocolate Cake", 68, 30600.00m);
-            dt.Rows.Add("Red Velvet Cake", 52, 21840.00m);
-            dt.Rows.Add("Vanilla Cupcake", 120, 4200.00m);
-            dt.Rows.Add("Chocolate Chip Cookies", 95, 2375.00m);
-            dt.Rows.Add("Strawberry Cheesecake", 30, 14400.00m);
-            dt.Rows.Add("Cinnamon Rolls", 42, 1680.00m);
-            dt.Rows.Add("Blueberry Muffins", 85, 2550.00m);
-            dt.Rows.Add("Tiramisu", 28, 12600.00m);
-            dt.Rows.Add("Apple Pie", 35, 10500.00m);
-            dt.Rows.Add("Croissants", 62, 3100.00m);
+            // Add sample rows with more accurate data (Ube Pandesal as top seller)
+            dt.Rows.Add("Ube Pandesal", 10, 1500.00m);
+            dt.Rows.Add("Ensaymada", 8, 1600.00m);
+            dt.Rows.Add("Pan de Coco", 7, 1050.00m);
+            dt.Rows.Add("Spanish Bread", 6, 900.00m);
+            dt.Rows.Add("Cheese Bread", 5, 750.00m);
+            dt.Rows.Add("Monay", 4, 600.00m);
+            dt.Rows.Add("Chocolate Chip Cookies", 3, 450.00m);
+            dt.Rows.Add("Cheese Roll", 3, 375.00m);
+            dt.Rows.Add("Hopia", 2, 200.00m);
+            dt.Rows.Add("Pan de Regla", 1, 150.00m);
 
             return dt;
         }
