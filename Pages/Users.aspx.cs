@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 using System.Web.Configuration;
 using Oracle.ManagedDataAccess.Types;
 using System.Diagnostics;
-using System.Web.UI.WebControls.Expressions;
+// Removed: using System.Web.UI.WebControls.Expressions;
 
 namespace OnlinePastryShop.Pages
 {
@@ -69,6 +69,7 @@ namespace OnlinePastryShop.Pages
         protected Panel pnlResetPasswordSuccess;
         // lvUsers is now properly declared in the designer file
 
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -96,22 +97,22 @@ namespace OnlinePastryShop.Pages
                 else
                 {
                     // For postbacks, check if it's a pagination event
-                    // If it is, let the DataPager handle it
+                    // If it is, handle custom pagination events
                     bool isPaginationEvent = false;
 
                     // Look at the current event target
                     string eventTarget = Request.Form["__EVENTTARGET"] ?? string.Empty;
                     if (!string.IsNullOrEmpty(eventTarget) &&
-                        (eventTarget.Contains("DataPager") || eventTarget.Contains("Pager")))
+                        (eventTarget.Contains("Pager")))
                     {
                         isPaginationEvent = true;
                         System.Diagnostics.Debug.WriteLine($"Pagination event detected: {eventTarget}");
                     }
 
-                    // If it's a pagination event, let the DataPager handle it
+                    // If it's a pagination event, handle custom pagination events
                     if (isPaginationEvent)
                     {
-                        System.Diagnostics.Debug.WriteLine("Letting DataPager handle the pagination event");
+                        System.Diagnostics.Debug.WriteLine("Our custom pagination will handle the pagination event");
                         return;
                     }
 
@@ -133,7 +134,7 @@ namespace OnlinePastryShop.Pages
             string eventTarget = Request["__EVENTTARGET"] ?? string.Empty;
             string eventArgument = Request["__EVENTARGUMENT"] ?? string.Empty;
 
-            bool isPagingEvent = eventTarget.Contains("DataPager") ||
+            bool isPagingEvent =
                 eventTarget.Contains("Pager") ||
                 eventArgument.Contains("Page$");
 
@@ -406,11 +407,10 @@ namespace OnlinePastryShop.Pages
                     }
                 }
 
-                // IMPORTANT: First, bind the entire collection to ensure ListView has data
-                // before DataPager tries to interact with it
+                // Set up pagination for our user list
                 if (users.Count > 0)
                 {
-                    // Get the current page index from ViewState
+                    // Get the current page index from ViewState (0-based)
                     int currentPageIndex = 0;
                     if (ViewState["CurrentPageIndex"] != null)
                     {
@@ -419,32 +419,58 @@ namespace OnlinePastryShop.Pages
 
                     Debug.WriteLine($"Current page index: {currentPageIndex}");
 
-                    // Set up the PagedDataSource for pagination AFTER binding full data to ListView
-                    PagedDataSource pagedDataSource = new PagedDataSource();
-                    pagedDataSource.DataSource = users;
-                    pagedDataSource.AllowPaging = true;
-                    pagedDataSource.PageSize = 10; // Same as DataPager PageSize
-                    pagedDataSource.CurrentPageIndex = currentPageIndex;
+                    // Define page size
+                    int pageSize = 10;
 
-                    // Make sure we don't try to display a page that doesn't exist
-                    if (pagedDataSource.PageCount > 0 && currentPageIndex >= pagedDataSource.PageCount)
+                    // Calculate total number of pages
+                    int totalItems = users.Count;
+                    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+                    Debug.WriteLine($"Total items: {totalItems}, Total pages: {totalPages}");
+
+                    // Make sure we're not trying to display a page that doesn't exist
+                    if (currentPageIndex >= totalPages)
                     {
-                        pagedDataSource.CurrentPageIndex = pagedDataSource.PageCount - 1;
-                        ViewState["CurrentPageIndex"] = pagedDataSource.CurrentPageIndex;
+                        currentPageIndex = totalPages - 1;
+                        ViewState["CurrentPageIndex"] = currentPageIndex;
+                        Debug.WriteLine($"Adjusted page index to {currentPageIndex}");
                     }
 
-                    // Store the total number of pages for reference
-                    ViewState["TotalPages"] = pagedDataSource.PageCount;
+                    // Store pagination values in ViewState
+                    ViewState["TotalItems"] = totalItems;
+                    ViewState["TotalPages"] = totalPages;
 
-                    Debug.WriteLine($"PagedDataSource: {users.Count} total items, " +
-                    $"page {pagedDataSource.CurrentPageIndex + 1} of {pagedDataSource.PageCount}, " +
-                    $"showing {pagedDataSource.PageSize} items per page");
+                    // Apply pagination by taking only the items for the current page
+                    int startIndex = currentPageIndex * pageSize;
+                    int itemsToTake = Math.Min(pageSize, totalItems - startIndex);
 
-                    // Now bind with the paged data
-                    lvUsers.DataSource = pagedDataSource;
-                    lvUsers.DataBind();
+                    // Handle case where startIndex might be out of range
+                    if (startIndex < totalItems)
+                    {
+                        // Get the users for just this page
+                        List<UserModel> pagedUsers = users.Skip(startIndex).Take(itemsToTake).ToList();
 
-                    ShowEmptyMessage(false);
+                        Debug.WriteLine($"Displaying page {currentPageIndex + 1} of {totalPages}, " +
+                            $"showing {pagedUsers.Count} items starting at index {startIndex}");
+
+                        // Bind the ListView to the paged data
+                        lvUsers.DataSource = pagedUsers;
+                        lvUsers.DataBind();
+
+                        // Update pagination controls
+                        UpdatePaginationControls(currentPageIndex + 1, totalPages); // Convert to 1-based page numbers for display
+
+                        // Hide any "no data" message
+                        ShowEmptyMessage(false);
+                    }
+                    else
+                    {
+                        // This should not happen with our bounds checking, but just in case
+                        Debug.WriteLine($"WARNING: Start index {startIndex} is out of range for {totalItems} items");
+                        lvUsers.DataSource = null;
+                        lvUsers.DataBind();
+                        ShowEmptyMessage(true, "No users found on this page.");
+                    }
                 }
                 else
                 {
@@ -454,6 +480,13 @@ namespace OnlinePastryShop.Pages
 
                     // If we have no users, show message
                     ShowEmptyMessage(true, "No users found matching your criteria.");
+
+                    // Reset pagination info in ViewState
+                    ViewState["TotalItems"] = 0;
+                    ViewState["TotalPages"] = 0;
+
+                    // Update pagination controls with zeros
+                    UpdatePaginationControls(1, 1); // Show "Page 1 of 1" when empty
                 }
 
                 // Update stats after loading users
@@ -1126,8 +1159,8 @@ namespace OnlinePastryShop.Pages
                 {
                     lblToastMessage.Text = message;
                     pnlToast.CssClass = isSuccess
-                        ? "fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg bg-green-500 z-50"
-                        : "fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg bg-red-500 z-50";
+                            ? "fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg bg-green-500 z-50"
+                            : "fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg bg-red-500 z-50";
 
                     // Make the panel visible
                     pnlToast.Style["display"] = "block";
@@ -1403,76 +1436,14 @@ namespace OnlinePastryShop.Pages
             return null;
         }
 
-        private DataPager FindDataPager()
+        private void FindDataPagerRemoved()
         {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine("Finding DataPager control...");
 
-                // Try to find the datapager by its ID first - there may be multiple DataPagers
-                DataPager dataPager = Page.FindControl("DataPager3") as DataPager;
-                if (dataPager != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("Found DataPager3 directly on Page");
-                    return dataPager;
-                }
-
-                dataPager = Page.FindControl("DataPager2") as DataPager;
-                if (dataPager != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("Found DataPager2 directly on Page");
-                    return dataPager;
-                }
-
-                // If not found, try looking in the content placeholder
-                ContentPlaceHolder contentPlaceHolder = Page.Master.FindControl("AdminContent") as ContentPlaceHolder;
-                if (contentPlaceHolder != null)
-                {
-                    dataPager = contentPlaceHolder.FindControl("DataPager3") as DataPager;
-                    if (dataPager != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Found DataPager3 in ContentPlaceHolder");
-                        return dataPager;
-                    }
-
-                    dataPager = contentPlaceHolder.FindControl("DataPager2") as DataPager;
-                    if (dataPager != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Found DataPager2 in ContentPlaceHolder");
-                        return dataPager;
-                    }
-                }
-
-                // As a last resort, search all controls for a DataPager
-                System.Diagnostics.Debug.WriteLine("DataPager not found by ID, searching all controls recursively...");
-                return FindDataPagerRecursive(Page);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR finding DataPager: {ex.Message}");
-                return null;
-            }
         }
 
-        private DataPager FindDataPagerRecursive(Control parent)
+        private void FindDataPagerRecursiveRemoved()
         {
-            // Check if this control is a DataPager
-            if (parent is DataPager)
-            {
-                System.Diagnostics.Debug.WriteLine($"Found DataPager recursively: ID={parent.ID}");
-                return parent as DataPager;
-            }
-
-            // Recursively search through all child controls
-            foreach (Control child in parent.Controls)
-            {
-                DataPager pager = FindDataPagerRecursive(child);
-                if (pager != null)
-                    return pager;
-            }
-
-            // If we get here, no DataPager was found
-            return null;
+ 
         }
 
         #endregion
@@ -1616,127 +1587,15 @@ namespace OnlinePastryShop.Pages
         }
 
         // Event handler for DataPager initialization
-        protected void DataPager_Init(object sender, EventArgs e)
+        protected void DataPager_Init_Removed()
         {
-            try
-            {
-                Debug.WriteLine("DataPager_Init called");
-
-                // Get the DataPager control
-                DataPager pager = sender as DataPager;
-                if (pager == null)
-                {
-                    Debug.WriteLine("ERROR: DataPager is null in DataPager_Init");
-                    return;
-                }
-
-                // Set a consistent page size
-                pager.PageSize = 10;
-
-                // Important: During the first Init, the ListView may not be databound yet
-                // Only try to set page properties if we already have data and it's not the first load
-                if (IsPostBack && lvUsers.Items.Count > 0)
-                {
-                    int currentPage = 0;
-                    // Get current page from ViewState if available
-                    if (ViewState["CurrentPageIndex"] != null)
-                    {
-                        currentPage = (int)ViewState["CurrentPageIndex"];
-                    }
-
-                    Debug.WriteLine($"Setting DataPager page index to {currentPage}");
-
-                    try
-                    {
-                        // Try to set page properties if the ListView is already data bound
-                        if (lvUsers.Items.Count > 0)
-                        {
-                            pager.SetPageProperties(currentPage * pager.PageSize, pager.PageSize, true);
-                        }
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        // This is expected during first load or when ListView isn't bound yet
-                        Debug.WriteLine($"ERROR in DataPager_Init: {ex.Message}");
-                        // We'll just let the DataPager use its default settings
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("DataPager_Init: Skipping SetPageProperties during initial page load or when ListView is empty");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in DataPager_Init: {ex.Message}");
-                Debug.WriteLine(ex.StackTrace);
-            }
+            // This method is no longer needed with our custom pagination
         }
 
         // Event handler for DataPager's page changing event
-        protected void DataPager_PagePropertiesChanging(object sender, PagePropertiesChangingEventArgs e)
+        protected void DataPager_PagePropertiesChanging_Removed()
         {
-            try
-            {
-                Debug.WriteLine("DataPager_PagePropertiesChanging called");
-                Debug.WriteLine($"New StartRowIndex: {e.StartRowIndex}, MaximumRows: {e.MaximumRows}");
-
-                // Calculate the page index from the start row index and maximum rows
-                int pageIndex = 0;
-                if (e.MaximumRows > 0)
-                {
-                    pageIndex = e.StartRowIndex / e.MaximumRows;
-                }
-
-                Debug.WriteLine($"Calculated page index: {pageIndex}");
-
-                // Store the current page index in ViewState for the LoadUsers method
-                ViewState["CurrentPageIndex"] = pageIndex;
-
-                // Check that we're not trying to navigate to a page that doesn't exist
-                int totalPages = 1;
-                if (ViewState["TotalPages"] != null)
-                {
-                    totalPages = Convert.ToInt32(ViewState["TotalPages"]);
-                }
-
-                if (pageIndex >= totalPages && totalPages > 0)
-                {
-                    pageIndex = totalPages - 1;
-                    ViewState["CurrentPageIndex"] = pageIndex;
-                    Debug.WriteLine($"Adjusting to last available page: {pageIndex}");
-                }
-
-                // Allow the DataPager to update its internal state
-                // This will reflect the new page number in the UI
-                DataPager pager = sender as DataPager;
-                if (pager != null)
-                {
-                    try
-                    {
-                        pager.SetPageProperties(e.StartRowIndex, e.MaximumRows, true);
-                        Debug.WriteLine("DataPager properties updated successfully");
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        // If SetPageProperties fails, we'll reload data anyway
-                        Debug.WriteLine($"Could not set DataPager properties: {ex.Message}");
-                    }
-                }
-
-                // Load the users for the new page
-                // Passing false because we don't want to reset pagination
-                LoadUsers(false);
-
-                // Note: Removed e.Cancel = true as this property is not available in this version
-                // The DataPager will handle the event normally
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in DataPager_PagePropertiesChanging: {ex.Message}");
-                Debug.WriteLine(ex.StackTrace);
-                ShowError("Error changing page: " + ex.Message);
-            }
+            // This method is no longer needed with our custom pagination
         }
 
         private void BindUserList()
@@ -1761,33 +1620,22 @@ namespace OnlinePastryShop.Pages
                     System.Diagnostics.Debug.WriteLine($"Current page index from ViewState: {currentPageIndex}");
                 }
 
-                // Find the DataPager control
-                DataPager dataPager = FindDataPager();
-                if (dataPager != null)
-                {
-                    // Check if current page index matches the expected row index in the DataPager
-                    int startRowIndex = currentPageIndex * dataPager.PageSize;
-                    if (dataPager.StartRowIndex != startRowIndex)
-                    {
-                        // Update the data pager properties
-                        System.Diagnostics.Debug.WriteLine($"Setting DataPager StartRowIndex to {startRowIndex}");
-                        dataPager.SetPageProperties(startRowIndex, dataPager.PageSize, true);
-                    }
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("WARNING: DataPager not found in BindUserList");
-                }
+                // No need to find DataPager anymore - we're using custom pagination
 
-                // Rebind the ListView
+                // Just rebind the ListView
                 lvUsers.DataBind();
-                System.Diagnostics.Debug.WriteLine("ListView rebound successfully");
+
+                // Update pagination controls
+                int totalPages = ViewState["TotalPages"] != null ? Convert.ToInt32(ViewState["TotalPages"]) : 1;
+                UpdatePaginationControls(currentPageIndex + 1, totalPages);
+
+                System.Diagnostics.Debug.WriteLine("BindUserList completed");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"ERROR in BindUserList: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error refreshing user list: " + ex.Message);
+                ShowError("Error binding user list: " + ex.Message);
             }
         }
 
@@ -1990,7 +1838,7 @@ namespace OnlinePastryShop.Pages
                 if (!string.IsNullOrEmpty(eventArgument) && eventArgument.Contains("Page$"))
                 {
                     System.Diagnostics.Debug.WriteLine($"Pagination event detected: {eventArgument}");
-                    return targetId.Contains("DataPager") || targetId.Contains("pager");
+                    return targetId.Contains("pager");
                 }
 
                 return false;
@@ -2039,7 +1887,7 @@ namespace OnlinePastryShop.Pages
                         {
                             Control control = FindControlRecursive(Page, key);
                             if (control is Button || control is ImageButton ||
-                                control is LinkButton || control is DataPager)
+                                control is LinkButton)
                             {
                                 System.Diagnostics.Debug.WriteLine($"Found potential postback control: {key}");
                                 return control;
@@ -2075,7 +1923,8 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    string query = "UPDATE USERS SET PASSWORD = :password WHERE USERID = :userId";
+                    // Fixed column name from PASSWORD to PASSWORDHASH
+                    string query = "UPDATE USERS SET PASSWORDHASH = :password WHERE USERID = :userId";
 
                     using (OracleCommand cmd = new OracleCommand(query, conn))
                     {
@@ -2218,7 +2067,7 @@ namespace OnlinePastryShop.Pages
                         else
                         {
                             Debug.WriteLine($"User status toggle failed - no rows affected");
-                            ShowToast($"⚠️ Failed to update status for user '{username}'. No changes were made.", false);
+                            ShowToast($"?? Failed to update status for user '{username}'. No changes were made.", false);
                         }
                     }
                 }
@@ -2346,5 +2195,304 @@ namespace OnlinePastryShop.Pages
                 return new List<Control>();
             }
         }
+
+        private void UpdateDataPagerTotalCount_Removed()
+        {
+            // This method is no longer needed with our custom pagination
+        }
+
+        private void UpdateDataPagersAfterBinding_Removed()
+        {
+            // This method is no longer needed with our custom pagination
+        }
+
+        private void FindDataPagingControlsRemoved()
+        {
+            // This method is no longer needed with our custom pagination
+            // Method removed
+        }
+
+        #region Pagination Methods
+
+        protected void btnFirst_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("btnFirst_Click called");
+                ViewState["CurrentPageIndex"] = 0;
+                LoadUsers(false);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR in btnFirst_Click: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                ShowError("Error navigating to first page: " + ex.Message);
+            }
+        }
+
+        // Previous page button click handler
+        protected void btnPrev_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("btnPrev_Click called");
+
+                // Get current page index from ViewState (0-based)
+                int currentPageIndex = 0;
+                if (ViewState["CurrentPageIndex"] != null)
+                {
+                    currentPageIndex = Convert.ToInt32(ViewState["CurrentPageIndex"]);
+                }
+
+                // Check if we can go to previous page
+                if (currentPageIndex > 0)
+                {
+                    // Decrement the page index
+                    currentPageIndex--;
+                    ViewState["CurrentPageIndex"] = currentPageIndex;
+                    Debug.WriteLine($"Moving to previous page: {currentPageIndex + 1}");
+
+                    // Reload users with the new page index
+                    LoadUsers(false);
+                }
+                else
+                {
+                    Debug.WriteLine("Already on first page, cannot go to previous page");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR in btnPrev_Click: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                ShowError("Error navigating to previous page: " + ex.Message);
+            }
+        }
+
+        // Next page button click handler
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("btnNext_Click called");
+
+                // Get current page index from ViewState (0-based)
+                int currentPageIndex = 0;
+                if (ViewState["CurrentPageIndex"] != null)
+                {
+                    currentPageIndex = Convert.ToInt32(ViewState["CurrentPageIndex"]);
+                }
+
+                // Get total pages from ViewState
+                int totalPages = 1;
+                if (ViewState["TotalPages"] != null)
+                {
+                    totalPages = Convert.ToInt32(ViewState["TotalPages"]);
+                }
+
+                // Check if we can go to next page
+                if (currentPageIndex < totalPages - 1)
+                {
+                    // Increment the page index
+                    currentPageIndex++;
+                    ViewState["CurrentPageIndex"] = currentPageIndex;
+                    Debug.WriteLine($"Moving to next page: {currentPageIndex + 1}");
+
+                    // Reload users with the new page index
+                    LoadUsers(false);
+                }
+                else
+                {
+                    Debug.WriteLine("Already on last page, cannot go to next page");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR in btnNext_Click: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                ShowError("Error navigating to next page: " + ex.Message);
+            }
+        }
+
+        // Handler for numeric page button clicks
+        protected void btnPage_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LinkButton btn = sender as LinkButton;
+                if (btn != null)
+                {
+                    // Get the page number from the button's CommandArgument
+                    string pageArg = btn.CommandArgument;
+                    if (!string.IsNullOrEmpty(pageArg) && int.TryParse(pageArg, out int pageNumber))
+                    {
+                        Debug.WriteLine($"btnPage_Click called for page {pageNumber}");
+
+                        // Convert from 1-based (display) to 0-based (internal)
+                        int pageIndex = pageNumber - 1;
+
+                        // Store in ViewState
+                        ViewState["CurrentPageIndex"] = pageIndex;
+
+                        // Reload users with the new page index
+                        LoadUsers(false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR in btnPage_Click: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                ShowError("Error navigating to the selected page: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates the pagination controls to reflect the current page and total pages
+        /// </summary>
+        /// <param name="currentPage">The current page number (1-based for display)</param>
+        /// <param name="totalPages">The total number of pages</param>
+        private void UpdatePaginationControls(int currentPage, int totalPages)
+        {
+            try
+            {
+                Debug.WriteLine($"Updating pagination controls: currentPage={currentPage}, totalPages={totalPages}");
+
+                // Find desktop pagination labels
+                Control desktopCurrentPage = FindControl("lblCurrentPage");
+                Control desktopTotalPages = FindControl("lblTotalPages");
+
+                // Update the desktop pagination labels
+                if (desktopCurrentPage is Label)
+                {
+                    (desktopCurrentPage as Label).Text = currentPage.ToString();
+                }
+
+                if (desktopTotalPages is Label)
+                {
+                    (desktopTotalPages as Label).Text = totalPages.ToString();
+                }
+
+                // Update the mobile pagination labels
+                Control mobileCurrentPage = FindControl("lblCurrentPageMobile");
+                if (mobileCurrentPage is Label)
+                {
+                    (mobileCurrentPage as Label).Text = currentPage.ToString();
+                }
+
+                Control mobileTotalPages = FindControl("lblTotalPagesMobile");
+                if (mobileTotalPages is Label)
+                {
+                    (mobileTotalPages as Label).Text = totalPages.ToString();
+                }
+
+                // Find desktop pagination buttons
+                Control prevButton = FindControl("btnPrev");
+                Control nextButton = FindControl("btnNext");
+
+                // Update the desktop pagination buttons
+                if (prevButton is LinkButton)
+                {
+                    LinkButton btnPrev = prevButton as LinkButton;
+                    btnPrev.Enabled = currentPage > 1;
+                    btnPrev.CssClass = currentPage > 1
+                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
+                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-l-lg cursor-not-allowed";
+                }
+
+                if (nextButton is LinkButton)
+                {
+                    LinkButton btnNext = nextButton as LinkButton;
+                    btnNext.Enabled = currentPage < totalPages;
+                    btnNext.CssClass = currentPage < totalPages
+                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
+                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-r-lg cursor-not-allowed";
+                }
+
+                // Update the mobile pagination buttons
+                Control prevMobileButton = FindControl("btnPrevMobile");
+                if (prevMobileButton is LinkButton)
+                {
+                    LinkButton btnPrevMobile = prevMobileButton as LinkButton;
+                    btnPrevMobile.Enabled = currentPage > 1;
+                    btnPrevMobile.CssClass = currentPage > 1
+                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
+                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-l-lg cursor-not-allowed";
+                }
+
+                Control nextMobileButton = FindControl("btnNextMobile");
+                if (nextMobileButton is LinkButton)
+                {
+                    LinkButton btnNextMobile = nextMobileButton as LinkButton;
+                    btnNextMobile.Enabled = currentPage < totalPages;
+                    btnNextMobile.CssClass = currentPage < totalPages
+                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
+                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-r-lg cursor-not-allowed";
+                }
+
+                // Create numeric pagination buttons if we have a container panel
+                Control numericPaginationPanel = FindControl("pnlNumericPagination");
+                if (numericPaginationPanel is Panel)
+                {
+                    Panel pnlNumericPagination = numericPaginationPanel as Panel;
+                    pnlNumericPagination.Controls.Clear();
+
+                    // Only show numeric pagination if we have more than one page
+                    if (totalPages > 1)
+                    {
+                        // Determine range of pages to display (at most 5 pages)
+                        int startPage = Math.Max(1, currentPage - 2);
+                        int endPage = Math.Min(totalPages, startPage + 4);
+
+                        // Adjust start page if we're at the end of the range
+                        if (endPage - startPage < 4 && startPage > 1)
+                        {
+                            startPage = Math.Max(1, endPage - 4);
+                        }
+
+                        // Add numeric buttons
+                        for (int i = startPage; i <= endPage; i++)
+                        {
+                            LinkButton btnPage = new LinkButton();
+                            btnPage.ID = "btnPage_" + i.ToString();
+                            btnPage.Text = i.ToString();
+                            btnPage.CommandArgument = i.ToString();
+                            btnPage.Click += new EventHandler(btnPage_Click);
+
+                            // Style the button based on whether it's the current page
+                            if (i == currentPage)
+                            {
+                                btnPage.CssClass = "px-4 py-2 text-sm font-medium text-white bg-blue-700 border border-blue-700 hover:bg-blue-800 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-white";
+                                btnPage.Enabled = false;
+                            }
+                            else
+                            {
+                                btnPage.CssClass = "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700";
+                            }
+
+                            // Add some margins between buttons
+                            btnPage.Style["margin"] = "0 2px";
+
+                            // Add the button to the panel
+                            pnlNumericPagination.Controls.Add(btnPage);
+                        }
+                    }
+                }
+
+                // Ensure the pagination panel is visible
+                Control paginationPanel = FindControl("pnlPagination");
+                if (paginationPanel is Panel)
+                {
+                    (paginationPanel as Panel).Visible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR in UpdatePaginationControls: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                // This is a UI update, so we don't want to crash if it fails
+            }
+        }
+
+        #endregion
     }
 }

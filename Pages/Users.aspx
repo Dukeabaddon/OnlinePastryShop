@@ -106,77 +106,60 @@
                             <!-- Pagination Controls -->
                             <div class="bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between">
                                 <div class="flex-1 flex justify-between sm:hidden">
-                                    <asp:DataPager ID="DataPager1" runat="server" PagedControlID="lvUsers" PageSize="10" class="relative inline-flex items-center"
-                                        OnInit="DataPager_Init" OnPagePropertiesChanging="DataPager_PagePropertiesChanging">
-                                        <Fields>
-                                            <asp:NextPreviousPagerField 
-                                                ButtonType="Link" 
-                                                ShowFirstPageButton="false" 
-                                                ShowLastPageButton="false"
-                                                ShowNextPageButton="false"
-                                                ShowPreviousPageButton="true"
-                                                PreviousPageText="&laquo; Previous"
-                                                ButtonCssClass="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" />
-                                            <asp:NextPreviousPagerField 
-                                                ButtonType="Link" 
-                                                ShowFirstPageButton="false" 
-                                                ShowLastPageButton="false"
-                                                ShowNextPageButton="true"
-                                                ShowPreviousPageButton="false"
-                                                NextPageText="Next &raquo;"
-                                                ButtonCssClass="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" />
-                                        </Fields>
-                                    </asp:DataPager>
+                                    <!-- Mobile pagination -->
+                                    <asp:LinkButton ID="btnPrevMobile" runat="server" OnClick="btnPrev_Click" 
+                                        CssClass="px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        Previous
+                                    </asp:LinkButton>
+                                    <div class="flex items-center px-4">
+                                        <span class="text-sm text-gray-700">Page <asp:Label ID="lblCurrentPageMobile" runat="server" CssClass="font-medium">1</asp:Label> of <asp:Label ID="lblTotalPagesMobile" runat="server" CssClass="font-medium">1</asp:Label></span>
+                                    </div>
+                                    <asp:LinkButton ID="btnNextMobile" runat="server" OnClick="btnNext_Click" 
+                                        CssClass="px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+                                        Next
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                    </asp:LinkButton>
                                 </div>
-                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                
+                                <!-- Desktop pagination -->
+                                <asp:Panel ID="pnlPagination" runat="server" CssClass="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                     <div>
                                         <p class="text-sm text-gray-700">
-                                            <span>Showing page</span>
-                                            <asp:DataPager ID="DataPager2" runat="server" PagedControlID="lvUsers" PageSize="10"
-                                                OnInit="DataPager_Init" OnPagePropertiesChanging="DataPager_PagePropertiesChanging">
-                                                <Fields>
-                                                    <asp:TemplatePagerField>
-                                                        <PagerTemplate>
-                                                            <span class="font-medium"><%# (Container.StartRowIndex / Container.PageSize) + 1 %></span>
-                                                            <span>of</span>
-                                                            <span class="font-medium"><%# Math.Ceiling((double)Container.TotalRowCount / Container.PageSize) %></span>
-                                                        </PagerTemplate>
-                                                    </asp:TemplatePagerField>
-                                                </Fields>
-                                            </asp:DataPager>
+                                            <span>Page </span>
+                                            <asp:Label ID="lblCurrentPage" runat="server" CssClass="font-medium">1</asp:Label>
+                                            <span> of </span>
+                                            <asp:Label ID="lblTotalPages" runat="server" CssClass="font-medium">1</asp:Label>
                                         </p>
                                     </div>
-                                    <div>
-                                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                            <asp:DataPager ID="DataPager3" runat="server" PagedControlID="lvUsers" PageSize="10"
-                                                OnInit="DataPager_Init" OnPagePropertiesChanging="DataPager_PagePropertiesChanging">
-                                                <Fields>
-                                                    <asp:NextPreviousPagerField 
-                                                        ButtonType="Link" 
-                                                        ShowFirstPageButton="true" 
-                                                        ShowLastPageButton="false"
-                                                        ShowNextPageButton="false"
-                                                        ShowPreviousPageButton="false"
-                                                        FirstPageText="&laquo;"
-                                                        ButtonCssClass="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" />
-                                                    <asp:NumericPagerField 
-                                                        ButtonType="Link" 
-                                                        CurrentPageLabelCssClass="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-indigo-50 text-sm font-medium text-indigo-600 hover:bg-gray-50"
-                                                        NumericButtonCssClass="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                                        ButtonCount="5" />
-                                                    <asp:NextPreviousPagerField 
-                                                        ButtonType="Link" 
-                                                        ShowFirstPageButton="false" 
-                                                        ShowLastPageButton="true"
-                                                        ShowNextPageButton="false"
-                                                        ShowPreviousPageButton="false"
-                                                        LastPageText="&raquo;"
-                                                        ButtonCssClass="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" />
-                                                </Fields>
-                                            </asp:DataPager>
-                                        </nav>
+                                    
+                                    <div class="inline-flex gap-px mt-2 xs:mt-0">
+                                        <!-- Previous page button -->
+                                            <asp:LinkButton ID="btnPrev" runat="server" OnClick="btnPrev_Click" 
+                                            CssClass="px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+                                            <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Previous
+                                            </asp:LinkButton>
+                                            
+                                        <!-- Numeric pagination buttons will be added programmatically -->
+                                        <asp:Panel ID="pnlNumericPagination" runat="server" CssClass="inline-flex items-center"></asp:Panel>
+                                        
+                                        <!-- Next page button -->
+                                            <asp:LinkButton ID="btnNext" runat="server" OnClick="btnNext_Click" 
+                                            CssClass="px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700">
+                                            Next
+                                            <svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            </asp:LinkButton>
                                     </div>
-                                </div>
+                                </asp:Panel>
                             </div>
                         </div>
                     </LayoutTemplate>
