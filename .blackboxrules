@@ -1,0 +1,233 @@
+{
+    "rules"; [
+        {
+        "trigger": "comment_contains('UI component') OR file_extension('.aspx')",
+        "action": "suggest_tailwind_snippet",
+        "details": {
+          "examples": [
+            "Responsive grid: <div class='grid grid-cols-1 md:grid-cols-3 gap-4'>",
+            "Form input: <asp:TextBox CssClass='rounded-lg border p-2 focus:ring-2 focus:ring-blue-500' runat='server' />",
+            "Button: <asp:Button CssClass='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' runat='server' Text='Submit' />"
+          ]
+        },
+        "language": "html"
+      },
+      {
+        "trigger": "comment_contains('database query') OR file_extension('.cs')",
+        "action": "suggest_oracle_snippet",
+        "details": {
+          "template": "using (OracleConnection conn = new OracleConnection(ConfigurationManager.ConnectionStrings[\"OracleConnection\"].ConnectionString)) {\n  conn.Open();\n  using (OracleCommand cmd = new OracleCommand(\"SELECT * FROM {{table}} WHERE id = :id\", conn)) {\n    cmd.Parameters.Add(\":id\", OracleDbType.Int32).Value = {{value}};\n    // ...\n  }\n}",
+          "security": "Always use parameterized queries to prevent SQL injection"
+        },
+        "language": "csharp"
+      },
+      {
+        "trigger": "error_message('ORA-') OR error_type('OracleException')",
+        "action": "explain_and_fix",
+        "details": {
+          "common_errors": {
+            "ORA-12541": "Check if Oracle service (XE) is running on port 1521",
+            "ORA-00942": "Verify table name exists in schema 'AARON_IPT'"
+          },
+          "default_response": "Check connection string in web.config: User Id=Aaron_IPT;Password=qwen123; Data Source=localhost:1521/xe"
+        }
+      },
+      {
+        "trigger": "error_message('Object reference not set')",
+        "action": "suggest_fix",
+        "details": {
+          "solution": "Add null checks for ASP controls: if (txtPrice.Text != string.Empty) {...}"
+        }
+      },
+      {
+        "trigger": "function_contains('SaveChanges') OR control_name_contains('txtPrice')",
+        "action": "enforce_validation",
+        "details": {
+          "rules": [
+            "Price validation: if (!decimal.TryParse(txtPrice.Text, out decimal price)) { ShowError(\"Invalid decimal value\"); }",
+            "Image upload: Validate file extension (jpg/png) and size (<5MB) before saving to ~/uploads/"
+          ]
+        }
+      },
+      {
+        "trigger": "loop_depth > 2 OR query_contains('SELECT *')",
+        "action": "optimize_code",
+        "details": {
+          "suggestions": [
+            "Replace nested loops with LINQ joins for Oracle data",
+            "Use OracleDataReader instead of DataTable for large datasets",
+            "Cache repeated database calls using HttpContext.Cache"
+          ]
+        }
+      },
+      {
+        "trigger": "same_error_occurred(3)",
+        "action": "alternative_solution",
+        "details": {
+          "response": "I’ve suggested this fix 3 times. Let’s try a different approach: [Provide 2 alternative methods]"
+        }
+      },
+      {
+        "trigger": "file_extension('.aspx') AND element_type('asp:TextBox')",
+        "action": "enhance_ui",
+        "details": {
+          "tailwind_rules": [
+            "Add focus states: focus:ring-2 focus:ring-blue-500",
+            "Error states: border-red-500 with validation summary using <div class='bg-red-50 text-red-700 p-2 rounded-md'>"
+          ]
+        }
+      },
+      {
+        "trigger": "file_extension('.cs')",
+        "action": "enforce_code_style",
+        "details": {
+          "guidelines": [
+            "Write concise, idiomatic C# code with accurate examples.",
+            "Follow .NET and ASP.NET Web Forms conventions and best practices.",
+            "Use object-oriented programming patterns as appropriate.",
+            "Prefer LINQ for collection operations when applicable.",
+            "Use descriptive variable and method names (e.g., 'IsUser SignedIn', 'CalculateTotal').",
+            "Structure files logically, grouping related classes and methods together."
+          ]
+        }
+      },
+      {
+        "trigger": "file_extension('.cs')",
+        "action": "enforce_security_practices",
+        "details": {
+          "practices": [
+            "Implement authentication and authorization checks for sensitive actions.",
+            "Use HTTPS for all communications to protect data in transit.",
+            "Sanitize user inputs to prevent XSS and CSRF attacks."
+          ]
+        }
+      },
+      {
+        "trigger": "error_occurred()",
+        "action": "log_error",
+        "details": {
+          "logging": "Log error details to a centralized logging system for monitoring and debugging.",
+          "user_friendly_message": "An unexpected error occurred. Please try again later."
+        }
+      },
+      {
+        "trigger": "comment_contains('API call')",
+        "action": "suggest_api_best_practices",
+        "details": {
+          "practices": [
+            "Use async/await for non-blocking API calls.",
+            "Handle API errors gracefully and provide fallback mechanisms.",
+            "Document API endpoints and expected responses clearly."
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('test')",
+        "action": "encourage_testing",
+        "details": {
+          "recommendations": [
+            "Write unit tests for critical business logic.",
+            "Use integration tests to validate interactions between components.",
+            "Regularly review and refactor code to improve maintainability."
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('data binding') OR file_extension('.aspx')",
+        "action": "suggest_data_binding_best_practices",
+        "details": {
+          "practices": [
+            "Use the DataSource property of controls like GridView and Repeater for binding data.",
+            "Implement the INotifyPropertyChanged interface for data models to support automatic UI updates.",
+            "Avoid using ViewState for large data sets; consider using session or caching instead."
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('performance') OR file_extension('.cs')",
+        "action": "suggest_performance_improvements",
+        "details": {
+          "improvements": [
+            "Use asynchronous programming patterns to improve responsiveness.",
+            "Minimize the use of server-side controls when simple HTML/CSS can achieve the same result.",
+            "Optimize SQL queries to reduce execution time and resource usage."
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('security') OR file_extension('.cs')",
+        "action": "enforce_security_measures",
+        "details": {
+          "measures": [
+            "Implement role-based access control for sensitive operations.",
+            "Use AntiForgeryToken for forms to prevent CSRF attacks.",
+            "Regularly update libraries and dependencies to patch known vulnerabilities."
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('logging') OR file_extension('.cs')",
+        "action": "suggest_logging_best_practices",
+        "details": {
+          "practices": [
+            "Use structured logging to capture contextual information.",
+            "Log at appropriate levels (Info, Warning, Error) to facilitate troubleshooting.",
+            "Ensure sensitive information is not logged (e.g., passwords, personal data)."
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('configuration') OR file_extension('.config')",
+        "action": "suggest_configuration_best_practices",
+        "details": {
+          "practices": [
+            "Store sensitive information (like connection strings) in secure locations (e.g., Azure Key Vault).",
+            "Use environment-specific configuration files to manage settings for development, testing, and production.",
+            "Implement configuration validation to ensure required settings are present at runtime."
+          ]
+        }
+      },
+      {
+        "trigger": "file_extension('.aspx') AND element_type('asp:Button')",
+        "action": "enhance_button_ui",
+        "details": {
+          "tailwind_rules": [
+            "Add hover effects: hover:bg-blue-600",
+            "Use transition classes for smooth effects: transition duration-200 ease-in-out"
+          ]
+        }
+      },
+      {
+        "trigger": "file_extension('.aspx') AND element_type('asp:GridView')",
+        "action": "enhance_gridview_ui",
+        "details": {
+          "tailwind_rules": [
+            "Add responsive classes: class='min-w-full divide-y divide-gray-200' for better layout.",
+            "Use Tailwind's spacing utilities for padding: class='p-4'"
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('documentation')",
+        "action": "encourage_documentation",
+        "details": {
+          "recommendations": [
+            "Maintain a comprehensive README file with setup instructions and usage examples.",
+            "Use XML comments for public methods and classes to generate documentation automatically.",
+            "Document API endpoints and their expected inputs/outputs clearly."
+          ]
+        }
+      },
+      {
+        "trigger": "comment_contains('refactor') OR file_extension('.cs')",
+        "action": "suggest_refactoring_opportunities",
+        "details": {
+          "opportunities": [
+            "Identify and extract duplicate code into reusable methods.",
+            "Simplify complex methods by breaking them into smaller, more manageable functions.",
+            "Review and improve naming conventions for clarity and consistency."
+          ]
+        }
+      }
+    ]
+}

@@ -39,21 +39,21 @@ namespace OnlinePastryShop.Pages
                     System.Diagnostics.Debug.WriteLine("Database connection opened");
 
                     // Get total products
-                    using (OracleCommand cmd = new OracleCommand("SELECT COUNT(*) FROM Products WHERE IsActive = 1", conn))
+                    using (OracleCommand cmd = new OracleCommand(@"SELECT COUNT(*) FROM ""AARON_IPT"".""PRODUCTS"" WHERE IsActive = 1", conn))
                     {
                         totalProducts = Convert.ToInt32(cmd.ExecuteScalar());
                         System.Diagnostics.Debug.WriteLine($"Total active products: {totalProducts}");
                     }
 
                     // Get out of stock count
-                    using (OracleCommand cmd = new OracleCommand("SELECT COUNT(*) FROM Products WHERE StockQuantity = 0 AND IsActive = 1", conn))
+                    using (OracleCommand cmd = new OracleCommand(@"SELECT COUNT(*) FROM ""AARON_IPT"".""PRODUCTS"" WHERE StockQuantity = 0 AND IsActive = 1", conn))
                     {
                         outOfStock = Convert.ToInt32(cmd.ExecuteScalar());
                         System.Diagnostics.Debug.WriteLine($"Out of stock products: {outOfStock}");
                     }
 
                     // Get low stock count
-                    using (OracleCommand cmd = new OracleCommand("SELECT COUNT(*) FROM Products WHERE StockQuantity > 0 AND StockQuantity < 10 AND IsActive = 1", conn))
+                    using (OracleCommand cmd = new OracleCommand(@"SELECT COUNT(*) FROM ""AARON_IPT"".""PRODUCTS"" WHERE StockQuantity > 0 AND StockQuantity < 10 AND IsActive = 1", conn))
                     {
                         lowStock = Convert.ToInt32(cmd.ExecuteScalar());
                         System.Diagnostics.Debug.WriteLine($"Low stock products: {lowStock}");
@@ -112,7 +112,7 @@ namespace OnlinePastryShop.Pages
                             c.NAME as CATEGORYNAME, 
                             c.CATEGORYID,
                             CASE WHEN p.IMAGE IS NOT NULL THEN 1 ELSE 0 END as HAS_IMAGE
-                        FROM PRODUCTS p
+                        FROM ""AARON_IPT"".""PRODUCTS"" p
                         LEFT JOIN PRODUCTCATEGORIES pc ON p.PRODUCTID = pc.PRODUCTID 
                         LEFT JOIN CATEGORIES c ON pc.CATEGORYID = c.CATEGORYID";
 
@@ -315,7 +315,7 @@ namespace OnlinePastryShop.Pages
 
                     string sql = @"
                         SELECT p.*, c.CategoryId
-                        FROM Products p
+                        FROM ""AARON_IPT"".""PRODUCTS"" p
                         LEFT JOIN ProductCategories pc ON p.ProductId = pc.ProductId
                         LEFT JOIN Categories c ON pc.CategoryId = c.CategoryId
                         WHERE p.ProductId = :ProductId AND p.IsActive = 1";
@@ -502,8 +502,7 @@ namespace OnlinePastryShop.Pages
                             bool hasDuplicate = false;
                             string existingProductName = "";
 
-                            using (OracleCommand checkCmd = new OracleCommand(
-                                "SELECT COUNT(*) as Count, MAX(Name) as ExistingName FROM Products WHERE LOWER(Name) = LOWER(:name) AND IsActive = 1", conn))
+                            using (OracleCommand checkCmd = new OracleCommand(@"SELECT COUNT(*) as Count, MAX(Name) as ExistingName FROM ""AARON_IPT"".""PRODUCTS"" WHERE LOWER(Name) = LOWER(:name) AND IsActive = 1", conn))
                             {
                                 checkCmd.Transaction = transaction;
                                 // Use the correct parameter pattern that works in UpdateProduct
@@ -542,8 +541,7 @@ namespace OnlinePastryShop.Pages
 
                             // Additional check to see all existing products with similar names for debugging
                             System.Diagnostics.Debug.WriteLine("Doing additional check for similar product names...");
-                            using (OracleCommand similarCmd = new OracleCommand(
-                                "SELECT ProductId, Name FROM Products WHERE Name LIKE :similar AND IsActive = 1", conn))
+                            using (OracleCommand similarCmd = new OracleCommand(@"SELECT ProductId, Name FROM ""AARON_IPT"".""PRODUCTS"" WHERE Name LIKE :similar AND IsActive = 1", conn))
                             {
                                 similarCmd.Transaction = transaction;
                                 similarCmd.Parameters.Add("similar", OracleDbType.Varchar2).Value = $"%{name.Substring(0, Math.Min(3, name.Length))}%";
@@ -574,7 +572,7 @@ namespace OnlinePastryShop.Pages
 
                             // Use named parameters with OracleDbType
                             string insertSql = @"
-                                INSERT INTO Products (
+                                INSERT INTO ""AARON_IPT"".""PRODUCTS"" (
                                     Name, Description, Price, CostPrice, StockQuantity, 
                                     Image, IsActive, IsLatest
                                 ) VALUES (
@@ -692,8 +690,7 @@ namespace OnlinePastryShop.Pages
                             {
                                 System.Diagnostics.Debug.WriteLine($"Adding category association: Product={newProductId}, Category={catIdValue}");
 
-                                using (OracleCommand catCmd = new OracleCommand(
-                                    "INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (:pid, :cid)", conn))
+                                using (OracleCommand catCmd = new OracleCommand(@"INSERT INTO ProductCategories (ProductId, CategoryId) VALUES (:pid, :cid)", conn))
                                 {
                                     catCmd.Transaction = transaction;
                                     // Use the working parameter approach
@@ -833,7 +830,7 @@ namespace OnlinePastryShop.Pages
                         {
                             // Check for duplicate name excluding current product
                             string checkDuplicateSql = @"
-                                SELECT COUNT(*) FROM Products 
+                                SELECT COUNT(*) FROM ""AARON_IPT"".""PRODUCTS"" 
                                 WHERE LOWER(Name) = LOWER(:Name) 
                                 AND ProductId != :ProductId 
                                 AND IsActive = 1";
@@ -852,7 +849,7 @@ namespace OnlinePastryShop.Pages
 
                             // Use named parameters for basic info update
                             string updateBasicSql = @"
-                                UPDATE Products SET 
+                                UPDATE ""AARON_IPT"".""PRODUCTS"" SET 
                                     Name = :Name, 
                                     Description = :Description, 
                                     Price = :Price, 
@@ -911,7 +908,7 @@ namespace OnlinePastryShop.Pages
                                     // Only update if we have valid image data
                                     if (imageBytes.Length > 0)
                                     {
-                                        string updateImageSql = "UPDATE Products SET Image = :Image WHERE ProductId = :ProductId";
+                                        string updateImageSql = @"UPDATE ""AARON_IPT"".""PRODUCTS"" SET Image = :Image WHERE ProductId = :ProductId";
                                         using (OracleCommand imageCmd = new OracleCommand(updateImageSql, conn))
                                         {
                                             imageCmd.Transaction = transaction;
@@ -1014,8 +1011,7 @@ namespace OnlinePastryShop.Pages
                             }
 
                             // Then delete the product
-                            using (OracleCommand cmd = new OracleCommand(
-                                "DELETE FROM Products WHERE ProductId = :ProductId", conn))
+                            using (OracleCommand cmd = new OracleCommand(@"DELETE FROM ""AARON_IPT"".""PRODUCTS"" WHERE ProductId = :ProductId", conn))
                             {
                                 cmd.Transaction = transaction;
                                 cmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = productId;
@@ -1068,7 +1064,7 @@ namespace OnlinePastryShop.Pages
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
                     conn.Open();
-                    using (OracleCommand cmd = new OracleCommand("SELECT IMAGE FROM PRODUCTS WHERE PRODUCTID = :ProductId", conn))
+                    using (OracleCommand cmd = new OracleCommand(@"SELECT IMAGE FROM ""AARON_IPT"".""PRODUCTS"" WHERE PRODUCTID = :ProductId", conn))
                     {
                         cmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = productId;
 

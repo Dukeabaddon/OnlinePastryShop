@@ -141,9 +141,12 @@
     <Content Include="Pages\Dashboard.aspx" />
     <Content Include="Pages\Default.aspx" />
     <Content Include="Pages\Menu.aspx" />
+    <Content Include="Pages\Orders.aspx" />
     <Content Include="Pages\Products.aspx" />
     <Content Include="Pages\SalesReport.aspx" />
+    <Content Include="Pages\Settings.aspx" />
     <Content Include="Pages\Users.aspx" />
+    <Content Include="Pages\Voucher.aspx" />
     <Content Include="Scripts\scroll.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -186,6 +189,13 @@
     <Compile Include="Pages\Menu.aspx.designer.cs">
       <DependentUpon>Menu.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Orders.aspx.cs">
+      <DependentUpon>Orders.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Orders.aspx.designer.cs">
+      <DependentUpon>Orders.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Products.aspx.cs">
       <DependentUpon>Products.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -200,11 +210,26 @@
     <Compile Include="Pages\SalesReport.aspx.designer.cs">
       <DependentUpon>SalesReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Settings.aspx.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Settings.aspx.designer.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Users.aspx.cs">
       <DependentUpon>Users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Users.aspx.designer.cs">
       <DependentUpon>Users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Voucher.aspx.cs">
+      <DependentUpon>Voucher.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Voucher.aspx.designer.cs">
+      <DependentUpon>Voucher.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pages\Site.Master.cs">

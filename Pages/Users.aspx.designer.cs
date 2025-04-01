@@ -24,6 +24,42 @@ namespace OnlinePastryShop.Pages
         protected global::System.Web.UI.ScriptManager ScriptManager1;
 
         /// <summary>
+        /// pnlSuccess control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlSuccess;
+
+        /// <summary>
+        /// litSuccessMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litSuccessMessage;
+
+        /// <summary>
+        /// pnlError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlError;
+
+        /// <summary>
+        /// litErrorMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litErrorMessage;
+
+        /// <summary>
         /// litTotalUsers control.
         /// </summary>
         /// <remarks>
@@ -85,6 +121,87 @@ namespace OnlinePastryShop.Pages
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ListView lvUsers;
+
+        /// <summary>
+        /// lblCurrentPage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCurrentPage;
+
+        /// <summary>
+        /// lblTotalPages control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTotalPages;
+
+        /// <summary>
+        /// btnFirst control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnFirst;
+
+        /// <summary>
+        /// btnPrev control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnPrev;
+
+        /// <summary>
+        /// phPageNumbers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder phPageNumbers;
+
+        /// <summary>
+        /// btnNext control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnNext;
+
+        /// <summary>
+        /// btnLast control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnLast;
+
+        /// <summary>
+        /// hdnCurrentPage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnCurrentPage;
+
+        /// <summary>
+        /// hdnTotalPages control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnTotalPages;
 
         /// <summary>
         /// pnlUserDetails control.
@@ -159,6 +276,15 @@ namespace OnlinePastryShop.Pages
         protected global::System.Web.UI.WebControls.Label lblEmail;
 
         /// <summary>
+        /// lblRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRole;
+
+        /// <summary>
         /// lblStatus control.
         /// </summary>
         /// <remarks>
@@ -213,6 +339,15 @@ namespace OnlinePastryShop.Pages
         protected global::System.Web.UI.WebControls.GridView gvOrderHistory;
 
         /// <summary>
+        /// lblOrderHistoryDebug control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblOrderHistoryDebug;
+
+        /// <summary>
         /// pnlPasswordReset control.
         /// </summary>
         /// <remarks>
@@ -222,13 +357,31 @@ namespace OnlinePastryShop.Pages
         protected global::System.Web.UI.WebControls.Panel pnlPasswordReset;
 
         /// <summary>
-        /// lblResetUsername control.
+        /// lblResetConfirmMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblResetUsername;
+        protected global::System.Web.UI.WebControls.Label lblResetConfirmMessage;
+
+        /// <summary>
+        /// pnlResetConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlResetConfirm;
+
+        /// <summary>
+        /// btnCancelReset control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelReset;
 
         /// <summary>
         /// btnConfirmReset control.
@@ -240,13 +393,40 @@ namespace OnlinePastryShop.Pages
         protected global::System.Web.UI.WebControls.Button btnConfirmReset;
 
         /// <summary>
-        /// btnClosePasswordReset control.
+        /// pnlResetComplete control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnClosePasswordReset;
+        protected global::System.Web.UI.WebControls.Panel pnlResetComplete;
+
+        /// <summary>
+        /// txtNewPassword control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNewPassword;
+
+        /// <summary>
+        /// btnCopyPassword control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCopyPassword;
+
+        /// <summary>
+        /// btnCloseReset control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCloseReset;
 
         /// <summary>
         /// pnlToggleStatus control.
@@ -258,15 +438,6 @@ namespace OnlinePastryShop.Pages
         protected global::System.Web.UI.WebControls.Panel pnlToggleStatus;
 
         /// <summary>
-        /// litStatusAction control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litStatusAction;
-
-        /// <summary>
         /// litStatusMessage control.
         /// </summary>
         /// <remarks>
@@ -276,21 +447,21 @@ namespace OnlinePastryShop.Pages
         protected global::System.Web.UI.WebControls.Literal litStatusMessage;
 
         /// <summary>
-        /// btnConfirmToggle control.
+        /// btnCancelStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConfirmToggle;
+        protected global::System.Web.UI.WebControls.Button btnCancelStatus;
 
         /// <summary>
-        /// btnCloseToggleStatus control.
+        /// btnConfirmStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCloseToggleStatus;
+        protected global::System.Web.UI.WebControls.Button btnConfirmStatus;
     }
 }

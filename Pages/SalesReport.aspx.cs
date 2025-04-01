@@ -1998,11 +1998,18 @@ namespace OnlinePastryShop.Pages
                             SUM(CASE WHEN STOCKQUANTITY > 20 THEN 1 ELSE 0 END) AS InStock,
                             SUM(CASE WHEN STOCKQUANTITY BETWEEN 1 AND 20 THEN 1 ELSE 0 END) AS LowStock,
                             SUM(CASE WHEN STOCKQUANTITY = 0 THEN 1 ELSE 0 END) AS OutOfStock
-                        FROM PRODUCTS
-                        WHERE ISACTIVE = 1";
+                        FROM ORDERS o
+                        LEFT JOIN ORDERDETAILS od ON o.ORDERID = od.ORDERID
+                        WHERE o.ORDERDATE >= TO_DATE(:StartDate, 'YYYY-MM-DD')
+                        AND o.ORDERDATE <= TO_DATE(:EndDate, 'YYYY-MM-DD') + 0.99999
+                        AND o.ISACTIVE = 1
+                    ";
 
                     using (OracleCommand command = new OracleCommand(query, connection))
                     {
+                        command.Parameters.Add(new OracleParameter("StartDate", OracleDbType.Varchar2)).Value = StartDate.ToString("yyyy-MM-dd");
+                        command.Parameters.Add(new OracleParameter("EndDate", OracleDbType.Varchar2)).Value = EndDate.ToString("yyyy-MM-dd");
+
                         using (OracleDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())

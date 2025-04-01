@@ -1,0 +1,1782 @@
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\mscorlib\v4.0_4.0.0.0__b77a5c561934e089\mscorlib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Web\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.ApplicationServices\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.ApplicationServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Configuration\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Configuration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xml\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: Domain 2): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\mscorlib\v4.0_4.0.0.0__b77a5c561934e089\mscorlib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Web\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.ApplicationServices\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.ApplicationServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Configuration\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Configuration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xml\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.Build.Utilities.v4.0\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.Build.Utilities.v4.0.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Caching\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Runtime.Caching.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Caching\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Runtime.Caching.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.Build.Utilities.v4.0\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.Build.Utilities.v4.0.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.JScript\v4.0_10.0.0.0__b03f5f7f11d50a3a\Microsoft.JScript.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\assembly\dl3\affcbc4a\00997024_7255d601\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.VisualStudio.Web.PageInspector.Loader\v4.0_1.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.Web.PageInspector.Loader.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Web Tools\Browser Link\Microsoft.WebTools.BrowserLink.Runtime.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\App_Code.q4jp5x9t.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\App_global.asax.tfneflnb.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\assembly\dl3\aaecd862\f6a122ff_04a3db01\OnlinePastryShop.dll'. Symbols loaded.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Activation\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Activation.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Extensions\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Web Tools\Browser Link\Microsoft.WebTools.BrowserLink.Tracing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\Oracle.Web\v4.0_4.112.2.0__89b483f429c47342\Oracle.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Internals\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Internals.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Mobile\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.Mobile.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.RegularExpressions\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.RegularExpressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.RegularExpressions\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.RegularExpressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel\v4.0_4.0.0.0__b77a5c561934e089\System.ServiceModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\SMDiagnostics\v4.0_4.0.0.0__b77a5c561934e089\SMDiagnostics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xaml.Hosting\v4.0_4.0.0.0__31bf3856ad364e35\System.Xaml.Hosting.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\App_Web_bb0tqx5i.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\App_Web_3vnn4223.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Drawing\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Drawing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\assembly\dl3\c0cd9f47\004b28b6_7353db01\Oracle.ManagedDataAccess.dll'. Module was built without symbols.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Transactions\v4.0_4.0.0.0__b77a5c561934e089\System.Transactions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\assembly\dl3\1649e48e\00c37916_0ce7d501\System.Threading.Tasks.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\assembly\dl3\bdd32c33\00fc9f49_9e41d901\System.Diagnostics.DiagnosticSource.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.EnterpriseServices\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.EnterpriseServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.EnterpriseServices\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.EnterpriseServices.Wrapper.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Numerics\v4.0_4.0.0.0__b77a5c561934e089\System.Numerics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\assembly\dl3\3ab44591\00dd8a2b_9ec7d701\System.Runtime.CompilerServices.Unsafe.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+==== Loading Dashboard Data ====
+Set card titles for today: Today's Revenue, Today's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:55:53 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:55:53
+Time Range: today, Label: Today
+Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Total orders found for today (any status): 2
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 0
+Current period revenue: 0.00
+Detailed order information for today:
+  Order #82, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 650.75
+  Order #84, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 325.25
+  Manually calculated revenue for today: 0
+Order details calculation for today:
+  No order details found for today.
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 0
+Revenue percent change: 0%
+LoadOrderCount - Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+LoadOrderCount - Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Orders in current period:
+- #84: 01/04/2025 8:55:17 pm (Pending)
+- #82: 01/04/2025 8:55:17 pm (Pending)
+Total count from listing: 2
+Orders in previous period:
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+Total count from listing: 3
+Current period count from COUNT query: 2
+Previous period count from COUNT query: 3
+Final order count set to: 2
+Order percent change: -33.3%, text: -33.3%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: today
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+No sales data found for the selected period.
+Sales Overview Labels (today): ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"]
+Sales Overview Data (today): [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 0
+Not enough products with sales data, adding sample products
+Final product count after merging: 5
+==== Dashboard Data Loaded ====
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Drawing\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Drawing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c691a09d\18961776\App_Web_dvsj3a3f.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/2/ROOT-1-133879857513325372): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.VisualBasic\v4.0_10.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualBasic.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+The thread 2612 has exited with code 0 (0x0).
+The thread 25468 has exited with code 0 (0x0).
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+==== Loading Dashboard Data ====
+Set card titles for today: Today's Revenue, Today's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:56:42 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:56:42
+Time Range: today, Label: Today
+Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Total orders found for today (any status): 2
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 0
+Current period revenue: 0.00
+Detailed order information for today:
+  Order #82, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 650.75
+  Order #84, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 325.25
+  Manually calculated revenue for today: 0
+Order details calculation for today:
+  No order details found for today.
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 0
+Revenue percent change: 0%
+LoadOrderCount - Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+LoadOrderCount - Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Orders in current period:
+- #84: 01/04/2025 8:55:17 pm (Pending)
+- #82: 01/04/2025 8:55:17 pm (Pending)
+Total count from listing: 2
+Orders in previous period:
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+Total count from listing: 3
+Current period count from COUNT query: 2
+Previous period count from COUNT query: 3
+Final order count set to: 2
+Order percent change: -33.3%, text: -33.3%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: today
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+No sales data found for the selected period.
+Sales Overview Labels (today): ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"]
+Sales Overview Data (today): [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 0
+Not enough products with sales data, adding sample products
+Final product count after merging: 5
+==== Dashboard Data Loaded ====
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+========================================
+Time range changed to: yesterday
+StartDate: 31/03/2025 12:00:00 am, EndDate: 31/03/2025 11:59:59 pm
+PreviousStartDate: 30/03/2025 12:00:00 am, PreviousEndDate: 30/03/2025 11:59:59 pm
+Set card titles for yesterday: Yesterday's Revenue, Yesterday's Orders
+Card titles updated: Yesterday's Revenue, Yesterday's Orders
+Reloading dashboard data...
+==== Loading Dashboard Data ====
+Set card titles for yesterday: Yesterday's Revenue, Yesterday's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:56:44 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:56:44
+Time Range: yesterday, Label: Yesterday
+Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 0
+Current period revenue: 0.00
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 2022.5
+Revenue percent change: -100.0%
+LoadOrderCount - Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+LoadOrderCount - Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2
+Orders in current period:
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+Total count from listing: 3
+Orders in previous period:
+- #56: 30/03/2025 12:38:52 am (Pending)
+- #34: 30/03/2025 4:21:47 am (Delivered)
+- #60: 30/03/2025 4:38:52 am (Pending)
+- #58: 30/03/2025 6:38:52 am (Pending)
+- #38: 30/03/2025 8:21:47 am (Delivered)
+- #53: 30/03/2025 8:38:52 am (Pending)
+- #57: 30/03/2025 9:38:52 am (Pending)
+- #55: 30/03/2025 10:38:52 am (Pending)
+- #61: 30/03/2025 11:38:52 am (Pending)
+- #2: 30/03/2025 12:21:46 pm (Pending)
+- #42: 30/03/2025 12:26:27 pm (Processing)
+- #41: 30/03/2025 12:26:27 pm (Approved)
+- #51: 30/03/2025 12:36:44 pm (Pending)
+- #52: 30/03/2025 12:38:52 pm (Approved)
+Total count from listing: 14
+Current period count from COUNT query: 3
+Previous period count from COUNT query: 14
+Final order count set to: 3
+Order percent change: -78.6%, text: -78.6%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: yesterday
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+No sales data found for the selected period.
+Sales Overview Labels (yesterday): ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"]
+Sales Overview Data (yesterday): [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 0
+Not enough products with sales data, adding sample products
+Final product count after merging: 5
+==== Dashboard Data Loaded ====
+Dashboard data reloaded
+DailyRevenue: 0.00, TodayOrderCount: 3
+========================================
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+========================================
+Time range changed to: week
+StartDate: 25/03/2025 12:00:00 am, EndDate: 01/04/2025 8:56:45 pm
+PreviousStartDate: 18/03/2025 12:00:00 am, PreviousEndDate: 24/03/2025 11:59:59 pm
+Set card titles for week: This Week's Revenue, This Week's Orders
+Card titles updated: This Week's Revenue, This Week's Orders
+Reloading dashboard data...
+==== Loading Dashboard Data ====
+Set card titles for week: This Week's Revenue, This Week's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:56:45 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:56:45
+Time Range: week, Label: This Week
+Date Criteria: ORDERDATE >= TRUNC(SYSDATE) - 7
+Prev Date Criteria: ORDERDATE >= TRUNC(SYSDATE) - 14 AND ORDERDATE < TRUNC(SYSDATE) - 7
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            ORDERDATE >= TRUNC(SYSDATE) - 7
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 3950.25
+Current period revenue: 3,950.25
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            ORDERDATE >= TRUNC(SYSDATE) - 14 AND ORDERDATE < TRUNC(SYSDATE) - 7
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 845.25
+Revenue percent change: 367.3%
+LoadOrderCount - Date Criteria: ORDERDATE >= TRUNC(SYSDATE) - 7
+LoadOrderCount - Prev Date Criteria: ORDERDATE >= TRUNC(SYSDATE) - 14 AND ORDERDATE < TRUNC(SYSDATE) - 7
+Orders in current period:
+- #14: 25/03/2025 12:21:47 pm (Delivered)
+- #47: 25/03/2025 12:26:27 pm (Delivered)
+- #46: 26/03/2025 12:26:27 pm (Delivered)
+- #45: 27/03/2025 12:26:27 pm (Delivered)
+- #59: 28/03/2025 12:38:52 pm (Pending)
+- #6: 29/03/2025 12:21:46 pm (Delivered)
+- #8: 29/03/2025 12:21:46 pm (Delivered)
+- #43: 29/03/2025 12:26:27 pm (Delivered)
+- #44: 29/03/2025 12:26:27 pm (Delivered)
+- #54: 29/03/2025 12:38:52 pm (Pending)
+- #56: 30/03/2025 12:38:52 am (Pending)
+- #34: 30/03/2025 4:21:47 am (Delivered)
+- #60: 30/03/2025 4:38:52 am (Pending)
+- #58: 30/03/2025 6:38:52 am (Pending)
+- #38: 30/03/2025 8:21:47 am (Delivered)
+- #53: 30/03/2025 8:38:52 am (Pending)
+- #57: 30/03/2025 9:38:52 am (Pending)
+- #55: 30/03/2025 10:38:52 am (Pending)
+- #61: 30/03/2025 11:38:52 am (Pending)
+- #2: 30/03/2025 12:21:46 pm (Pending)
+- #42: 30/03/2025 12:26:27 pm (Processing)
+- #41: 30/03/2025 12:26:27 pm (Approved)
+- #51: 30/03/2025 12:36:44 pm (Pending)
+- #52: 30/03/2025 12:38:52 pm (Approved)
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #82: 01/04/2025 8:55:17 pm (Pending)
+- #84: 01/04/2025 8:55:17 pm (Pending)
+Total count from listing: 29
+Orders in previous period:
+- #49: 20/03/2025 12:26:27 pm (Delivered)
+- #16: 22/03/2025 12:21:47 pm (Delivered)
+- #48: 22/03/2025 12:26:27 pm (Delivered)
+Total count from listing: 3
+Current period count from COUNT query: 29
+Previous period count from COUNT query: 3
+Final order count set to: 29
+Order percent change: 866.7%, text: +866.7%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: week
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'DY') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND O.ORDERDATE >= TRUNC(SYSDATE) - 7
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'DY')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+  SAT: 645.76
+  SUN: 1122.26
+Sales Overview Labels (week): ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+Sales Overview Data (week): [0,0,0,0,0,645.76,1122.26]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND O.ORDERDATE >= TRUNC(SYSDATE) - 7
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND O.ORDERDATE >= TRUNC(SYSDATE) - 7
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 6
+==== Dashboard Data Loaded ====
+Dashboard data reloaded
+DailyRevenue: 3,950.25, TodayOrderCount: 29
+========================================
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+========================================
+Time range changed to: today
+StartDate: 01/04/2025 12:00:00 am, EndDate: 01/04/2025 8:56:48 pm
+PreviousStartDate: 31/03/2025 12:00:00 am, PreviousEndDate: 31/03/2025 11:59:59 pm
+Set card titles for today: Today's Revenue, Today's Orders
+Card titles updated: Today's Revenue, Today's Orders
+Reloading dashboard data...
+==== Loading Dashboard Data ====
+Set card titles for today: Today's Revenue, Today's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:56:48 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:56:48
+Time Range: today, Label: Today
+Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Total orders found for today (any status): 2
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 0
+Current period revenue: 0.00
+Detailed order information for today:
+  Order #82, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 650.75
+  Order #84, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 325.25
+  Manually calculated revenue for today: 0
+Order details calculation for today:
+  No order details found for today.
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 0
+Revenue percent change: 0%
+LoadOrderCount - Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+LoadOrderCount - Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Orders in current period:
+- #84: 01/04/2025 8:55:17 pm (Pending)
+- #82: 01/04/2025 8:55:17 pm (Pending)
+Total count from listing: 2
+Orders in previous period:
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+Total count from listing: 3
+Current period count from COUNT query: 2
+Previous period count from COUNT query: 3
+Final order count set to: 2
+Order percent change: -33.3%, text: -33.3%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: today
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+No sales data found for the selected period.
+Sales Overview Labels (today): ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"]
+Sales Overview Data (today): [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 0
+Not enough products with sales data, adding sample products
+Final product count after merging: 5
+==== Dashboard Data Loaded ====
+Dashboard data reloaded
+DailyRevenue: 0.00, TodayOrderCount: 2
+========================================
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+========================================
+Time range changed to: today
+StartDate: 01/04/2025 12:00:00 am, EndDate: 01/04/2025 8:58:09 pm
+PreviousStartDate: 31/03/2025 12:00:00 am, PreviousEndDate: 31/03/2025 11:59:59 pm
+Set card titles for today: Today's Revenue, Today's Orders
+Card titles updated: Today's Revenue, Today's Orders
+Reloading dashboard data...
+==== Loading Dashboard Data ====
+Set card titles for today: Today's Revenue, Today's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:58:09 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:58:09
+Time Range: today, Label: Today
+Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Total orders found for today (any status): 2
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 0
+Current period revenue: 0.00
+Detailed order information for today:
+  Order #82, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 650.75
+  Order #84, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 325.25
+  Manually calculated revenue for today: 0
+Order details calculation for today:
+  No order details found for today.
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 0
+Revenue percent change: 0%
+LoadOrderCount - Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+LoadOrderCount - Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Orders in current period:
+- #84: 01/04/2025 8:55:17 pm (Pending)
+- #82: 01/04/2025 8:55:17 pm (Pending)
+Total count from listing: 2
+Orders in previous period:
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+Total count from listing: 3
+Current period count from COUNT query: 2
+Previous period count from COUNT query: 3
+Final order count set to: 2
+Order percent change: -33.3%, text: -33.3%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: today
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+No sales data found for the selected period.
+Sales Overview Labels (today): ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"]
+Sales Overview Data (today): [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 0
+Not enough products with sales data, adding sample products
+Final product count after merging: 5
+==== Dashboard Data Loaded ====
+Dashboard data reloaded
+DailyRevenue: 0.00, TodayOrderCount: 2
+========================================
+The thread 23836 has exited with code 0 (0x0).
+The thread 24604 has exited with code 0 (0x0).
+The thread 23888 has exited with code 0 (0x0).
+The thread 2880 has exited with code 0 (0x0).
+The thread 5092 has exited with code 0 (0x0).
+The thread 10676 has exited with code 0 (0x0).
+The thread 25704 has exited with code 0 (0x0).
+The thread 13000 has exited with code 0 (0x0).
+The thread 24168 has exited with code 0 (0x0).
+The thread 13680 has exited with code 0 (0x0).
+The thread 10848 has exited with code 0 (0x0).
+The thread 17368 has exited with code 0 (0x0).
+The thread 13416 has exited with code 0 (0x0).
+The thread 1916 has exited with code 0 (0x0).
+The thread 18740 has exited with code 0 (0x0).
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+========================================
+Time range changed to: yesterday
+StartDate: 31/03/2025 12:00:00 am, EndDate: 31/03/2025 11:59:59 pm
+PreviousStartDate: 30/03/2025 12:00:00 am, PreviousEndDate: 30/03/2025 11:59:59 pm
+Set card titles for yesterday: Yesterday's Revenue, Yesterday's Orders
+Card titles updated: Yesterday's Revenue, Yesterday's Orders
+Reloading dashboard data...
+==== Loading Dashboard Data ====
+Set card titles for yesterday: Yesterday's Revenue, Yesterday's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:58:24 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:58:24
+Time Range: yesterday, Label: Yesterday
+Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 0
+Current period revenue: 0.00
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 2022.5
+Revenue percent change: -100.0%
+LoadOrderCount - Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+LoadOrderCount - Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2
+Orders in current period:
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+Total count from listing: 3
+Orders in previous period:
+- #56: 30/03/2025 12:38:52 am (Pending)
+- #34: 30/03/2025 4:21:47 am (Delivered)
+- #60: 30/03/2025 4:38:52 am (Pending)
+- #58: 30/03/2025 6:38:52 am (Pending)
+- #38: 30/03/2025 8:21:47 am (Delivered)
+- #53: 30/03/2025 8:38:52 am (Pending)
+- #57: 30/03/2025 9:38:52 am (Pending)
+- #55: 30/03/2025 10:38:52 am (Pending)
+- #61: 30/03/2025 11:38:52 am (Pending)
+- #2: 30/03/2025 12:21:46 pm (Pending)
+- #42: 30/03/2025 12:26:27 pm (Processing)
+- #41: 30/03/2025 12:26:27 pm (Approved)
+- #51: 30/03/2025 12:36:44 pm (Pending)
+- #52: 30/03/2025 12:38:52 pm (Approved)
+Total count from listing: 14
+Current period count from COUNT query: 3
+Previous period count from COUNT query: 14
+Final order count set to: 3
+Order percent change: -78.6%, text: -78.6%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: yesterday
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+No sales data found for the selected period.
+Sales Overview Labels (yesterday): ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"]
+Sales Overview Data (yesterday): [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 0
+Not enough products with sales data, adding sample products
+Final product count after merging: 5
+==== Dashboard Data Loaded ====
+Dashboard data reloaded
+DailyRevenue: 0.00, TodayOrderCount: 3
+========================================
+Database connection successful.
+------- Dashboard Page Load -------
+EmptyLowStockMessage control exists: True
+EmptyPendingOrdersMessage control exists: True
+LowStockRepeater control exists: True
+PendingOrdersRepeater control exists: True
+========================================
+Time range changed to: today
+StartDate: 01/04/2025 12:00:00 am, EndDate: 01/04/2025 8:58:25 pm
+PreviousStartDate: 31/03/2025 12:00:00 am, PreviousEndDate: 31/03/2025 11:59:59 pm
+Set card titles for today: Today's Revenue, Today's Orders
+Card titles updated: Today's Revenue, Today's Orders
+Reloading dashboard data...
+==== Loading Dashboard Data ====
+Set card titles for today: Today's Revenue, Today's Orders
+Product stock levels:
+- Tiramisu Cake: 5
+- Strawberry Cheesecake: 8
+- Carrot Cake: 12
+- Red Velvet Cake: 15
+- Vanilla Bean Cake: 20
+- Chocolate Fudge Cake: 25
+- Blueberry Muffins (6 pack): 30
+- Chocolate Chip Cookies (12 pack): 40
+- French Croissants: 100
+Low stock products query: 
+                        SELECT 
+                            PRODUCTID,
+                            NAME,
+                            STOCKQUANTITY,
+                            'N/A' AS CategoryName,
+                            PRICE
+                        FROM "AARON_IPT"."PRODUCTS"
+                        WHERE STOCKQUANTITY <= 10
+                        AND ISACTIVE = 1
+                        ORDER BY STOCKQUANTITY ASC
+Low stock products found: 2
+First low stock product details:
+  PRODUCTID: 14
+  NAME: Tiramisu Cake
+  STOCKQUANTITY: 5
+  CATEGORYNAME: N/A
+  PRICE: 150.75
+Case sensitivity test for 'Pending':
+- Exact 'Pending': 16
+- Upper 'PENDING': 0
+- Lower 'pending': 0
+- Using UPPER(): 16
+Pending order count query: 
+                        SELECT 
+                            COUNT(*) AS PendingCount
+                        FROM "AARON_IPT"."ORDERS"
+                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+Pending order count (from COUNT): 16
+Pending order IDs:
+- 2
+- 51
+- 53
+- 54
+- 55
+- 56
+- 57
+- 58
+- 59
+- 60
+- 61
+- 82
+- 84
+- 86
+- 88
+- 90
+Pending order count (manual count): 16
+Database SYSDATE: 01/04/2025 8:58:25 pm
+Database TRUNC(SYSDATE): 01/04/2025 12:00:00 am
+Database SYSDATE (formatted): 2025-04-01 20:58:25
+Time Range: today, Label: Today
+Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Total orders found for today (any status): 2
+Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Successfully converted result to decimal: 0
+Current period revenue: 0.00
+Detailed order information for today:
+  Order #82, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 650.75
+  Order #84, Date: 2025-04-01 20:55:17, Status: Pending, Amount: 325.25
+  Manually calculated revenue for today: 0
+Order details calculation for today:
+  No order details found for today.
+Previous Period Revenue Query: 
+                        SELECT 
+                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                        FROM 
+                            "AARON_IPT"."ORDERS"
+                        WHERE 
+                            TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+                        AND 
+                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
+Previous period revenue: 0
+Revenue percent change: 0%
+LoadOrderCount - Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE)
+LoadOrderCount - Prev Date Criteria: TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1
+Orders in current period:
+- #84: 01/04/2025 8:55:17 pm (Pending)
+- #82: 01/04/2025 8:55:17 pm (Pending)
+Total count from listing: 2
+Orders in previous period:
+- #86: 31/03/2025 8:55:17 pm (Pending)
+- #90: 31/03/2025 8:55:17 pm (Pending)
+- #88: 31/03/2025 8:55:17 pm (Pending)
+Total count from listing: 3
+Current period count from COUNT query: 2
+Previous period count from COUNT query: 3
+Final order count set to: 2
+Order percent change: -33.3%, text: -33.3%
+Orders table structure:
+- ORDERID: NUMBER
+- USERID: NUMBER
+- ORDERDATE: DATE
+- TOTALAMOUNT: NUMBER
+- ISACTIVE: NUMBER
+- STATUS: VARCHAR2
+Total pending orders count: 16
+All pending orders:
+- Order ID: 84, User ID: 6, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 82, User ID: 4, Date: 01/04/2025 8:55:17 pm, Status: Pending
+- Order ID: 88, User ID: 10, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 90, User ID: 4, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 86, User ID: 8, Date: 31/03/2025 8:55:17 pm, Status: Pending
+- Order ID: 51, User ID: 4, Date: 30/03/2025 12:36:44 pm, Status: Pending
+- Order ID: 2, User ID: 2, Date: 30/03/2025 12:21:46 pm, Status: Pending
+- Order ID: 61, User ID: 4, Date: 30/03/2025 11:38:52 am, Status: Pending
+- Order ID: 55, User ID: 10, Date: 30/03/2025 10:38:52 am, Status: Pending
+- Order ID: 57, User ID: 6, Date: 30/03/2025 9:38:52 am, Status: Pending
+- Order ID: 53, User ID: 6, Date: 30/03/2025 8:38:52 am, Status: Pending
+- Order ID: 58, User ID: 2, Date: 30/03/2025 6:38:52 am, Status: Pending
+- Order ID: 60, User ID: 10, Date: 30/03/2025 4:38:52 am, Status: Pending
+- Order ID: 56, User ID: 4, Date: 30/03/2025 12:38:52 am, Status: Pending
+- Order ID: 54, User ID: 8, Date: 29/03/2025 12:38:52 pm, Status: Pending
+- Order ID: 59, User ID: 8, Date: 28/03/2025 12:38:52 pm, Status: Pending
+Pending orders query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            {dateCriteria}
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
+Error filling pending orders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in OnlinePastryShop.dll
+Error in LoadPendingOrders: ORA-00911: invalid character
+https://docs.oracle.com/error-help/db/ora-00911/
+Loading sales overview chart with TimeRange: today
+Using price column in sales overview: PRICE
+Sales overview query: 
+                                SELECT 
+                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
+                                    NVL(SUM(OD.QUANTITY * OD.PRICE), 0) AS Revenue
+                                FROM "AARON_IPT"."ORDERS" O, "AARON_IPT"."ORDERDETAILS" OD
+                                WHERE O.ORDERID = OD.ORDERID
+                                AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY TimeLabel
+Sales overview data from database:
+No sales data found for the selected period.
+Sales Overview Labels (today): ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"]
+Sales Overview Data (today): [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Total order details records: 11
+OrderDetails table structure:
+- ORDERDETAILID: NUMBER
+- ORDERID: NUMBER
+- PRODUCTID: NUMBER
+- QUANTITY: NUMBER
+- PRICE: NUMBER
+- ISACTIVE: NUMBER
+Using price column: PRICE
+Top selling products date filter: AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+Top selling products query: 
+                        SELECT * FROM (
+                            SELECT 
+                                P.NAME AS ProductName,
+                                SUM(OD.QUANTITY) AS QuantitySold,
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue
+                            FROM "AARON_IPT"."PRODUCTS" P, "AARON_IPT"."ORDERDETAILS" OD, "AARON_IPT"."ORDERS" O
+                            WHERE OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
+                            AND TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
+                            GROUP BY P.NAME
+                            ORDER BY Revenue DESC
+                        ) WHERE ROWNUM <= 10
+Top selling products found: 0
+Not enough products with sales data, adding sample products
+Final product count after merging: 5
+==== Dashboard Data Loaded ====
+Dashboard data reloaded
+DailyRevenue: 0.00, TodayOrderCount: 2
+========================================
+The thread 24176 has exited with code 0 (0x0).

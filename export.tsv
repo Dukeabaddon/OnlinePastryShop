@@ -1,0 +1,95 @@
+"USERID"	"USERNAME"	"PASSWORDHASH"	"EMAIL"	"ROLE"	"LASTLOGIN"	"DATECREATED"	"DATEMODIFIED"	"ISACTIVE"
+2	"admin"	"1f1a9d72af6178f0e23d6722eebdc0da57dcfca12ceb07ec566c0ac5bb9a63e8"	"admin@ocakes.com"	"Admin"	03/27/2025	03/30/2025	03/30/2025	1
+4	"johndoe"	"5JEUuQek35DEUb+WzMCEa+2YEXX09oq87VHdWPk76UI="	"john.doe@example.com"	"Customer"	03/28/2025	03/30/2025	03/30/2025	1
+6	"janesmith"	"hashed_password_here"	"jane.smith@example.com"	"Customer"	03/29/2025	03/30/2025	03/30/2025	1
+8	"mikebrown"	"hashed_password_here"	"mike.brown@example.com"	"Customer"	03/25/2025	03/30/2025	03/30/2025	1
+10	"sarahlee"	"hashed_password_here"	"sarah.lee@example.com"	"Customer"	03/23/2025	03/30/2025	03/30/2025	0
+12	"olduser"	"hashed_password_here"	"olduser@example.com"	"Customer"	03/20/2025	03/30/2025	03/30/2025	0
+14	"newuser"	"hashed_password_here"	"newuser@example.com"	"Customer"	03/28/2025	03/30/2025	03/30/2025	1
+20	"Aaron"	"hashed_password_here"	"aaronmecate182@gmail.com"	"Admin"	03/27/2025	03/30/2025	03/30/2025	1
+22	"testuser_old"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser_old@example.com"	"Customer"		01/15/2025	03/30/2025	1
+23	"testuser_new"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser_new@example.com"	"Customer"		02/14/2025	03/30/2025	1
+24	"testuser1_recent"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser1_recent@example.com"	"Customer"		03/30/2025	03/30/2025	1
+25	"testuser2_recent"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser2_recent@example.com"	"Customer"		03/30/2025	03/30/2025	1
+26	"testuser3_recent"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser3_recent@example.com"	"Customer"		03/30/2025	03/30/2025	1
+27	"testuser4_old"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser4_old@example.com"	"Customer"		03/30/2025	03/30/2025	1
+28	"testuser5_old"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser5_old@example.com"	"Customer"		03/30/2025	03/30/2025	1
+29	"testuser6_old"	"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"	"testuser6_old@example.com"	"Customer"		03/30/2025	03/30/2025	1
+"PRODUCTID"	"NAME"	"DESCRIPTION"	"PRICE"	"STOCKQUANTITY"	"IMAGE"	"ISLATEST"	"DATECREATED"	"DATEMODIFIED"	"ISACTIVE"	"COSTPRICE"
+2	"Chocolate Fudge Cake"	"Rich chocolate cake with fudge frosting"	125.25	25		1	03/30/2025	03/30/2025	1	43.84
+4	"Vanilla Bean Cake"	"Light vanilla sponge with vanilla bean frosting"	140.25	20		1	03/30/2025	03/30/2025	1	49.09
+6	"Red Velvet Cake"	"Classic red velvet with cream cheese frosting"	100	15		1	03/30/2025	03/30/2025	1	35
+8	"Strawberry Cheesecake"	"Creamy cheesecake with fresh strawberry topping"	1099	8	(BLOB)	0	03/30/2025	03/30/2025	1	700
+10	"Blueberry Muffins (6 pack)"	"Moist muffins loaded with fresh blueberries"	35.5	30		1	03/30/2025	03/30/2025	1	12.43
+12	"Chocolate Chip Cookies (12 pack)"	"Classic cookies with semi-sweet chocolate chunks"	30	40		1	03/30/2025	03/30/2025	1	10.5
+14	"Tiramisu Cake"	"Italian dessert with espresso and mascarpone"	150.75	5		1	03/30/2025	03/30/2025	1	52.76
+16	"Carrot Cake"	"Spiced carrot cake with cream cheese frosting"	175.25	12	(BLOB)	1	03/30/2025	03/30/2025	1	61.34
+18	"French Croissants"	"Buttery and flaky authentic croissants"	42	0		1	03/30/2025	03/30/2025	1	14.7
+"CATEGORYID"	"NAME"	"DESCRIPTION"	"PARENTCATEGORYID"	"DATECREATED"	"DATEMODIFIED"	"ISACTIVE"
+1	"Latest"	"Latest and featured products"		03/30/2025	03/30/2025	1
+2	"Cakes"	"Delicious cakes for all occasions"		03/30/2025	03/30/2025	1
+3	"Cupcakes"	"Small individual cakes perfect for any celebration"		03/30/2025	03/30/2025	1
+4	"Macaroons"	"Sweet meringue-based confections"		03/30/2025	03/30/2025	1
+5	"Pastries"	"Assorted sweet and savory pastries"		03/30/2025	03/30/2025	1
+6	"Donuts"	"Ring-shaped sweet fried dough"		03/30/2025	03/30/2025	1
+7	"Breads"	"Freshly baked artisanal breads"		03/30/2025	03/30/2025	1
+8	"Croissants"	"Buttery, flaky viennoiserie pastries"		03/30/2025	03/30/2025	1
+"PRODUCTCATEGORYID"	"PRODUCTID"	"CATEGORYID"
+58	18	8
+57	8	2
+39	2	2
+40	4	2
+41	6	2
+43	14	2
+44	16	2
+47	2	1
+48	4	1
+49	6	1
+50	10	1
+51	12	1
+52	14	1
+53	16	1
+"ORDERID"	"USERID"	"ORDERDATE"	"TOTALAMOUNT"	"ISACTIVE"	"STATUS"
+2	2	03/30/2025	275.25	1	"Pending"
+6	4	03/29/2025	125.25	1	"Delivered"
+8	2	03/29/2025	270.5	1	"Delivered"
+14	4	03/25/2025	180.5	1	"Delivered"
+16	2	03/22/2025	320	1	"Delivered"
+22	4	03/05/2025	330.25	1	"Delivered"
+26	2	02/13/2025	520.75	1	"Delivered"
+30	4	02/03/2025	620.25	1	"Delivered"
+34	4	03/30/2025	420.75	1	"Delivered"
+38	2	03/30/2025	550.25	1	"Delivered"
+41	4	03/30/2025	275.25	1	"Approved"
+42	6	03/30/2025	350.5	1	"Processing"
+43	8	03/29/2025	125.25	1	"Delivered"
+44	4	03/29/2025	270.5	1	"Delivered"
+45	10	03/27/2025	225	1	"Delivered"
+46	6	03/26/2025	550.25	1	"Delivered"
+47	8	03/25/2025	180.5	1	"Delivered"
+48	4	03/22/2025	320	1	"Delivered"
+49	10	03/20/2025	205.25	1	"Delivered"
+50	6	03/10/2025	420.75	1	"Delivered"
+51	4	03/30/2025	275.25	1	"Pending"
+52	4	03/30/2025	425.75	1	"Approved"
+53	6	03/30/2025	275.5	1	"Pending"
+54	8	03/29/2025	362.25	1	"Pending"
+55	10	03/30/2025	750	1	"Pending"
+56	4	03/30/2025	250	1	"Pending"
+57	6	03/30/2025	187.95	1	"Pending"
+58	2	03/30/2025	1250.75	1	"Pending"
+59	8	03/28/2025	450.5	1	"Pending"
+60	10	03/30/2025	325	1	"Pending"
+61	4	03/30/2025	425.99	1	"Pending"
+"ORDERDETAILID"	"ORDERID"	"PRODUCTID"	"QUANTITY"	"PRICE"	"ISACTIVE"
+8	2	8	1	175.25	1
+22	6	2	3	140.25	1
+24	6	4	2	49.88	1
+49	41	2	2	125.25	1
+50	41	8	1	49.88	1
+51	42	6	1	100	1
+52	42	16	1	175.25	1
+53	51	2	2	125.25	1
+54	51	8	1	49.88	1
+55	42	10	2	35.5	1
+56	43	2	1	125.25	1

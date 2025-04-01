@@ -225,7 +225,7 @@ namespace OnlinePastryShop.Pages
             System.Diagnostics.Debug.WriteLine($"Set card titles for {TimeRange}: {RevenueCardTitle}, {OrderCardTitle}");
         }
 
-        private void LoadDailyRevenue()
+        private string LoadDailyRevenue()
         {
             try
             {
@@ -233,104 +233,51 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    // Log the exact current date from the database for debugging
-                    using (OracleCommand dateCmd = new OracleCommand("SELECT SYSDATE, TRUNC(SYSDATE), TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') FROM DUAL", conn))
-                    {
-                        using (OracleDataReader dateReader = dateCmd.ExecuteReader())
-                        {
-                            if (dateReader.Read())
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Database SYSDATE: {dateReader[0]}");
-                                System.Diagnostics.Debug.WriteLine($"Database TRUNC(SYSDATE): {dateReader[1]}");
-                                System.Diagnostics.Debug.WriteLine($"Database SYSDATE (formatted): {dateReader[2]}");
-                            }
-                        }
-                    }
-
                     string dateCriteria = "";
                     string prevDateCriteria = "";
-                    string timeRangeLabel = "";
 
                     // Determine date criteria based on time range
                     switch (TimeRange.ToLower())
                     {
                         case "today":
-                            // Use TRUNC to get just the date part of ORDERDATE for comparison with today
-                            dateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE)";
-                            prevDateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1";
-                            timeRangeLabel = "Today";
+                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
+                            prevDateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
                             break;
                         case "yesterday":
-                            dateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1";
-                            prevDateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 2";
-                            timeRangeLabel = "Yesterday";
+                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
+                            prevDateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 2";
                             break;
                         case "week":
-                            dateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 7";
-                            prevDateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 14 AND ORDERDATE < TRUNC(SYSDATE) - 7";
-                            timeRangeLabel = "This Week";
+                            dateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 7";
+                            prevDateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 14 AND O.ORDERDATE < TRUNC(SYSDATE) - 7";
                             break;
                         case "month":
-                            dateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 30";
-                            prevDateCriteria = "ORDERDATE >= TRUNC(SYSDATE) - 60 AND ORDERDATE < TRUNC(SYSDATE) - 30";
-                            timeRangeLabel = "This Month";
+                            dateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 30";
+                            prevDateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 60 AND O.ORDERDATE < TRUNC(SYSDATE) - 30";
                             break;
                         default:
-                            dateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE)";
-                            prevDateCriteria = "TRUNC(ORDERDATE) = TRUNC(SYSDATE) - 1";
-                            timeRangeLabel = "Today";
+                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
+                            prevDateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
                             break;
                     }
 
-                    System.Diagnostics.Debug.WriteLine($"Time Range: {TimeRange}, Label: {timeRangeLabel}");
+                    System.Diagnostics.Debug.WriteLine($"Time Range: {TimeRange}");
                     System.Diagnostics.Debug.WriteLine($"Date Criteria: {dateCriteria}");
                     System.Diagnostics.Debug.WriteLine($"Prev Date Criteria: {prevDateCriteria}");
 
-                    // If we're looking at 'today', let's check for any orders at all first
-                    if (TimeRange.ToLower() == "today")
-                    {
-                        string checkQuery = "SELECT COUNT(*) FROM ORDERS WHERE TRUNC(ORDERDATE) = TRUNC(SYSDATE)";
-                        using (OracleCommand checkCmd = new OracleCommand(checkQuery, conn))
-                        {
-                            int orderCount = Convert.ToInt32(checkCmd.ExecuteScalar());
-                            System.Diagnostics.Debug.WriteLine($"Total orders found for today (any status): {orderCount}");
-
-                            // If no orders found at all, let's double-check by listing today's date from the DB perspective
-                            if (orderCount == 0)
-                            {
-                                string dateQuery = "SELECT TO_CHAR(TRUNC(SYSDATE), 'YYYY-MM-DD') FROM DUAL";
-                                using (OracleCommand dateCheckCmd = new OracleCommand(dateQuery, conn))
-                                {
-                                    string todayDate = dateCheckCmd.ExecuteScalar().ToString();
-                                    System.Diagnostics.Debug.WriteLine($"Database today's date (TRUNC): {todayDate}");
-
-                                    // Let's check if there are orders with this exact date string
-                                    string exactCheckQuery = $"SELECT COUNT(*), MIN(ORDERID), MAX(ORDERID) FROM ORDERS WHERE TO_CHAR(ORDERDATE, 'YYYY-MM-DD') = '{todayDate}'";
-                                    using (OracleCommand exactCmd = new OracleCommand(exactCheckQuery, conn))
-                                    {
-                                        using (OracleDataReader reader = exactCmd.ExecuteReader())
-                                        {
-                                            if (reader.Read())
-                                            {
-                                                System.Diagnostics.Debug.WriteLine($"Orders with exact date match: Count={reader[0]}, MinID={reader[1]}, MaxID={reader[2]}");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Simplify the query to get total revenue directly from ORDERS table
+                    // Calculate true profit (revenue - cost) using ORDERDETAILS and PRODUCTS table
                     string currentPeriodQuery = @"
                         SELECT 
-                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                            NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS TrueProfit
                         FROM 
-                            ORDERS
+                            AARON_IPT.ORDERDETAILS OD,
+                            AARON_IPT.PRODUCTS P,
+                            AARON_IPT.ORDERS O
                         WHERE 
-                            " + dateCriteria + @"
-                        AND 
-                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
+                            OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND " + dateCriteria + @"
+                            AND O.STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
 
                     System.Diagnostics.Debug.WriteLine($"Revenue Query: {currentPeriodQuery}");
 
@@ -339,7 +286,7 @@ namespace OnlinePastryShop.Pages
                         object result = cmd.ExecuteScalar();
                         decimal currentRevenue = 0;
 
-                        // Handle null result - this means no rows matched our criteria
+                        // Handle null result
                         if (result == null || result == DBNull.Value)
                         {
                             System.Diagnostics.Debug.WriteLine("No revenue data found - result was null or DBNull");
@@ -355,151 +302,41 @@ namespace OnlinePastryShop.Pages
                             catch (Exception ex)
                             {
                                 System.Diagnostics.Debug.WriteLine($"Error converting result to decimal: {ex.Message}");
-                                System.Diagnostics.Debug.WriteLine($"Result type: {result.GetType().Name}, Value: {result}");
                                 currentRevenue = 0;
                             }
                         }
 
                         DailyRevenue = currentRevenue.ToString("N2");
-                        System.Diagnostics.Debug.WriteLine($"Current period revenue: {DailyRevenue}");
-
-                        // If today's revenue is 0, do more detailed debugging to understand why
-                        if (TimeRange.ToLower() == "today" && currentRevenue == 0)
-                        {
-                            // Let's examine the order table to see if there are any orders for today
-                            string ordersQuery = @"
-                                SELECT 
-                                    ORDERID, 
-                                    TO_CHAR(ORDERDATE, 'YYYY-MM-DD HH24:MI:SS') AS ORDERDATE_STR, 
-                                    STATUS, 
-                                    TOTALAMOUNT
-                                FROM 
-                                    ORDERS  
-                                WHERE 
-                                    TRUNC(ORDERDATE) = TRUNC(SYSDATE)
-                                ORDER BY 
-                                    ORDERID";
-
-                            using (OracleCommand ordersCmd = new OracleCommand(ordersQuery, conn))
-                            {
-                                using (OracleDataReader reader = ordersCmd.ExecuteReader())
-                                {
-                                    System.Diagnostics.Debug.WriteLine("Detailed order information for today:");
-                                    bool hasOrders = false;
-                                    decimal manualTotal = 0;
-
-                                    while (reader.Read())
-                                    {
-                                        hasOrders = true;
-                                        string status = reader["STATUS"].ToString();
-                                        decimal amount = Convert.ToDecimal(reader["TOTALAMOUNT"]);
-
-                                        System.Diagnostics.Debug.WriteLine($"  Order #{reader["ORDERID"]}, Date: {reader["ORDERDATE_STR"]}, Status: {status}, Amount: {amount}");
-
-                                        // Only include orders with status that should be counted
-                                        if (status == "Completed" || status == "Approved" || status == "Delivered" ||
-                                            status == "Shipped" || status == "Processing")
-                                        {
-                                            manualTotal += amount;
-                                        }
-                                    }
-
-                                    if (!hasOrders)
-                                    {
-                                        System.Diagnostics.Debug.WriteLine("  No orders found for today.");
-                                    }
-                                    else
-                                    {
-                                        System.Diagnostics.Debug.WriteLine($"  Manually calculated revenue for today: {manualTotal}");
-
-                                        // If we have a manual calculation and it's not zero, use it
-                                        if (manualTotal > 0 && currentRevenue == 0)
-                                        {
-                                            DailyRevenue = manualTotal.ToString("N2");
-                                            currentRevenue = manualTotal;
-                                            System.Diagnostics.Debug.WriteLine($"Using manually calculated revenue: {DailyRevenue}");
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Let's also check the ORDERDETAILS table in case that's where we need to calculate from
-                            string detailsQuery = @"
-                                SELECT
-                                    OD.ORDERID,
-                                    SUM(OD.QUANTITY * OD.PRICE) AS LINE_TOTAL
-                                FROM
-                                    ORDERDETAILS OD
-                                JOIN
-                                    ORDERS O ON OD.ORDERID = O.ORDERID
-                                WHERE
-                                    TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)
-                                AND
-                                    O.STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')
-                                GROUP BY
-                                    OD.ORDERID";
-
-                            using (OracleCommand detailsCmd = new OracleCommand(detailsQuery, conn))
-                            {
-                                using (OracleDataReader reader = detailsCmd.ExecuteReader())
-                                {
-                                    System.Diagnostics.Debug.WriteLine("Order details calculation for today:");
-                                    bool hasDetails = false;
-                                    decimal detailsTotal = 0;
-
-                                    while (reader.Read())
-                                    {
-                                        hasDetails = true;
-                                        decimal lineTotal = Convert.ToDecimal(reader["LINE_TOTAL"]);
-                                        detailsTotal += lineTotal;
-                                        System.Diagnostics.Debug.WriteLine($"  Order #{reader["ORDERID"]}, Line Total: {lineTotal}");
-                                    }
-
-                                    if (!hasDetails)
-                                    {
-                                        System.Diagnostics.Debug.WriteLine("  No order details found for today.");
-                                    }
-                                    else
-                                    {
-                                        System.Diagnostics.Debug.WriteLine($"  Total from ORDERDETAILS: {detailsTotal}");
-
-                                        // If we have a details calculation and current is still zero, use it
-                                        if (detailsTotal > 0 && currentRevenue == 0)
-                                        {
-                                            DailyRevenue = detailsTotal.ToString("N2");
-                                            currentRevenue = detailsTotal;
-                                            System.Diagnostics.Debug.WriteLine($"Using ORDERDETAILS calculated revenue: {DailyRevenue}");
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        System.Diagnostics.Debug.WriteLine($"Current period profit: {DailyRevenue}");
                     }
 
-                    // Now calculate previous period revenue for comparison
+                    // Calculate previous period profit for comparison
                     string previousPeriodQuery = @"
                         SELECT 
-                            NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
+                            NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS TrueProfit
                         FROM 
-                            ORDERS
+                            AARON_IPT.ORDERDETAILS OD,
+                            AARON_IPT.PRODUCTS P,
+                            AARON_IPT.ORDERS O
                         WHERE 
-                            " + prevDateCriteria + @"
-                        AND 
-                            STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
+                            OD.PRODUCTID = P.PRODUCTID
+                            AND OD.ORDERID = O.ORDERID
+                            AND " + prevDateCriteria + @"
+                            AND O.STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
 
-                    System.Diagnostics.Debug.WriteLine($"Previous Period Revenue Query: {previousPeriodQuery}");
+                    System.Diagnostics.Debug.WriteLine($"Previous Period Profit Query: {previousPeriodQuery}");
 
                     decimal previousRevenue = 0;
                     using (OracleCommand cmd = new OracleCommand(previousPeriodQuery, conn))
                     {
                         object result = cmd.ExecuteScalar();
                         previousRevenue = (result != DBNull.Value) ? Convert.ToDecimal(result) : 0;
-                        System.Diagnostics.Debug.WriteLine($"Previous period revenue: {previousRevenue}");
+                        System.Diagnostics.Debug.WriteLine($"Previous period profit: {previousRevenue}");
                     }
 
                     // Calculate percentage change
                     RevenuePercentChange = CalculatePercentChange(Convert.ToDecimal(DailyRevenue), previousRevenue);
-                    System.Diagnostics.Debug.WriteLine($"Revenue percent change: {RevenuePercentChange}%");
+                    System.Diagnostics.Debug.WriteLine($"Profit percent change: {RevenuePercentChange}%");
 
                     // Format the change for display
                     DailyRevenueChange = Math.Abs(RevenuePercentChange).ToString("N1");
@@ -531,6 +368,8 @@ namespace OnlinePastryShop.Pages
                 DailyRevenueChangeClass = "text-gray-500";
                 DailyRevenueIcon = "M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z";
             }
+            
+            return DailyRevenue;
         }
 
         // Helper method to calculate percentage change
@@ -585,7 +424,7 @@ namespace OnlinePastryShop.Pages
                     conn.Open();
 
                     // Get list of matching orders for current period
-                    string listQuery = $"SELECT ORDERID, ORDERDATE, STATUS FROM ORDERS WHERE {dateCriteria} ORDER BY ORDERDATE";
+                    string listQuery = $@"SELECT ORDERID, ORDERDATE, STATUS FROM ""AARON_IPT"".""ORDERS"" WHERE {dateCriteria} ORDER BY ORDERDATE";
                     using (OracleCommand listCmd = new OracleCommand(listQuery, conn))
                     {
                         using (OracleDataReader reader = listCmd.ExecuteReader())
@@ -602,7 +441,7 @@ namespace OnlinePastryShop.Pages
                     }
 
                     // Same for previous period
-                    string prevListQuery = $"SELECT ORDERID, ORDERDATE, STATUS FROM ORDERS WHERE {prevDateCriteria} ORDER BY ORDERDATE";
+                    string prevListQuery = $@"SELECT ORDERID, ORDERDATE, STATUS FROM ""AARON_IPT"".""ORDERS"" WHERE {prevDateCriteria} ORDER BY ORDERDATE";
                     using (OracleCommand prevListCmd = new OracleCommand(prevListQuery, conn))
                     {
                         using (OracleDataReader reader = prevListCmd.ExecuteReader())
@@ -619,7 +458,7 @@ namespace OnlinePastryShop.Pages
                     }
 
                     // Now get the actual counts
-                    string countQuery = $"SELECT COUNT(*) FROM ORDERS WHERE {dateCriteria}";
+                    string countQuery = $@"SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE {dateCriteria}";
                     int currentOrders = 0;
 
                     using (OracleCommand countCmd = new OracleCommand(countQuery, conn))
@@ -629,7 +468,7 @@ namespace OnlinePastryShop.Pages
                         System.Diagnostics.Debug.WriteLine($"Current period count from COUNT query: {currentOrders}");
                     }
 
-                    string prevCountQuery = $"SELECT COUNT(*) FROM ORDERS WHERE {prevDateCriteria}";
+                    string prevCountQuery = $@"SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE {prevDateCriteria}";
                     int previousOrders = 0;
 
                     using (OracleCommand prevCountCmd = new OracleCommand(prevCountQuery, conn))
@@ -697,10 +536,10 @@ namespace OnlinePastryShop.Pages
                     // Debug: test case-sensitivity in Oracle
                     string caseTestQuery = @"
                         SELECT 
-                            (SELECT COUNT(*) FROM ORDERS WHERE STATUS = 'Pending') AS PendingExact,
-                            (SELECT COUNT(*) FROM ORDERS WHERE STATUS = 'PENDING') AS PendingUpper,
-                            (SELECT COUNT(*) FROM ORDERS WHERE STATUS = 'pending') AS PendingLower,
-                            (SELECT COUNT(*) FROM ORDERS WHERE UPPER(STATUS) = 'PENDING') AS PendingUpperFunc
+                            (SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE STATUS = 'Pending') AS PendingExact,
+                            (SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE STATUS = 'PENDING') AS PendingUpper,
+                            (SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE STATUS = 'pending') AS PendingLower,
+                            (SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE UPPER(STATUS) = 'PENDING') AS PendingUpperFunc
                         FROM DUAL";
 
                     using (OracleCommand testCmd = new OracleCommand(caseTestQuery, conn))
@@ -722,7 +561,7 @@ namespace OnlinePastryShop.Pages
                     string query = @"
                         SELECT 
                             COUNT(*) AS PendingCount
-                        FROM ORDERS
+                        FROM ""AARON_IPT"".""ORDERS""
                         WHERE STATUS IN ('Pending', 'PENDING', 'pending')";
 
                     System.Diagnostics.Debug.WriteLine($"Pending order count query: {query}");
@@ -736,7 +575,7 @@ namespace OnlinePastryShop.Pages
 
                         // Double check with a query that returns all IDs
                         string verifyQuery = @"
-                            SELECT ORDERID FROM ORDERS 
+                            SELECT ORDERID FROM ""AARON_IPT"".""ORDERS"" 
                             WHERE STATUS IN ('Pending', 'PENDING', 'pending')
                             ORDER BY ORDERID";
 
@@ -779,71 +618,23 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    // First, check the Orders table structure to confirm fields
-                    string tableStructureQuery = @"
-                        SELECT column_name, data_type
-                        FROM user_tab_columns 
-                        WHERE table_name = 'ORDERS'
-                        ORDER BY column_id";
-
-                    using (OracleCommand structureCmd = new OracleCommand(tableStructureQuery, conn))
-                    {
-                        using (OracleDataReader reader = structureCmd.ExecuteReader())
-                        {
-                            System.Diagnostics.Debug.WriteLine("Orders table structure:");
-                            while (reader.Read())
-                            {
-                                System.Diagnostics.Debug.WriteLine($"- {reader["column_name"]}: {reader["data_type"]}");
-                            }
-                        }
-                    }
-
-                    // Get full count of Pending orders to verify we're getting all
-                    string countQuery = @"
-                        SELECT COUNT(*) FROM ORDERS
-                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')";
-
-                    int totalPendingOrders = 0;
-                    using (OracleCommand countCmd = new OracleCommand(countQuery, conn))
-                    {
-                        object countResult = countCmd.ExecuteScalar();
-                        totalPendingOrders = countResult != DBNull.Value ? Convert.ToInt32(countResult) : 0;
-                        System.Diagnostics.Debug.WriteLine($"Total pending orders count: {totalPendingOrders}");
-                    }
-
-                    // Now list all pending order IDs for debugging
-                    string debugIdsQuery = @"
-                        SELECT ORDERID, USERID, ORDERDATE, STATUS
-                        FROM ORDERS 
-                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
-                        ORDER BY ORDERDATE DESC";
-
-                    using (OracleCommand debugCmd = new OracleCommand(debugIdsQuery, conn))
-                    {
-                        using (OracleDataReader reader = debugCmd.ExecuteReader())
-                        {
-                            System.Diagnostics.Debug.WriteLine("All pending orders:");
-                            while (reader.Read())
-                            {
-                                System.Diagnostics.Debug.WriteLine($"- Order ID: {reader["ORDERID"]}, User ID: {reader["USERID"]}, Date: {reader["ORDERDATE"]}, Status: {reader["STATUS"]}");
-                            }
-                        }
-                    }
-
-                    // Use a simple query with Oracle 11g compatible syntax (no ANSI JOIN)
-                    // Make sure we're not limiting the results with ROWNUM or similar
+                    // Simple query to get pending orders - fix the invalid character issue by using proper quotes
                     string query = @"
                         SELECT 
                             O.ORDERID,
                             U.USERNAME AS CustomerName,
                             U.EMAIL,
-                            O.ORDERDATE AS OrderDate,
+                            O.ORDERDATE,
                             O.TOTALAMOUNT,
                             O.STATUS
-                        FROM ORDERS O, USERS U 
-                        WHERE O.USERID = U.USERID
-                        AND O.STATUS IN ('Pending', 'PENDING', 'pending')
-                        ORDER BY O.ORDERDATE DESC";
+                        FROM 
+                            AARON_IPT.ORDERS O,
+                            AARON_IPT.USERS U
+                        WHERE 
+                            O.USERID = U.USERID
+                            AND O.STATUS IN ('Pending', 'PENDING', 'pending')
+                        ORDER BY 
+                            O.ORDERDATE DESC";
 
                     System.Diagnostics.Debug.WriteLine($"Pending orders query: {query}");
 
@@ -857,13 +648,13 @@ namespace OnlinePastryShop.Pages
                                 adapter.Fill(dt);
                             }
 
-                            System.Diagnostics.Debug.WriteLine($"Pending orders found in DataTable: {dt.Rows.Count} (should match total count: {totalPendingOrders})");
+                            System.Diagnostics.Debug.WriteLine($"Pending orders found: {dt.Rows.Count}");
 
-                            // For debugging, output ALL results
-                            System.Diagnostics.Debug.WriteLine("All pending orders in DataTable:");
-                            foreach (DataRow row in dt.Rows)
+                            // For debugging, output the first few orders
+                            for (int i = 0; i < Math.Min(dt.Rows.Count, 3); i++)
                             {
-                                System.Diagnostics.Debug.WriteLine($"- Order ID: {row["ORDERID"]}, Customer: {row["CustomerName"]}, Date: {row["OrderDate"]}, Amount: {row["TOTALAMOUNT"]}");
+                                DataRow row = dt.Rows[i];
+                                System.Diagnostics.Debug.WriteLine($"Order #{row["ORDERID"]}, Customer: {row["CustomerName"]}, Amount: {row["TOTALAMOUNT"]}");
                             }
 
                             // Bind pending orders to repeater
@@ -886,7 +677,7 @@ namespace OnlinePastryShop.Pages
                                         EmptyPendingOrdersMessage.Visible = false;
                                 }
 
-                                // Added explicit update to pending order count
+                                // Update pending order count
                                 PendingOrderCount = dt.Rows.Count.ToString();
                             }
                             else
@@ -897,7 +688,7 @@ namespace OnlinePastryShop.Pages
                         catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine($"Error filling pending orders: {ex.Message}");
-                            throw; // Re-throw to be caught by the outer try-catch
+                            throw;
                         }
                     }
                 }
@@ -920,26 +711,7 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    // Get all product stock levels for debugging
-                    string debugQuery = @"
-                        SELECT NAME, STOCKQUANTITY
-                        FROM PRODUCTS
-                        WHERE ISACTIVE = 1
-                        ORDER BY STOCKQUANTITY ASC";
-
-                    using (OracleCommand debugCmd = new OracleCommand(debugQuery, conn))
-                    {
-                        using (OracleDataReader reader = debugCmd.ExecuteReader())
-                        {
-                            System.Diagnostics.Debug.WriteLine("Product stock levels:");
-                            while (reader.Read())
-                            {
-                                System.Diagnostics.Debug.WriteLine($"- {reader["NAME"]}: {reader["STOCKQUANTITY"]}");
-                            }
-                        }
-                    }
-
-                    // Use a dead simple query for low stock products without any joins
+                    // Simple query for low stock products without any joins
                     string query = @"
                         SELECT 
                             PRODUCTID,
@@ -947,7 +719,7 @@ namespace OnlinePastryShop.Pages
                             STOCKQUANTITY,
                             'N/A' AS CategoryName,
                             PRICE
-                        FROM PRODUCTS
+                        FROM AARON_IPT.PRODUCTS
                         WHERE STOCKQUANTITY <= 10
                         AND ISACTIVE = 1
                         ORDER BY STOCKQUANTITY ASC";
@@ -1046,36 +818,10 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    // Determine which price column to use in OrderDetails
-                    string priceColumn = "PRICE"; // Default
-                    string schemaQuery = @"
-                        SELECT column_name
-                        FROM user_tab_columns 
-                        WHERE table_name = 'ORDERDETAILS'
-                        ORDER BY column_id";
-
-                    using (OracleCommand schemaCmd = new OracleCommand(schemaQuery, conn))
-                    {
-                        using (OracleDataReader reader = schemaCmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                string columnName = reader["column_name"].ToString();
-                                if (columnName == "PRODUCTPRICE")
-                                {
-                                    priceColumn = "PRODUCTPRICE";
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    System.Diagnostics.Debug.WriteLine($"Using price column in sales overview: {priceColumn}");
-
                     string query = "";
                     string dateCriteria = "";
 
-                    // Set the correct date criteria based on the time range - same as used in LoadDailyRevenue
+                    // Set the correct date criteria based on the time range
                     switch (timeRange.ToLower())
                     {
                         case "today":
@@ -1098,16 +844,23 @@ namespace OnlinePastryShop.Pages
                     switch (timeRange.ToLower())
                     {
                         case "today":
-                            // Group by hour for today
-                            query = $@"
+                            // Group by hour for today, showing profit
+                            query = @"
                                 SELECT 
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
-                                FROM ORDERS O, ORDERDETAILS OD
-                                WHERE O.ORDERID = OD.ORDERID
-                                AND {dateCriteria}
-                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
-                                ORDER BY TimeLabel";
+                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
+                                FROM 
+                                    AARON_IPT.ORDERS O,
+                                    AARON_IPT.ORDERDETAILS OD,
+                                    AARON_IPT.PRODUCTS P
+                                WHERE 
+                                    O.ORDERID = OD.ORDERID
+                                    AND OD.PRODUCTID = P.PRODUCTID
+                                    AND " + dateCriteria + @"
+                                GROUP BY 
+                                    TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY 
+                                    TimeLabel";
 
                             // Create all 24 hours as labels
                             for (int hour = 0; hour < 24; hour++)
@@ -1118,84 +871,112 @@ namespace OnlinePastryShop.Pages
                             break;
 
                         case "yesterday":
-                            // Group by hour for yesterday
-                            query = $@"
+                            // Same approach for yesterday
+                            query = @"
                                 SELECT 
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
-                                FROM ORDERS O, ORDERDETAILS OD
-                                WHERE O.ORDERID = OD.ORDERID
-                                AND {dateCriteria}
-                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
-                                ORDER BY TimeLabel";
+                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
+                                FROM 
+                                    AARON_IPT.ORDERS O,
+                                    AARON_IPT.ORDERDETAILS OD,
+                                    AARON_IPT.PRODUCTS P
+                                WHERE 
+                                    O.ORDERID = OD.ORDERID
+                                    AND OD.PRODUCTID = P.PRODUCTID
+                                    AND " + dateCriteria + @"
+                                GROUP BY 
+                                    TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY 
+                                    TimeLabel";
 
                             // Create all 24 hours as labels
                             for (int hour = 0; hour < 24; hour++)
                             {
                                 labels.Add($"{hour:D2}:00");
-                                dataPoints.Add(0); // Default to 0, will be replaced if data exists
+                                dataPoints.Add(0);
                             }
                             break;
 
                         case "week":
-                            // Group by day for week
-                            query = $@"
+                            // Group by day for week, showing profit
+                            query = @"
                                 SELECT 
                                     TO_CHAR(O.ORDERDATE, 'DY') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
-                                FROM ORDERS O, ORDERDETAILS OD
-                                WHERE O.ORDERID = OD.ORDERID
-                                AND {dateCriteria}
-                                GROUP BY TO_CHAR(O.ORDERDATE, 'DY')
-                                ORDER BY TimeLabel";
+                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
+                                FROM 
+                                    AARON_IPT.ORDERS O,
+                                    AARON_IPT.ORDERDETAILS OD,
+                                    AARON_IPT.PRODUCTS P
+                                WHERE 
+                                    O.ORDERID = OD.ORDERID
+                                    AND OD.PRODUCTID = P.PRODUCTID
+                                    AND " + dateCriteria + @"
+                                GROUP BY 
+                                    TO_CHAR(O.ORDERDATE, 'DY')
+                                ORDER BY 
+                                    TimeLabel";
 
                             // Create all days of the week as labels
                             string[] dayNames = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
                             for (int i = 0; i < 7; i++)
                             {
                                 labels.Add(dayNames[i]);
-                                dataPoints.Add(0); // Default to 0, will be replaced if data exists
+                                dataPoints.Add(0);
                             }
                             break;
 
                         case "month":
-                            // Group by week for month
-                            query = $@"
+                            // Group by week for month, showing profit
+                            query = @"
                                 SELECT 
                                     TO_CHAR(O.ORDERDATE, 'IW') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
-                                FROM ORDERS O, ORDERDETAILS OD
-                                WHERE O.ORDERID = OD.ORDERID
-                                AND {dateCriteria}
-                                GROUP BY TO_CHAR(O.ORDERDATE, 'IW')
-                                ORDER BY TimeLabel";
+                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
+                                FROM 
+                                    AARON_IPT.ORDERS O,
+                                    AARON_IPT.ORDERDETAILS OD,
+                                    AARON_IPT.PRODUCTS P
+                                WHERE 
+                                    O.ORDERID = OD.ORDERID
+                                    AND OD.PRODUCTID = P.PRODUCTID
+                                    AND " + dateCriteria + @"
+                                GROUP BY 
+                                    TO_CHAR(O.ORDERDATE, 'IW')
+                                ORDER BY 
+                                    TimeLabel";
 
                             // Get current week number
                             int currentWeek = DateTime.Now.DayOfYear / 7 + 1;
                             for (int week = currentWeek - 4; week <= currentWeek; week++)
                             {
                                 labels.Add($"Week {week}");
-                                dataPoints.Add(0); // Default to 0, will be replaced if data exists
+                                dataPoints.Add(0);
                             }
                             break;
 
                         default:
                             // Default to daily view for today
-                            query = $@"
+                            query = @"
                                 SELECT 
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
-                                FROM ORDERS O, ORDERDETAILS OD
-                                WHERE O.ORDERID = OD.ORDERID
-                                AND {dateCriteria}
-                                GROUP BY TO_CHAR(O.ORDERDATE, 'HH24')
-                                ORDER BY TimeLabel";
+                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
+                                FROM 
+                                    AARON_IPT.ORDERS O,
+                                    AARON_IPT.ORDERDETAILS OD,
+                                    AARON_IPT.PRODUCTS P
+                                WHERE 
+                                    O.ORDERID = OD.ORDERID
+                                    AND OD.PRODUCTID = P.PRODUCTID
+                                    AND " + dateCriteria + @"
+                                GROUP BY 
+                                    TO_CHAR(O.ORDERDATE, 'HH24')
+                                ORDER BY 
+                                    TimeLabel";
 
                             // Create 6-hour intervals as labels for the default view
                             for (int hour = 0; hour < 24; hour += 6)
                             {
                                 labels.Add($"{hour:D2}:00");
-                                dataPoints.Add(0); // Default to 0, will be replaced if data exists
+                                dataPoints.Add(0);
                             }
                             break;
                     }
@@ -1238,9 +1019,9 @@ namespace OnlinePastryShop.Pages
                             {
                                 hasData = true;
                                 string timeLabel = reader["TimeLabel"].ToString().Trim().ToUpper();
-                                decimal revenue = Convert.ToDecimal(reader["Revenue"]);
+                                decimal profit = Convert.ToDecimal(reader["Profit"]);
 
-                                System.Diagnostics.Debug.WriteLine($"  {timeLabel}: {revenue}");
+                                System.Diagnostics.Debug.WriteLine($"  {timeLabel}: {profit}");
 
                                 // Try to map the time label to our predefined labels
                                 if (labelMapping.ContainsKey(timeLabel))
@@ -1248,13 +1029,12 @@ namespace OnlinePastryShop.Pages
                                     int index = labelMapping[timeLabel];
                                     if (index < dataPoints.Count)
                                     {
-                                        dataPoints[index] = revenue;
+                                        dataPoints[index] = profit;
                                     }
                                 }
                                 else if (timeRange.ToLower() == "month")
                                 {
-                                    // For month view, we need to handle week numbers differently
-                                    // Try to parse the week number and map it to our week labels
+                                    // For month view, handle week numbers differently
                                     if (int.TryParse(timeLabel, out int weekNum))
                                     {
                                         int currentWeek = DateTime.Now.DayOfYear / 7 + 1;
@@ -1262,7 +1042,7 @@ namespace OnlinePastryShop.Pages
 
                                         if (index >= 0 && index < dataPoints.Count)
                                         {
-                                            dataPoints[index] = revenue;
+                                            dataPoints[index] = profit;
                                         }
                                     }
                                 }
@@ -1276,7 +1056,7 @@ namespace OnlinePastryShop.Pages
                     }
                 }
 
-                // Convert to JSON strings for JavaScript using JavaScriptSerializer instead of JsonConvert
+                // Convert to JSON strings for JavaScript
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
                 SalesOverviewLabels = serializer.Serialize(labels);
                 SalesOverviewData = serializer.Serialize(dataPoints);
@@ -1308,48 +1088,6 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    // Debug query to check product sales
-                    string debugQuery = @"
-                        SELECT COUNT(*) FROM ORDERDETAILS";
-
-                    using (OracleCommand debugCmd = new OracleCommand(debugQuery, conn))
-                    {
-                        object result = debugCmd.ExecuteScalar();
-                        System.Diagnostics.Debug.WriteLine($"Total order details records: {result}");
-                    }
-
-                    // Debug query to check ORDERDETAILS structure first
-                    string schemaQuery = @"
-                        SELECT column_name, data_type
-                        FROM user_tab_columns 
-                        WHERE table_name = 'ORDERDETAILS'
-                        ORDER BY column_id";
-
-                    bool hasPriceColumn = false;
-                    bool hasUnitPriceColumn = false;
-
-                    using (OracleCommand schemaCmd = new OracleCommand(schemaQuery, conn))
-                    {
-                        using (OracleDataReader reader = schemaCmd.ExecuteReader())
-                        {
-                            System.Diagnostics.Debug.WriteLine("OrderDetails table structure:");
-                            while (reader.Read())
-                            {
-                                string columnName = reader["column_name"].ToString();
-                                System.Diagnostics.Debug.WriteLine($"- {columnName}: {reader["data_type"]}");
-
-                                if (columnName == "PRICE")
-                                    hasPriceColumn = true;
-                                else if (columnName == "UNITPRICE")
-                                    hasUnitPriceColumn = true;
-                            }
-                        }
-                    }
-
-                    // Determine which price column to use
-                    string priceColumn = hasUnitPriceColumn ? "UNITPRICE" : (hasPriceColumn ? "PRICE" : "PRICE");
-                    System.Diagnostics.Debug.WriteLine($"Using price column: {priceColumn}");
-
                     // Determine the date criteria based on the selected time range
                     string dateCriteria = "";
 
@@ -1372,22 +1110,28 @@ namespace OnlinePastryShop.Pages
                             break;
                     }
 
-                    System.Diagnostics.Debug.WriteLine($"Top selling products date filter: {dateCriteria}");
-
-                    // Use Oracle 11g compatible join syntax (no ANSI JOIN)
-                    string query = $@"
+                    // Updated query to include profit calculation with consistent schema naming
+                    string query = @"
                         SELECT * FROM (
                             SELECT 
                                 P.NAME AS ProductName,
                                 SUM(OD.QUANTITY) AS QuantitySold,
-                                SUM(OD.QUANTITY * OD.{priceColumn}) AS Revenue
-                            FROM PRODUCTS P, ORDERDETAILS OD, ORDERS O
-                            WHERE OD.PRODUCTID = P.PRODUCTID
-                            AND OD.ORDERID = O.ORDERID
-                            AND P.ISACTIVE = 1
-                            {dateCriteria}
-                            GROUP BY P.NAME
-                            ORDER BY Revenue DESC
+                                SUM(OD.QUANTITY * OD.PRICE) AS Revenue,
+                                SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)) AS Profit,
+                                ROUND((SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)) / SUM(OD.QUANTITY * OD.PRICE)) * 100, 2) AS ProfitMargin
+                            FROM 
+                                AARON_IPT.PRODUCTS P,
+                                AARON_IPT.ORDERDETAILS OD,
+                                AARON_IPT.ORDERS O
+                            WHERE 
+                                OD.PRODUCTID = P.PRODUCTID
+                                AND OD.ORDERID = O.ORDERID
+                                AND P.ISACTIVE = 1
+                                " + dateCriteria + @"
+                            GROUP BY 
+                                P.NAME
+                            ORDER BY 
+                                Profit DESC
                         ) WHERE ROWNUM <= 10";
 
                     System.Diagnostics.Debug.WriteLine($"Top selling products query: {query}");
@@ -1512,22 +1256,23 @@ namespace OnlinePastryShop.Pages
         {
             DataTable dt = new DataTable();
 
-            // Add columns
+            // Add columns including profit
             dt.Columns.Add("ProductName", typeof(string));
             dt.Columns.Add("QuantitySold", typeof(int));
             dt.Columns.Add("Revenue", typeof(decimal));
+            dt.Columns.Add("Profit", typeof(decimal));
+            dt.Columns.Add("ProfitMargin", typeof(decimal));
 
-            // Add sample rows with more accurate data (Ube Pandesal as top seller)
-            dt.Rows.Add("Ube Pandesal", 10, 1500.00m);
-            dt.Rows.Add("Ensaymada", 8, 1600.00m);
-            dt.Rows.Add("Pan de Coco", 7, 1050.00m);
-            dt.Rows.Add("Spanish Bread", 6, 900.00m);
-            dt.Rows.Add("Cheese Bread", 5, 750.00m);
-            dt.Rows.Add("Monay", 4, 600.00m);
-            dt.Rows.Add("Chocolate Chip Cookies", 3, 450.00m);
-            dt.Rows.Add("Cheese Roll", 3, 375.00m);
-            dt.Rows.Add("Hopia", 2, 200.00m);
-            dt.Rows.Add("Pan de Regla", 1, 150.00m);
+            // Add sample rows with profit margin data
+            dt.Rows.Add("Chocolate Fudge Cake", 12, 1503.00m, 976.68m, 65.0m);
+            dt.Rows.Add("Red Velvet Cake", 10, 1000.00m, 650.00m, 65.0m);
+            dt.Rows.Add("Vanilla Bean Cake", 8, 1122.00m, 729.28m, 65.0m);
+            dt.Rows.Add("Strawberry Cheesecake", 6, 6594.00m, 3594.00m, 54.5m);
+            dt.Rows.Add("Blueberry Muffins", 15, 532.50m, 346.05m, 65.0m);
+            dt.Rows.Add("Chocolate Chip Cookies", 20, 600.00m, 390.00m, 65.0m);
+            dt.Rows.Add("Tiramisu Cake", 4, 603.00m, 391.96m, 65.0m);
+            dt.Rows.Add("Carrot Cake", 5, 876.25m, 569.55m, 65.0m);
+            dt.Rows.Add("French Croissants", 12, 504.00m, 327.60m, 65.0m);
 
             return dt;
         }
@@ -1543,19 +1288,14 @@ namespace OnlinePastryShop.Pages
                 }
                 else
                 {
-                    // Log the error
-                    System.Diagnostics.Debug.WriteLine("ERROR: OracleConnection string not found in Web.config");
-
-                    // Return a hardcoded backup connection string
-                    return "User Id=mecate;Password=qwen123;Data Source=localhost:1521/xe;";
+                    System.Diagnostics.Debug.WriteLine("OracleConnection string not found in Web.config, using backup");
+                    return "User Id=AARON_IPT;Password=qwen123;Data Source=localhost:1521/xe;";
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"ERROR getting connection string: {ex.Message}");
-
-                // Fallback to hardcoded connection string
-                return "User Id=mecate;Password=qwen123;Data Source=localhost:1521/xe;";
+                return "User Id=AARON_IPT;Password=qwen123;Data Source=localhost:1521/xe;";
             }
         }
 
@@ -1588,7 +1328,7 @@ namespace OnlinePastryShop.Pages
                     connection.Open();
 
                     // Debug - log the current status before update
-                    string checkQuery = "SELECT STATUS FROM ORDERS WHERE ORDERID = :OrderId";
+                    string checkQuery = @"SELECT STATUS FROM ""AARON_IPT"".""ORDERS"" WHERE ORDERID = :OrderId";
                     using (OracleCommand checkCmd = new OracleCommand(checkQuery, connection))
                     {
                         checkCmd.Parameters.Add("OrderId", OracleDbType.Int32).Value = orderId;
@@ -1597,7 +1337,7 @@ namespace OnlinePastryShop.Pages
                     }
 
                     string query = @"
-                        UPDATE Orders
+                        UPDATE ""AARON_IPT"".""ORDERS""
                         SET Status = :Status
                         WHERE OrderId = :OrderId
                     ";
@@ -1621,28 +1361,41 @@ namespace OnlinePastryShop.Pages
 
         protected void TimeRangeSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DropDownList dropdown = (DropDownList)sender;
-            TimeRange = dropdown.SelectedValue;
+            try
+            {
+                DropDownList dropdown = (DropDownList)sender;
+                TimeRange = dropdown.SelectedValue;
 
-            System.Diagnostics.Debug.WriteLine($"========================================");
-            System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
+                System.Diagnostics.Debug.WriteLine($"========================================");
+                System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
 
-            // Reinitialize time parameters
-            InitializeTimeParameters();
-            System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
-            System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
+                // Reinitialize time parameters
+                InitializeTimeParameters();
+                System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
+                System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
 
-            // Update card titles based on time range
-            UpdateCardTitles();
-            System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
+                // Update card titles based on time range
+                UpdateCardTitles();
+                System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
 
-            // Reload dashboard data with new time range
-            System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
-            LoadDashboardData();
+                // Clear existing data
+                DailyRevenue = "0.00";
+                TodayOrderCount = "0";
+                PendingOrderCount = "0";
+                
+                // Reload dashboard data with new time range
+                System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
+                LoadDashboardData();
 
-            System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
-            System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
-            System.Diagnostics.Debug.WriteLine($"========================================");
+                System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
+                System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
+                System.Diagnostics.Debug.WriteLine($"========================================");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in TimeRangeSelector_SelectedIndexChanged: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
         }
 
         // Add a simple DbHelper class for database operations
@@ -1696,7 +1449,7 @@ namespace OnlinePastryShop.Pages
             private static string GetConnectionString()
             {
                 return ConfigurationManager.ConnectionStrings["OracleConnection"]?.ConnectionString
-                    ?? "User Id=mecate;Password=qwen123;Data Source=localhost:1521/xe;";
+                    ?? "User Id=AARON_IPT;Password=qwen123;Data Source=localhost:1521/xe;";
             }
         }
     }

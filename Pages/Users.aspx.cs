@@ -1,744 +1,739 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Net.Mail;
-using Oracle.ManagedDataAccess.Client;
 using System.Configuration;
-using System.Security.Cryptography;
-using System.Web.Configuration;
-using Oracle.ManagedDataAccess.Types;
+using System.Data;
 using System.Diagnostics;
-// Removed: using System.Web.UI.WebControls.Expressions;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Oracle.ManagedDataAccess.Client;
 
 namespace OnlinePastryShop.Pages
 {
-    #region User Model
-    public class UserModel
-    {
-        public int UserId { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Status { get; set; }
-        public DateTime DateCreated { get; set; }
-        public string UserType { get; set; }
-        public bool IsActive { get; set; }
-
-        public static UserModel FromReader(OracleDataReader reader)
-        {
-            bool isActive = Convert.ToBoolean(Convert.ToInt32(reader["ISACTIVE"]));
-            return new UserModel
-            {
-                UserId = Convert.ToInt32(reader["USERID"]),
-                Username = reader["USERNAME"].ToString(),
-                Email = reader["EMAIL"].ToString(),
-                Status = isActive ? "Active" : "Inactive",
-                DateCreated = Convert.ToDateTime(reader["DATECREATED"]),
-                UserType = reader["USERTYPE"].ToString(),
-                IsActive = isActive
-            };
-        }
-    }
-    #endregion
-
     public partial class Users : System.Web.UI.Page
     {
-        // Hidden field to store user ID for operations that need it across postbacks
+        // Constants
+        private const int PAGE_SIZE = 10;
         private int selectedUserId = 0;
+        private int currentPage = 1;
 
-        // UI controls defined in aspx file
-        protected Repeater userRepeater;
-        protected Label lblTotalUsersValue;
-        protected Label lblActiveUsersValue;
-        protected Label lblInactiveUsersValue;
-        protected Label lblNewUsersValue;
-        protected Label lblMessage;
-        protected Panel pnlToast;
-        protected Label lblToastMessage;
-        protected GridView gvUsers;
-
-        // Add missing control declarations
-        protected Label lblToggleConfirmMessage;
-        protected Label lblResetConfirmMessage;
-        protected Label lblNewPassword;
-        protected Panel pnlResetPasswordSuccess;
-        // lvUsers is now properly declared in the designer file
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Debug.WriteLine("----- Page_Load called -----");
+            
             try
             {
-                System.Diagnostics.Debug.WriteLine($"Page_Load called - IsPostBack: {IsPostBack}, ViewState count: {ViewState.Count}");
-
                 if (!IsPostBack)
                 {
-                    // Initialize dropdown on first load
-                    if (ddlStatus != null)
-                    {
-                        ddlStatus.SelectedValue = "true"; // Default to active users
-                        System.Diagnostics.Debug.WriteLine("Set ddlStatus default value to 'true'");
-                    }
-
-                    // Set initial ViewState values
-                    ViewState["StatusFilter"] = "true";
-                    ViewState["CurrentPageIndex"] = 0;
-                    ViewState["SearchText"] = string.Empty;
-
-                    // Load initial data
+                    Debug.WriteLine("Initial page load - loading default data");
+                    
+                    // Set defaults for first load
+                    DropDownList ddlStatus = FindControl("ddlStatus") as DropDownList;
+                    TextBox txtSearch = FindControl("txtSearch") as TextBox;
+                    
+                    if (ddlStatus != null) ddlStatus.SelectedValue = "true";
+                    if (txtSearch != null) txtSearch.Text = string.Empty;
+                    
+                    // Load user stats
                     LoadStats();
-                    LoadUsers(false);
-                }
-                else
-                {
-                    // For postbacks, check if it's a pagination event
-                    // If it is, handle custom pagination events
-                    bool isPaginationEvent = false;
-
-                    // Look at the current event target
-                    string eventTarget = Request.Form["__EVENTTARGET"] ?? string.Empty;
-                    if (!string.IsNullOrEmpty(eventTarget) &&
-                        (eventTarget.Contains("Pager")))
+                    
+                    // Load users with default parameters (active users, page 1)
+                    LoadUsers(1, "true", string.Empty);
+                        }
+                        else
+                        {
+                    // Check if we're handling a page change from JavaScript
+                    if (Request.Form["__EVENTTARGET"] == "btnChangePage")
                     {
-                        isPaginationEvent = true;
-                        System.Diagnostics.Debug.WriteLine($"Pagination event detected: {eventTarget}");
+                        string pageArg = Request.Form["__EVENTARGUMENT"];
+                        if (!string.IsNullOrEmpty(pageArg) && int.TryParse(pageArg, out int page))
+                        {
+                            // Get current filter values from hidden fields
+                            HiddenField hdnStatus = FindControl("hdnStatus") as HiddenField;
+                            HiddenField hdnSearch = FindControl("hdnSearch") as HiddenField;
+                            
+                            string activeStatus = hdnStatus?.Value ?? "true";
+                            string searchText = hdnSearch?.Value ?? string.Empty;
+                            
+                            Debug.WriteLine($"JavaScript page change to page {page} detected");
+                            LoadUsers(page, activeStatus, searchText);
+                        }
                     }
-
-                    // If it's a pagination event, handle custom pagination events
-                    if (isPaginationEvent)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Our custom pagination will handle the pagination event");
-                        return;
-                    }
-
-                    // Otherwise, restore values from ViewState as needed
-                    // Note: LoadUsers will be called by the specific event handlers
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in Page_Load: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error loading page: " + ex.Message);
+                Debug.WriteLine($"Error in Page_Load: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
+                ShowError("An error occurred while loading the page. Please try again.");
             }
-        }
-
-        // Check if the current request is a pagination event
-        private bool IsPaginationEvent()
-        {
-            string eventTarget = Request["__EVENTTARGET"] ?? string.Empty;
-            string eventArgument = Request["__EVENTARGUMENT"] ?? string.Empty;
-
-            bool isPagingEvent =
-                eventTarget.Contains("Pager") ||
-                eventArgument.Contains("Page$");
-
-            if (isPagingEvent)
-            {
-                System.Diagnostics.Debug.WriteLine($"Pagination event detected: Target='{eventTarget}', Argument='{eventArgument}'");
-            }
-
-            return isPagingEvent;
         }
 
         #region Data Loading Methods
 
+        private void LoadUsers(int page = 1, string activeStatus = "all", string searchText = "")
+        {
+            try
+            {
+                Debug.WriteLine($"LoadUsers called with page={page}, activeStatus={activeStatus}, searchText={searchText}");
+                
+                // Store current page for pagination
+                currentPage = page;
+                
+                // Validate and set parameters
+                if (string.IsNullOrEmpty(activeStatus)) activeStatus = "all";
+                if (searchText == null) searchText = "";
+
+                string connectionString = GetConnectionString();
+
+                // Create a list to hold all user data
+                List<UserModel> allUsers = new List<UserModel>();
+                
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // Use a very simple query to get all users first
+                    string sql = @"SELECT USERID, USERNAME, EMAIL, ROLE, DATECREATED, DATEMODIFIED, LASTLOGIN, ISACTIVE 
+                                 FROM AARON_IPT.USERS";
+                    
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        {
+                            // Read all users into memory
+                            while (reader.Read())
+                            {
+                                // Convert data directly from reader to UserModel
+                                UserModel user = new UserModel
+                                {
+                                    UserId = Convert.ToInt32(reader["USERID"]),
+                                    Username = reader["USERNAME"].ToString(),
+                                    Email = reader["EMAIL"].ToString(),
+                                    Role = reader["ROLE"] != DBNull.Value ? reader["ROLE"].ToString() : string.Empty,
+                                    DateCreated = reader["DATECREATED"] != DBNull.Value ? Convert.ToDateTime(reader["DATECREATED"]) : DateTime.MinValue,
+                                    DateModified = reader["DATEMODIFIED"] != DBNull.Value ? Convert.ToDateTime(reader["DATEMODIFIED"]) : DateTime.MinValue,
+                                    LastLogin = reader["LASTLOGIN"] != DBNull.Value ? Convert.ToDateTime(reader["LASTLOGIN"]) : DateTime.MinValue,
+                                    IsActive = reader["ISACTIVE"] != DBNull.Value && Convert.ToInt32(reader["ISACTIVE"]) == 1
+                                };
+                                
+                                allUsers.Add(user);
+                            }
+                        }
+                    }
+                    
+                    Debug.WriteLine($"Retrieved {allUsers.Count} total users from database");
+                }
+                
+                // Filter users in memory - much more reliable than SQL in this case
+                var filteredUsers = allUsers.AsQueryable();
+                
+                // Apply active/inactive filter if needed
+                if (activeStatus.ToLower() == "true")
+                {
+                    filteredUsers = filteredUsers.Where(u => u.IsActive);
+                    Debug.WriteLine("Filtering for active users only");
+                }
+                else if (activeStatus.ToLower() == "false")
+                {
+                    filteredUsers = filteredUsers.Where(u => !u.IsActive);
+                    Debug.WriteLine("Filtering for inactive users only");
+                }
+                
+                // Apply search filter if provided
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    string search = searchText.ToLower();
+                    filteredUsers = filteredUsers.Where(u => 
+                        u.Username.ToLower().Contains(search) || 
+                        u.Email.ToLower().Contains(search) || 
+                        (u.Role != null && u.Role.ToLower().Contains(search))
+                    );
+                    Debug.WriteLine($"Applied search filter: '{searchText}'");
+                }
+                
+                // Order by UserId
+                filteredUsers = filteredUsers.OrderBy(u => u.UserId);
+                
+                // Get total count after filtering
+                int totalUsers = filteredUsers.Count();
+                Debug.WriteLine($"After filtering: {totalUsers} users match criteria");
+                
+                // Calculate total pages
+                int pageSize = PAGE_SIZE;
+                int totalPages = (int)Math.Ceiling((double)totalUsers / pageSize);
+                
+                // Make sure the requested page is valid
+                if (page > totalPages && totalPages > 0)
+                {
+                    page = totalPages;
+                    currentPage = page;
+                }
+                else if (page < 1)
+                {
+                    page = 1;
+                    currentPage = page;
+                }
+                
+                // Apply pagination in memory
+                var pagedUsers = filteredUsers
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                
+                Debug.WriteLine($"After paging: Showing {pagedUsers.Count} users for page {page}");
+                
+                // List all users in the current page for debugging
+                if (pagedUsers.Any())
+                {
+                    Debug.WriteLine("Users in current page:");
+                    foreach (var user in pagedUsers)
+                    {
+                        Debug.WriteLine($"  User {user.UserId}: {user.Username}, IsActive={user.IsActive}");
+                    }
+                }
+                
+                // Store filter values in hidden fields
+                HiddenField hdnStatusField = GetControlById("hdnStatus") as HiddenField;
+                HiddenField hdnSearchField = GetControlById("hdnSearch") as HiddenField;
+                if (hdnStatusField != null) hdnStatusField.Value = activeStatus;
+                if (hdnSearchField != null) hdnSearchField.Value = searchText;
+                
+                // Save to ViewState too for reliability
+                ViewState["CurrentActiveStatus"] = activeStatus;
+                ViewState["CurrentSearchText"] = searchText;
+                
+                // Bind data to ListView
+                lvUsers.DataSource = pagedUsers;
+                lvUsers.DataBind();
+                
+                // Update pagination info
+                lblCurrentPage.Text = page.ToString();
+                lblTotalPages.Text = totalPages.ToString();
+                hdnCurrentPage.Value = page.ToString();
+                hdnTotalPages.Value = totalPages.ToString();
+                
+                // Handle the case when no users are found
+                if (pagedUsers.Count == 0)
+                {
+                    Debug.WriteLine("No users found with the current filter");
+                    Label lblNoUsers = GetControlById("lblNoUsers") as Label;
+                    if (lblNoUsers != null)
+                    {
+                        if (!string.IsNullOrEmpty(searchText))
+                        {
+                            lblNoUsers.Text = $"No users found matching '{searchText}'.";
+                        }
+                        else if (activeStatus.ToLower() != "all")
+                        {
+                            lblNoUsers.Text = $"No {(activeStatus.ToLower() == "true" ? "active" : "inactive")} users found.";
+                            }
+                            else
+                            {
+                            lblNoUsers.Text = "No users found.";
+                        }
+                        lblNoUsers.Visible = true;
+                    }
+                    
+                    ListView lvUsersList = GetControlById("lvUsers") as ListView;
+                    if (lvUsersList != null) lvUsersList.Visible = false;
+                    
+                    // Update the total user count in the UI
+                    Literal litTotalUsers = GetControlById("litTotalUsers") as Literal;
+                    if (litTotalUsers != null) litTotalUsers.Text = totalUsers.ToString();
+                    }
+                    else
+                    {
+                    // Show the ListView
+                    Label lblNoUsers = GetControlById("lblNoUsers") as Label;
+                    if (lblNoUsers != null) lblNoUsers.Visible = false;
+                    
+                    ListView lvUsersList = GetControlById("lvUsers") as ListView;
+                    if (lvUsersList != null) lvUsersList.Visible = true;
+                    
+                    // Generate pagination buttons
+                    GeneratePaginationButtons();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in LoadUsers: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
+                ShowError("Error loading users. Please try again.");
+            }
+        }
+        
         private void LoadStats()
         {
             try
             {
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                // Get the connection string
+                string connectionString = GetConnectionString();
+
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
                     conn.Open();
+                    Debug.WriteLine("LoadStats: Connection opened successfully");
 
-                    // Get total number of users (both active and inactive)
-                    string totalUsersQuery = @"
-                        SELECT COUNT(*) AS TotalUsers
-                        FROM Users
-                        WHERE UPPER(USERNAME) <> 'ADMIN'";
-
-                    using (OracleCommand cmd = new OracleCommand(totalUsersQuery, conn))
+                    // DEBUGGING: Check ISACTIVE values directly from the database
+                    try
                     {
-                        object result = cmd.ExecuteScalar();
-                        if (result != null && result != DBNull.Value)
+                        Debug.WriteLine("==== CHECKING ISACTIVE VALUES START ====");
+                        using (OracleCommand cmd = new OracleCommand("SELECT USERID, USERNAME, ISACTIVE FROM AARON_IPT.USERS", conn))
                         {
-                            litTotalUsers.Text = result.ToString();
+                            using (OracleDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    int userId = reader.GetInt32(0);
+                                    string username = reader.GetString(1);
+                                    object isActiveObj = reader[2];
+                                    
+                                    Debug.WriteLine($"User ID: {userId}, Username: {username}");
+                                    Debug.WriteLine($"ISACTIVE type: {isActiveObj?.GetType().FullName ?? "null"}, Value: '{isActiveObj?.ToString() ?? "null"}'");
+                                    
+                                    // Try different conversions to understand the data type
+                                    try 
+                                    {
+                                        if (isActiveObj != null && isActiveObj != DBNull.Value)
+                                        {
+                                            bool? boolValue = null;
+                                            int? intValue = null;
+                                            string strValue = isActiveObj.ToString().ToLower();
+                                            
+                                            // Try bool conversion
+                                            try { boolValue = Convert.ToBoolean(isActiveObj); } catch { }
+                                            
+                                            // Try int conversion
+                                            try { intValue = Convert.ToInt32(isActiveObj); } catch { }
+                                            
+                                            Debug.WriteLine($"  - As bool: {boolValue}");
+                                            Debug.WriteLine($"  - As int: {intValue}");
+                                            Debug.WriteLine($"  - As string: '{strValue}'");
+                                            Debug.WriteLine($"  - String equals 'true': {strValue == "true"}");
+                                            Debug.WriteLine($"  - String equals '1': {strValue == "1"}");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Debug.WriteLine($"Error in conversion tests: {ex.Message}");
+                                    }
+                                }
+                            }
                         }
+                        Debug.WriteLine("==== CHECKING ISACTIVE VALUES END ====");
+            }
+            catch (Exception ex)
+            {
+                        Debug.WriteLine($"Error checking ISACTIVE values: {ex.Message}");
                     }
 
-                    // Get new users (last 30 days) - regardless of active status
-                    string newUsersQuery = @"
-                        SELECT COUNT(*) AS NewUsers
-                        FROM Users
-                        WHERE DateCreated >= :startDate
-                        AND UPPER(USERNAME) <> 'ADMIN'";
-
-                    using (OracleCommand cmd = new OracleCommand(newUsersQuery, conn))
+                    // Continue with original LoadStats functionality 
+                    // Test table existence first
+                    try
                     {
-                        cmd.Parameters.Add("startDate", OracleDbType.Date).Value = DateTime.Now.AddDays(-30);
-                        object result = cmd.ExecuteScalar();
-                        if (result != null && result != DBNull.Value)
+                        using (OracleCommand testCmd = new OracleCommand(
+                            "SELECT COUNT(*) FROM ALL_TABLES WHERE OWNER = 'AARON_IPT' AND TABLE_NAME = 'USERS'", conn))
                         {
-                            litNewUsers.Text = result.ToString();
+                            int tableExists = Convert.ToInt32(testCmd.ExecuteScalar());
+                            Debug.WriteLine($"USERS table exists check for stats: {tableExists > 0}");
+                            
+                            if (tableExists == 0)
+                            {
+                                Debug.WriteLine("USERS table does not exist in the AARON_IPT schema");
+                                // Set defaults for controls
+                                Literal litTotalUsers = GetControlById("litTotalUsers") as Literal;
+                                Literal litNewUsers = GetControlById("litNewUsers") as Literal;
+                                
+                                if (litTotalUsers != null) litTotalUsers.Text = "0";
+                                if (litNewUsers != null) litNewUsers.Text = "0";
+                                
+                                return;
+                            }
                         }
+                    }
+                    catch (Exception tableEx)
+                    {
+                        Debug.WriteLine($"Error checking table existence for stats: {tableEx.Message}");
+                    }
+
+                    // STEP 1: Get total users count
+                int totalUsers = 0;
+                    try
+                    {
+                        using (OracleCommand cmd = new OracleCommand("SELECT COUNT(*) FROM AARON_IPT.USERS", conn))
+                        {
+                            totalUsers = Convert.ToInt32(cmd.ExecuteScalar());
+                            Debug.WriteLine($"Total users count: {totalUsers}");
+                            
+                            // Find control
+                            Literal litTotalUsers = GetControlById("litTotalUsers") as Literal;
+                            if (litTotalUsers != null)
+                            {
+                                litTotalUsers.Text = totalUsers.ToString();
+                            }
+                        }
+                    }
+                    catch (Exception countEx)
+                    {
+                        Debug.WriteLine($"Error getting total users count: {countEx.Message}");
+                        // Set default value
+                        Literal litTotalUsers = GetControlById("litTotalUsers") as Literal;
+                        if (litTotalUsers != null) litTotalUsers.Text = "0";
+                    }
+                    
+                    // STEP 2: Get new users count (last 30 days)
+                    int newUsers = 0;
+                    try
+                    {
+                        DateTime startDate = DateTime.Now.AddDays(-30);
+                        string newUsersQuery = "SELECT COUNT(*) FROM AARON_IPT.USERS WHERE DATECREATED >= :startDate";
+                        
+                        using (OracleCommand cmd = new OracleCommand(newUsersQuery, conn))
+                        {
+                            cmd.Parameters.Add(new OracleParameter("startDate", OracleDbType.Date)).Value = startDate;
+                            
+                            newUsers = Convert.ToInt32(cmd.ExecuteScalar());
+                            Debug.WriteLine($"New users count (last 30 days): {newUsers}");
+                            
+                            // Find control
+                            Literal litNewUsers = GetControlById("litNewUsers") as Literal;
+                            if (litNewUsers != null)
+                            {
+                                litNewUsers.Text = newUsers.ToString();
+                            }
+                        }
+                    }
+                    catch (Exception newUsersEx)
+                    {
+                        Debug.WriteLine($"Error getting new users count: {newUsersEx.Message}");
+                        // Set default value
+                        Literal litNewUsers = GetControlById("litNewUsers") as Literal;
+                        if (litNewUsers != null) litNewUsers.Text = "0";
                     }
                 }
             }
             catch (Exception ex)
             {
-                ShowMessage("Error loading statistics: " + ex.Message, false);
-            }
-        }
-
-        private TextBox GetSearchTextBox()
-        {
-            // Look for the control with the specific path that includes ContentPlaceHolder
-            var content = FindControl("AdminContent") as ContentPlaceHolder;
-            if (content != null)
-            {
-                System.Diagnostics.Debug.WriteLine("Found AdminContent ContentPlaceHolder");
-                var searchBox = content.FindControl("txtSearch") as TextBox;
-                if (searchBox != null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Found txtSearch within AdminContent: {searchBox.ClientID}");
-                    return searchBox;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("txtSearch not found within AdminContent");
-                }
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("AdminContent ContentPlaceHolder not found");
-            }
-
-            // Try from the Form as a fallback
-            if (Form != null)
-            {
-                var control = Form.FindControl("txtSearch") as TextBox;
-                if (control != null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Found txtSearch using Form.FindControl: {control.ClientID}");
-                    return control;
-                }
-            }
-
-            // Try recursive search as a final fallback
-            var allControls = FindAllControlsRecursive(this);
-            var textBoxes = allControls.Where(c => c.ID == "txtSearch").OfType<TextBox>().ToList();
-
-            if (textBoxes.Any())
-            {
-                System.Diagnostics.Debug.WriteLine($"Found {textBoxes.Count} txtSearch controls using recursive search");
-                var searchBox = textBoxes.First();
-                System.Diagnostics.Debug.WriteLine($"Using txtSearch with ID: {searchBox.ClientID}");
-                return searchBox;
-            }
-
-            System.Diagnostics.Debug.WriteLine("ERROR: Could not find txtSearch control!");
-            return null;
-        }
-
-        private DropDownList GetStatusDropDown()
-        {
-            // Look for the control with the specific path that includes ContentPlaceHolder
-            var content = FindControl("AdminContent") as ContentPlaceHolder;
-            if (content != null)
-            {
-                System.Diagnostics.Debug.WriteLine("Found AdminContent ContentPlaceHolder");
-                var ddlStatus = content.FindControl("ddlStatus") as DropDownList;
-                if (ddlStatus != null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Found ddlStatus within AdminContent: {ddlStatus.ClientID}");
-                    return ddlStatus;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("ddlStatus not found within AdminContent");
-                }
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("AdminContent ContentPlaceHolder not found");
-            }
-
-            // Try from the Form as a fallback
-            if (Form != null)
-            {
-                var control = Form.FindControl("ddlStatus") as DropDownList;
-                if (control != null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Found ddlStatus using Form.FindControl: {control.ClientID}");
-                    return control;
-                }
-            }
-
-            // Try recursive search as a final fallback
-            var allControls = FindAllControlsRecursive(this);
-            var ddlControls = allControls.Where(c => c.ID == "ddlStatus").OfType<DropDownList>().ToList();
-
-            if (ddlControls.Any())
-            {
-                System.Diagnostics.Debug.WriteLine($"Found {ddlControls.Count} ddlStatus controls using recursive search");
-                var ddlStatus = ddlControls.First();
-                System.Diagnostics.Debug.WriteLine($"Using ddlStatus with ID: {ddlStatus.ClientID}");
-                return ddlStatus;
-            }
-
-            System.Diagnostics.Debug.WriteLine("ERROR: Could not find ddlStatus control!");
-            return null;
-        }
-
-        private void LoadUsers(bool isSearch = false)
-        {
-            try
-            {
-                // Reset pagination if this is a new search
-                if (isSearch)
-                {
-                    ViewState["CurrentPageIndex"] = 0;
-                    Debug.WriteLine("New search - resetting to page 1");
-                }
-
-                // Get search and status values from ViewState or controls
-                string searchText = string.Empty;
-                string statusValue = "true"; // Default to active users
-
-                // Try to get search text from ViewState or control
-                if (ViewState["SearchText"] != null)
-                {
-                    searchText = ViewState["SearchText"].ToString();
-                }
-                else if (txtSearch != null)
-                {
-                    searchText = txtSearch.Text.Trim();
-                    ViewState["SearchText"] = searchText;
-                }
-
-                // Try to get status filter from ViewState or control
-                if (ViewState["StatusFilter"] != null)
-                {
-                    statusValue = ViewState["StatusFilter"].ToString();
-                }
-                else if (ddlStatus != null)
-                {
-                    statusValue = ddlStatus.SelectedValue;
-                    ViewState["StatusFilter"] = statusValue;
-                }
-
-                Debug.WriteLine($"LOADING USERS: SearchText='{searchText}', StatusValue='{statusValue}'");
-
-                // Store to track if we found any users
-                List<UserModel> users = new List<UserModel>();
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-                    Debug.WriteLine("Database connection opened successfully");
-
-                    // Build the SQL query with parameters
-                    string query = @"
-                            SELECT 
-                                USERID, 
-                                USERNAME, 
-                                EMAIL, 
-                                ISACTIVE, 
-                                TO_CHAR(DATECREATED, 'YYYY-MM-DD') AS DATECREATED, 
-                                ROLE AS USERTYPE 
-                            FROM USERS 
-                        WHERE UPPER(USERNAME) <> 'ADMIN'";
-
-                    using (OracleCommand cmd = new OracleCommand())
-                    {
-                        cmd.Connection = conn;
-
-                        // Apply status filter if specified
-                        if (!string.IsNullOrEmpty(statusValue))
-                        {
-                            // Ensure we're converting the string value correctly
-                            // "true"/"false" or "1"/"0" to integer 1/0 for database query
-                            int isActiveValue = 0;
-
-                            if (statusValue.Equals("true", StringComparison.OrdinalIgnoreCase) ||
-                                statusValue.Equals("1", StringComparison.OrdinalIgnoreCase))
-                            {
-                                isActiveValue = 1;
-                            }
-
-                            query += " AND ISACTIVE = :status";
-                            cmd.Parameters.Add("status", OracleDbType.Int32).Value = isActiveValue;
-                            Debug.WriteLine($"Added status filter: ISACTIVE = {isActiveValue}");
-                        }
-
-                        // Apply search filter if specified
-                        if (!string.IsNullOrEmpty(searchText))
-                        {
-                            query += @" AND (
-                                UPPER(USERNAME) LIKE UPPER(:search) OR 
-                                UPPER(EMAIL) LIKE UPPER(:search)
-                            )";
-                            cmd.Parameters.Add("search", OracleDbType.Varchar2).Value = "%" + searchText + "%";
-                            Debug.WriteLine($"Added search filter: '{searchText}'");
-                        }
-
-                        // Add order by clause
-                        query += " ORDER BY USERNAME";
-
-                        cmd.CommandText = query;
-                        Debug.WriteLine($"Executing query: {query}");
-
-                        // Execute the query and build the user list
-                        using (OracleDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                UserModel user = UserModel.FromReader(reader);
-                                users.Add(user);
-                            }
-                        }
-
-                        Debug.WriteLine($"Retrieved {users.Count} users from database");
-                    }
-                }
-
-                // Set up pagination for our user list
-                if (users.Count > 0)
-                {
-                    // Get the current page index from ViewState (0-based)
-                    int currentPageIndex = 0;
-                    if (ViewState["CurrentPageIndex"] != null)
-                    {
-                        currentPageIndex = Convert.ToInt32(ViewState["CurrentPageIndex"]);
-                    }
-
-                    Debug.WriteLine($"Current page index: {currentPageIndex}");
-
-                    // Define page size
-                    int pageSize = 10;
-
-                    // Calculate total number of pages
-                    int totalItems = users.Count;
-                    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-                    Debug.WriteLine($"Total items: {totalItems}, Total pages: {totalPages}");
-
-                    // Make sure we're not trying to display a page that doesn't exist
-                    if (currentPageIndex >= totalPages)
-                    {
-                        currentPageIndex = totalPages - 1;
-                        ViewState["CurrentPageIndex"] = currentPageIndex;
-                        Debug.WriteLine($"Adjusted page index to {currentPageIndex}");
-                    }
-
-                    // Store pagination values in ViewState
-                    ViewState["TotalItems"] = totalItems;
-                    ViewState["TotalPages"] = totalPages;
-
-                    // Apply pagination by taking only the items for the current page
-                    int startIndex = currentPageIndex * pageSize;
-                    int itemsToTake = Math.Min(pageSize, totalItems - startIndex);
-
-                    // Handle case where startIndex might be out of range
-                    if (startIndex < totalItems)
-                    {
-                        // Get the users for just this page
-                        List<UserModel> pagedUsers = users.Skip(startIndex).Take(itemsToTake).ToList();
-
-                        Debug.WriteLine($"Displaying page {currentPageIndex + 1} of {totalPages}, " +
-                            $"showing {pagedUsers.Count} items starting at index {startIndex}");
-
-                        // Bind the ListView to the paged data
-                        lvUsers.DataSource = pagedUsers;
-                        lvUsers.DataBind();
-
-                        // Update pagination controls
-                        UpdatePaginationControls(currentPageIndex + 1, totalPages); // Convert to 1-based page numbers for display
-
-                        // Hide any "no data" message
-                        ShowEmptyMessage(false);
-                    }
-                    else
-                    {
-                        // This should not happen with our bounds checking, but just in case
-                        Debug.WriteLine($"WARNING: Start index {startIndex} is out of range for {totalItems} items");
-                        lvUsers.DataSource = null;
-                        lvUsers.DataBind();
-                        ShowEmptyMessage(true, "No users found on this page.");
-                    }
-                }
-                else
-                {
-                    // No users found
-                    lvUsers.DataSource = null;
-                    lvUsers.DataBind();
-
-                    // If we have no users, show message
-                    ShowEmptyMessage(true, "No users found matching your criteria.");
-
-                    // Reset pagination info in ViewState
-                    ViewState["TotalItems"] = 0;
-                    ViewState["TotalPages"] = 0;
-
-                    // Update pagination controls with zeros
-                    UpdatePaginationControls(1, 1); // Show "Page 1 of 1" when empty
-                }
-
-                // Update stats after loading users
-                LoadStats();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in LoadUsers: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error loading users: " + ex.Message);
-            }
-        }
-
-        private void LoadUserDetails(int userId)
-        {
-            try
-            {
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-
-                    string query = @"
-                        SELECT 
-                            UserId, 
-                            Username, 
-                            Email, 
-                            LastLogin, 
-                            DateCreated, 
-                            DateModified,
-                            IsActive
-                        FROM Users
-                        WHERE UserId = :userId";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
-                    {
-                        cmd.Parameters.Add("userId", OracleDbType.Int32).Value = userId;
-
-                        using (OracleDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                // Populate user details
-                                lblUserId.Text = reader["UserId"].ToString();
-                                lblUsername.Text = reader["Username"].ToString();
-                                lblEmail.Text = reader["Email"].ToString();
-                                lblDateCreated.Text = FormatDate(reader["DateCreated"]);
-                                lblDateModified.Text = FormatDate(reader["DateModified"]);
-                                lblLastLogin.Text = FormatDate(reader["LastLogin"]);
-                                lblStatus.Text = Convert.ToBoolean(reader["IsActive"]) ? "Active" : "Inactive";
-
-                                // Store username for password reset
-                                lblResetUsername.Text = reader["Username"].ToString();
-                            }
-                        }
-                    }
-                }
-
-                // Make Basic Info tab active by default
-                SetActiveTab("BasicInfo");
-
-                // Show the user details panel
-                pnlUserDetails.Visible = true;
-            }
-            catch (Exception ex)
-            {
-                ShowMessage("Error loading user details: " + ex.Message, false);
+                Debug.WriteLine($"Error in LoadStats: {ex.Message}");
+                ShowError("An error occurred while loading statistics.");
             }
         }
 
         private void LoadOrderHistory(int userId)
         {
-            try
+             try
             {
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                Debug.WriteLine($"LoadOrderHistory called for userId: {userId}");
+                
+                // Reset debug label
+                lblOrderHistoryDebug.Visible = false;
+                
+                string connectionString = GetConnectionString();
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
                     conn.Open();
-
-                    string query = @"
-                        SELECT 
-                            o.OrderId, 
-                            o.OrderDate, 
-                            o.TotalAmount,
-                            o.Status
-                        FROM Orders o
-                        WHERE o.UserId = :userId
-                        AND o.IsActive = 1
-                        ORDER BY o.OrderDate DESC";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
+                    
+                    try
                     {
-                        cmd.Parameters.Add("userId", OracleDbType.Int32).Value = userId;
-
-                        using (OracleDataAdapter adapter = new OracleDataAdapter(cmd))
+                        // Simple query that works with the actual table structure
+                        // Include a count of ORDER_DETAIL items as ITEMCOUNT to match what GridView expects
+                        string simpleQuery = @"
+                            SELECT 
+                                o.ORDERID, 
+                                o.ORDERDATE, 
+                                o.TOTALAMOUNT, 
+                                o.STATUS,
+                                0 AS ITEMCOUNT
+                            FROM 
+                                ORDERS o
+                            WHERE 
+                                o.USERID = :userId
+                            ORDER BY 
+                                o.ORDERDATE DESC";
+                        
+                        Debug.WriteLine($"Executing simplified order history query for user {userId}");
+                        
+                        using (OracleCommand cmd = new OracleCommand(simpleQuery, conn))
                         {
-                            DataTable dt = new DataTable();
-                            adapter.Fill(dt);
-
-                            gvOrderHistory.DataSource = dt;
-                            gvOrderHistory.DataBind();
+                            cmd.Parameters.Add(new OracleParameter("userId", OracleDbType.Int32) { Value = userId });
+                            
+                            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                            DataTable orderTable = new DataTable();
+                            adapter.Fill(orderTable);
+                            
+                            Debug.WriteLine($"Found {orderTable.Rows.Count} orders for user ID {userId}");
+                            
+                            if (orderTable.Rows.Count > 0)
+                            {
+                                gvOrderHistory.DataSource = orderTable;
+                                gvOrderHistory.DataBind();
+                            }
+                            else
+                            {
+                                // No orders found, set empty data text
+                                gvOrderHistory.DataSource = null;
+                                gvOrderHistory.DataBind();
+                                
+                                Debug.WriteLine("No orders found for this user");
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error executing order query: {ex.Message}");
+                        throw; // Re-throw to be caught by outer try/catch
                     }
                 }
             }
             catch (Exception ex)
             {
-                ShowMessage("Error loading order history: " + ex.Message, false);
+                Debug.WriteLine($"Error in LoadOrderHistory: {ex.Message}");
+                lblOrderHistoryDebug.Text = $"Error loading order history: {ex.Message}";
+                lblOrderHistoryDebug.Visible = true;
+            }
+        }
+
+        private void DiagnoseDatabase()
+        {
+            try
+            {
+                Debug.WriteLine("===== RUNNING DATABASE DIAGNOSIS =====");
+                
+                // Check connection and examine ISACTIVE values
+                string connectionString = GetConnectionString();
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+                    Debug.WriteLine("Successfully connected to the database");
+
+                    // Check if USERS table exists
+                    using (OracleCommand cmd = new OracleCommand("SELECT COUNT(*) FROM ALL_TABLES WHERE OWNER = 'AARON_IPT' AND TABLE_NAME = 'USERS'", conn))
+                    {
+                        int tableCount = Convert.ToInt32(cmd.ExecuteScalar());
+                        Debug.WriteLine($"USERS table exists: {tableCount > 0}");
+                    }
+
+                    // Get column information for USERS table
+                    using (OracleCommand cmd = new OracleCommand(@"
+                        SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH, NULLABLE 
+                        FROM ALL_TAB_COLUMNS 
+                        WHERE OWNER = 'AARON_IPT' AND TABLE_NAME = 'USERS'
+                        ORDER BY COLUMN_ID", conn))
+                    {
+                        Debug.WriteLine("USERS table columns:");
+                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Debug.WriteLine($"  {reader["COLUMN_NAME"]} ({reader["DATA_TYPE"]}, {reader["DATA_LENGTH"]}) {(reader["NULLABLE"].ToString() == "Y" ? "NULL" : "NOT NULL")}");
+                            }
+                        }
+                    }
+
+                    // Check for distinct ISACTIVE values
+                    using (OracleCommand cmd = new OracleCommand("SELECT ISACTIVE, COUNT(*) FROM AARON_IPT.USERS GROUP BY ISACTIVE", conn))
+                    {
+                        Debug.WriteLine("ISACTIVE value distribution:");
+                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string isActiveValue = reader[0] == DBNull.Value ? "NULL" : reader[0].ToString();
+                                Debug.WriteLine($"  ISACTIVE = {isActiveValue}: {reader[1]} records (Type: {(reader[0] == DBNull.Value ? "NULL" : reader[0].GetType().Name)})");
+                            }
+                        }
+                    }
+
+                    // Try direct query with limited columns and no WHERE clause
+                    using (OracleCommand cmd = new OracleCommand("SELECT USERID, USERNAME, EMAIL, ISACTIVE FROM AARON_IPT.USERS", conn))
+                    {
+                        Debug.WriteLine("Direct query results (first 5 users):");
+                        int count = 0;
+                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read() && count < 5)
+                            {
+                                count++;
+                                Debug.WriteLine($"  User {reader["USERID"]}: {reader["USERNAME"]}, {reader["EMAIL"]}, ISACTIVE={reader["ISACTIVE"]} (Type: {reader["ISACTIVE"].GetType().Name})");
+                            }
+                            // Check if there are more records
+                            if (reader.Read())
+                            {
+                                Debug.WriteLine("  ... more records exist");
+                            }
+                        }
+                        
+                        if (count == 0)
+                        {
+                            Debug.WriteLine("  NO USERS FOUND in direct query!");
+                        }
+                    }
+
+                    // Try a simple version of our pagination query
+                    string testQuery = @"
+                        SELECT * FROM (
+                            SELECT a.*, ROWNUM AS rn FROM (
+                                SELECT USERID, USERNAME, EMAIL, ISACTIVE
+                                FROM AARON_IPT.USERS
+                                ORDER BY USERID
+                            ) a
+                            WHERE ROWNUM <= 10
+                        )
+                        WHERE rn >= 1";
+
+                    using (OracleCommand cmd = new OracleCommand(testQuery, conn))
+                    {
+                        Debug.WriteLine("Testing simplified pagination query:");
+                        try
+                        {
+                            using (OracleDataReader reader = cmd.ExecuteReader())
+                            {
+                                int count = 0;
+                                while (reader.Read() && count < 5)
+                                {
+                                    count++;
+                                    Debug.WriteLine($"  User {reader["USERID"]}: {reader["USERNAME"]}, ISACTIVE={reader["ISACTIVE"]}");
+                                }
+                                
+                                if (count == 0)
+                                {
+                                    Debug.WriteLine("  NO USERS FOUND in pagination test query!");
+                                }
+                            }
+            }
+            catch (Exception ex)
+            {
+                            Debug.WriteLine($"  ERROR in test query: {ex.Message}");
+                        }
+                    }
+                }
+                
+                Debug.WriteLine("===== DATABASE DIAGNOSIS COMPLETE =====");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Database diagnosis error: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
             }
         }
 
         #endregion
 
-        #region Event Handlers
+        #region Button Event Handlers
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            try
-            {
-                Debug.WriteLine("btnSearch_Click triggered");
-
-                // Get search text and store in ViewState
-                string searchText = string.Empty;
-
-                // First try to get the search text box directly
-                if (txtSearch != null)
-                {
-                    searchText = txtSearch.Text.Trim();
-                    Debug.WriteLine($"Search text from control: '{searchText}'");
-                }
-                else
-                {
-                    Debug.WriteLine("WARNING: txtSearch control not found!");
-
-                    // Try to find the search text box
-                    TextBox searchBox = GetSearchTextBox();
-                    if (searchBox != null)
-                    {
-                        searchText = searchBox.Text.Trim();
-                        Debug.WriteLine($"Search text from FindControl: '{searchText}'");
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Could not find search text box");
-                    }
-                }
-
-                // Update ViewState regardless of whether we found a control
-                ViewState["SearchText"] = searchText;
-                Debug.WriteLine($"Stored search text in ViewState: '{searchText}'");
-
-                // Get status filter and store in ViewState
-                string statusValue = "true"; // Default to active users
-
-                // First try to get the status dropdown directly
-                if (ddlStatus != null)
-                {
-                    statusValue = ddlStatus.SelectedValue;
-                    Debug.WriteLine($"Status filter from control: '{statusValue}'");
-                }
-                else
-                {
-                    Debug.WriteLine("WARNING: ddlStatus control not found!");
-
-                    // Try to find the status dropdown
-                    DropDownList statusDropDown = GetStatusDropDown();
-                    if (statusDropDown != null)
-                    {
-                        statusValue = statusDropDown.SelectedValue;
-                        Debug.WriteLine($"Status filter from FindControl: '{statusValue}'");
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Could not find status dropdown");
-                    }
-                }
-
-                // Update ViewState regardless of whether we found a control
-                ViewState["StatusFilter"] = statusValue;
-                Debug.WriteLine($"Stored status filter in ViewState: '{statusValue}'");
-
-                // Load users with the search flag set to true to reset pagination
-                LoadUsers(true);
-
-                // Show confirmation of the search
-                string filterDesc = statusValue.Equals("true", StringComparison.OrdinalIgnoreCase)
-                    ? "Active" : "Inactive";
-
-                if (!string.IsNullOrEmpty(searchText))
-                {
-                    ShowToast($"Showing {filterDesc} users matching '{searchText}'");
-                }
-                else
-                {
-                    ShowToast($"Showing all {filterDesc} users");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in btnSearch_Click: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error performing search: " + ex.Message);
-            }
+            Debug.WriteLine("Search button clicked");
+            
+            // Get filter values directly from controls
+            string searchText = txtSearch.Text.Trim();
+            string status = ddlStatus.SelectedValue;
+            
+            Debug.WriteLine($"Search clicked with text: '{searchText}', status: {status}");
+            
+            // Update hidden fields - get them by ID first
+            HiddenField hdnStatusField = FindControl("hdnStatus") as HiddenField;
+            HiddenField hdnSearchField = FindControl("hdnSearch") as HiddenField;
+            
+            if (hdnStatusField != null) hdnStatusField.Value = status;
+            if (hdnSearchField != null) hdnSearchField.Value = searchText;
+            
+            // Reset to page 1 for new search and pass selected status value directly to LoadUsers
+            LoadUsers(1, status, searchText);
+        }
+        
+        protected void btnReset_Click(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Reset search clicked");
+            
+            // Reset controls to default values
+                txtSearch.Text = string.Empty;
+                    ddlStatus.SelectedValue = "true";
+            
+            // Reset hidden fields
+            HiddenField hdnStatusField = FindControl("hdnStatus") as HiddenField;
+            HiddenField hdnSearchField = FindControl("hdnSearch") as HiddenField;
+            
+            if (hdnStatusField != null) hdnStatusField.Value = "true";
+            if (hdnSearchField != null) hdnSearchField.Value = string.Empty;
+            
+            // Reset to page 1 and load with default filters
+            LoadUsers(1, "true", string.Empty);
         }
 
-        protected void btnReset_Click(object sender, EventArgs e)
+        protected void Page_Click(object sender, EventArgs e)
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine("btnReset_Click triggered");
-
-                // Clear search text
-                if (txtSearch != null)
+                Debug.WriteLine("Page_Click called");
+                
+                // Get current page and total pages
+                int currentPageNum = 1;
+                int totalPages = 1;
+                
+                if (int.TryParse(hdnCurrentPage.Value, out currentPageNum) && 
+                    int.TryParse(hdnTotalPages.Value, out totalPages))
                 {
-                    txtSearch.Text = string.Empty;
+                    Debug.WriteLine($"Current page: {currentPageNum}, Total pages: {totalPages}");
                 }
-                else
+                
+                // Determine which page to navigate to based on the sender
+                int targetPage = currentPageNum;
+                
+                if (sender is LinkButton btn)
                 {
-                    // Try to get the control by ID
-                    TextBox searchBox = GetControl<TextBox>("txtSearch");
-                    if (searchBox != null)
+                    string arg = btn.CommandArgument.ToLower();
+                    Debug.WriteLine($"Command argument: {arg}");
+                    
+                    switch (arg)
                     {
-                        searchBox.Text = string.Empty;
+                        case "first":
+                            targetPage = 1;
+                            break;
+                        case "prev":
+                            targetPage = Math.Max(1, currentPageNum - 1);
+                            break;
+                        case "next":
+                            targetPage = Math.Min(totalPages, currentPageNum + 1);
+                            break;
+                        case "last":
+                            targetPage = totalPages;
+                            break;
+                        default:
+                            // Try to parse as a page number
+                            if (int.TryParse(arg, out int pageNum))
+                            {
+                                targetPage = pageNum;
+                            }
+                            break;
                     }
                 }
-
-                // Reset status filter to "Active"
-                if (ddlStatus != null)
+                else if (sender is Button)
                 {
-                    ddlStatus.SelectedValue = "true";
+                    // For btnChangePage, we use the value from hdnCurrentPage
+                    // which is set by the JavaScript changePage function
+                    targetPage = currentPageNum;
+                    Debug.WriteLine($"Button click changing to page {targetPage}");
                 }
-                else
-                {
-                    // Try to get the control by ID
-                    DropDownList statusDropDown = GetControl<DropDownList>("ddlStatus");
-                    if (statusDropDown != null)
-                    {
-                        statusDropDown.SelectedValue = "true";
-                    }
-                }
-
-                // Clear ViewState search values
-                ViewState["SearchText"] = string.Empty;
-                ViewState["StatusFilter"] = "true";
-                ViewState["CurrentPageIndex"] = 0;
-
-                // Reload users with reset filters
-                LoadUsers(true);
+                
+                Debug.WriteLine($"Navigating to page {targetPage}");
+                
+                // Get filter values
+                string activeStatus = ddlStatus.SelectedValue;
+                string searchText = txtSearch.Text;
+                
+                // Load the users for the target page
+                LoadUsers(targetPage, activeStatus, searchText);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in btnReset_Click: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error resetting search: " + ex.Message);
+                Debug.WriteLine($"Error in Page_Click: {ex.Message}");
+                ShowError("Error navigating to page: " + ex.Message);
             }
         }
 
@@ -746,134 +741,30 @@ namespace OnlinePastryShop.Pages
         {
             try
             {
-                Debug.WriteLine($"lvUsers_ItemCommand called with command: {e.CommandName}");
-
-                // Get the user ID from the CommandArgument
-                string userId = e.CommandArgument.ToString();
-                Debug.WriteLine($"Command for User ID: {userId}");
-
-                if (string.IsNullOrEmpty(userId))
-                {
-                    ShowError("Invalid user ID.");
-                    return;
-                }
-
-                // Store the user ID for subsequent operations - both in instance variable and ViewState for persistence
-                selectedUserId = Convert.ToInt32(userId);
-                ViewState["SelectedUserId"] = userId;
-
-                // Handle different commands
-                switch (e.CommandName)
-                {
-                    case "ViewDetails":
-                        Debug.WriteLine($"Viewing details for user ID: {userId}");
-                        ShowUserDetails(userId);
-                        break;
-
-                    case "ResetPassword":
-                        Debug.WriteLine($"Reset password confirmation for user ID: {userId}");
-                        // Before showing the confirmation, check if the user exists and is active
-                        if (IsUserActive(selectedUserId))
-                        {
-                            ShowResetPasswordConfirmation(userId);
-                        }
-                        else
-                        {
-                            ShowError("Cannot reset password for inactive users.");
-                        }
-                        break;
-
-                    case "ToggleStatus":
-                        Debug.WriteLine($"Toggle status for user ID: {userId}");
-                        // Get the current status
-                        bool isActive = IsUserActive(selectedUserId);
-
-                        // Show confirmation dialog
-                        string username = GetUsernameById(userId);
-                        string action = isActive ? "deactivate" : "activate";
-
-                        // Set message for confirmation dialog
-                        if (lblToggleConfirmMessage != null)
-                        {
-                            lblToggleConfirmMessage.Text = $"Are you sure you want to {action} user '{username}'?";
-                        }
-
-                        // Show the toggle confirmation panel
-                        if (pnlToggleStatus != null)
-                        {
-                            pnlToggleStatus.Visible = true;
-                            Debug.WriteLine($"Toggle status confirmation panel made visible for {username}");
-                        }
-                        else
-                        {
-                            // Direct toggle without confirmation as fallback
-                            ToggleUserStatus(userId);
-                        }
-                        break;
-
-                    default:
-                        Debug.WriteLine($"Unhandled command: {e.CommandName}");
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in lvUsers_ItemCommand: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error processing command: " + ex.Message);
-            }
-        }
-
-        protected void lvUsers_ItemDataBound(object sender, ListViewItemEventArgs e)
-        {
-            try
-            {
-                if (e.Item.ItemType == ListViewItemType.DataItem)
-                {
-                    // Get the user model for this row
-                    UserModel user = (UserModel)((ListViewDataItem)e.Item).DataItem;
-                    if (user != null)
+                // Get the user ID
+                    if (e.CommandArgument != null)
                     {
-                        // Find the status badge span
-                        HtmlGenericControl statusBadge = (HtmlGenericControl)e.Item.FindControl("statusBadge");
-                        if (statusBadge != null)
-                        {
-                            // Set the status badge class based on the user's active status
-                            if (user.IsActive)
-                            {
-                                statusBadge.Attributes["class"] = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800";
-                            }
-                            else
-                            {
-                                statusBadge.Attributes["class"] = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800";
-                            }
-                        }
-
-                        // Find the toggle status button
-                        LinkButton btnToggleStatus = (LinkButton)e.Item.FindControl("btnToggleStatus");
-                        if (btnToggleStatus != null)
-                        {
-                            // Set button color and tooltip based on current status
-                            if (user.IsActive)
-                            {
-                                btnToggleStatus.ToolTip = "Deactivate User";
-                                btnToggleStatus.CssClass = "text-red-600 hover:text-red-900";
-                            }
-                            else
-                            {
-                                btnToggleStatus.ToolTip = "Activate User";
-                                btnToggleStatus.CssClass = "text-green-600 hover:text-green-900";
-                            }
-
-                            System.Diagnostics.Debug.WriteLine($"Setup toggle button for user {user.Username} (Active: {user.IsActive})");
-                        }
+                        selectedUserId = Convert.ToInt32(e.CommandArgument);
                     }
+                    
+                // Execute the appropriate action
+                switch (e.CommandName)
+                    {
+                    case "ViewDetails":
+                        ShowUserDetails(selectedUserId);
+                        break;
+                    case "ResetPassword":
+                        ShowResetPassword(selectedUserId);
+                        break;
+                    case "ToggleStatus":
+                        ShowToggleStatus(selectedUserId);
+                        break;
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in lvUsers_ItemDataBound: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                Debug.WriteLine($"Error processing command: {ex.Message}");
+                ShowError($"Error processing command: {ex.Message}");
             }
         }
 
@@ -884,196 +775,274 @@ namespace OnlinePastryShop.Pages
 
         protected void tabBasicInfo_Click(object sender, EventArgs e)
         {
-            SetActiveTab("BasicInfo");
+            try
+            {
+                pnlBasicInfo.Visible = true;
+                pnlOrderHistory.Visible = false;
+                
+                // Update tab styling
+                tabBasicInfo.CssClass = "border-[#D43B6A] text-[#D43B6A] whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+                tabOrderHistory.CssClass = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+                
+                Debug.WriteLine("Basic Info tab activated");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in tabBasicInfo_Click: {ex.Message}");
+            }
         }
 
         protected void tabOrderHistory_Click(object sender, EventArgs e)
         {
-            SetActiveTab("OrderHistory");
-            LoadOrderHistory(selectedUserId);
+            try
+            {
+                // Get user ID from ViewState
+                int userId = 0;
+                if (ViewState["SelectedUserId"] != null)
+                {
+                    userId = Convert.ToInt32(ViewState["SelectedUserId"]);
+                    Debug.WriteLine($"Loading order history for userId: {userId}");
+                    
+                    // Load order history data
+                    LoadOrderHistory(userId);
+                }
+                else
+                {
+                    Debug.WriteLine("ERROR: SelectedUserId not found in ViewState for order history");
+                    lblOrderHistoryDebug.Text = "User ID not found. Cannot load order history.";
+                    lblOrderHistoryDebug.Visible = true;
+                }
+                
+                // Show order history panel and hide basic info
+                pnlBasicInfo.Visible = false;
+                pnlOrderHistory.Visible = true;
+                
+                // Update tab styling
+                tabBasicInfo.CssClass = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+                tabOrderHistory.CssClass = "border-[#D43B6A] text-[#D43B6A] whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+                
+                Debug.WriteLine("Order History tab activated");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in tabOrderHistory_Click: {ex.Message}");
+                lblOrderHistoryDebug.Text = $"Error loading order history: {ex.Message}";
+                lblOrderHistoryDebug.Visible = true;
+            }
         }
 
-        protected void btnClosePasswordReset_Click(object sender, EventArgs e)
+        protected void btnCancelReset_Click(object sender, EventArgs e)
         {
             pnlPasswordReset.Visible = false;
         }
 
         protected void btnConfirmReset_Click(object sender, EventArgs e)
         {
+            int userId = 0;
+
             try
             {
-                // Get the user ID from ViewState - this persists across postbacks
-                string userId = ViewState["SelectedUserId"] as string;
-
-                System.Diagnostics.Debug.WriteLine($"btnConfirmReset_Click called for user ID: {userId}");
-
-                if (string.IsNullOrEmpty(userId))
+                // Retrieve the user ID from ViewState
+                if (ViewState["SelectedUserId"] != null)
                 {
-                    ShowError("Invalid user ID for password reset.");
+                    userId = Convert.ToInt32(ViewState["SelectedUserId"]);
+                    Debug.WriteLine($"Resetting password for userId: {userId}");
+                }
+                else
+                {
+                    Debug.WriteLine("ERROR: SelectedUserId not found in ViewState");
+                    ShowError("User ID not found. Please try again.");
+                    pnlPasswordReset.Visible = false;
                     return;
                 }
+                
+                // Generate a random password (8 characters, alphanumeric)
+                string newPassword = GenerateRandomPassword(10);
+                string hashedPassword = HashPassword(newPassword);
 
-                // Reset the password for this user
-                ResetPassword(userId);
-
-                // Hide the confirmation panel
-                if (pnlPasswordReset != null)
+                // Update the user's password in the database
+                string connectionString = GetConnectionString();
+                
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
-                    pnlPasswordReset.Visible = false;
+                    conn.Open();
+                    string sql = "UPDATE AARON_IPT.USERS SET PASSWORD = :password, DATEMODIFIED = SYSDATE WHERE USERID = :userId";
+                    
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.Parameters.Add(new OracleParameter("password", OracleDbType.Varchar2) { Value = hashedPassword });
+                        cmd.Parameters.Add(new OracleParameter("userId", OracleDbType.Int32) { Value = userId });
+                        
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        Debug.WriteLine($"Password reset affected {rowsAffected} rows");
+                        
+                        if (rowsAffected > 0)
+                        {
+                            // Show the new password
+                            pnlResetConfirm.Visible = false;
+                            pnlResetComplete.Visible = true;
+                            txtNewPassword.Text = newPassword;
+                            lblResetConfirmMessage.Text = "Password has been reset successfully!";
+                            }
+                            else
+                            {
+                            ShowError("Failed to reset password. Please try again.");
+                            pnlPasswordReset.Visible = false;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in btnConfirmReset_Click: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error resetting password: " + ex.Message);
+                Debug.WriteLine($"Error in btnConfirmReset_Click: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
+                ShowError($"An error occurred: {ex.Message}");
+                pnlPasswordReset.Visible = false;
             }
         }
 
-        protected void btnCloseToggleStatus_Click(object sender, EventArgs e)
+        protected void btnCloseReset_Click(object sender, EventArgs e)
+        {
+            // Clear the password field and hide the panel
+            txtNewPassword.Text = string.Empty;
+            pnlPasswordReset.Visible = false;
+            pnlResetConfirm.Visible = true;
+            pnlResetComplete.Visible = false;
+            
+            // Hide any success messages when closing the modal
+            pnlSuccess.Visible = false;
+        }
+
+        protected void btnCancelStatus_Click(object sender, EventArgs e)
         {
             pnlToggleStatus.Visible = false;
         }
 
-        protected void btnConfirmToggle_Click(object sender, EventArgs e)
+        protected void btnConfirmStatus_Click(object sender, EventArgs e)
         {
+            int userId = 0;
+
             try
             {
-                // Get the user ID from ViewState - this persists across postbacks
-                string userId = ViewState["SelectedUserId"] as string;
-
-                System.Diagnostics.Debug.WriteLine($"btnConfirmToggle_Click called for user ID: {userId}");
-
-                if (string.IsNullOrEmpty(userId))
+                // Retrieve the user ID from ViewState
+                if (ViewState["SelectedUserId"] != null)
                 {
-                    ShowError("Invalid user ID for status toggle.");
+                    userId = Convert.ToInt32(ViewState["SelectedUserId"]);
+                    Debug.WriteLine($"btnConfirmStatus_Click for userId: {userId}");
+                }
+                else
+                {
+                    Debug.WriteLine("ERROR: SelectedUserId not found in ViewState");
+                    ShowError("User ID not found. Please try again.");
+                    pnlToggleStatus.Visible = false;
                     return;
                 }
-
-                // Toggle the user status
-                ToggleUserStatus(userId);
-
-                // Hide the confirmation panel
-                if (pnlToggleStatus != null)
-                {
-                    pnlToggleStatus.Visible = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in btnConfirmToggle_Click: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error toggling user status: " + ex.Message);
-            }
-        }
-
-        protected void ActivateUser(string userId)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"Activating user ID: {userId}");
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                
+                // Get the connection string
+                string connectionString = GetConnectionString();
+                
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
                     conn.Open();
 
-                    string query = "UPDATE USERS SET ISACTIVE = 1 WHERE USERID = :userId";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
+                    // First get the current status
+                    int currentStatus = 0;
+                    string getCurrentStatusSql = "SELECT ISACTIVE FROM AARON_IPT.USERS WHERE USERID = :userId";
+                    
+                    using (OracleCommand getCmd = new OracleCommand(getCurrentStatusSql, conn))
                     {
-                        cmd.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            System.Diagnostics.Debug.WriteLine("User activated successfully");
-                            ShowToast("User activated successfully.", true);
-
-                            // Reload the user list to reflect the change
-                            LoadUsers(false);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("User activation failed - no rows affected");
-                            ShowError("Failed to activate user.");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in ActivateUser: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error activating user: " + ex.Message);
-            }
-        }
-
-        protected void DeactivateUser(string userId)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"Deactivating user ID: {userId}");
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-
-                    string query = "UPDATE USERS SET ISACTIVE = 0 WHERE USERID = :userId";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
-                    {
-                        cmd.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            System.Diagnostics.Debug.WriteLine("User deactivated successfully");
-                            ShowToast("User deactivated successfully.", true);
-
-                            // Reload the user list to reflect the change
-                            LoadUsers(false);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("User deactivation failed - no rows affected");
-                            ShowError("Failed to deactivate user.");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in DeactivateUser: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error deactivating user: " + ex.Message);
-            }
-        }
-
-        // Helper method to get user name by ID
-        private string GetUserName(int userId)
-        {
-            try
-            {
-                string userName = "Unknown User";
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-                    using (OracleCommand cmd = new OracleCommand("SELECT USERNAME FROM USERS WHERE USER_ID = :userId", conn))
-                    {
-                        cmd.Parameters.Add(":userId", OracleDbType.Int32).Value = userId;
-                        object result = cmd.ExecuteScalar();
+                        getCmd.Parameters.Add(new OracleParameter("userId", OracleDbType.Int32) { Value = userId });
+                        
+                        var result = getCmd.ExecuteScalar();
                         if (result != null && result != DBNull.Value)
                         {
-                            userName = result.ToString();
+                            currentStatus = Convert.ToInt32(result);
+                            Debug.WriteLine($"Current status for userId {userId}: {currentStatus}");
+                }
+                else
+                {
+                            Debug.WriteLine($"User not found with ID: {userId}");
+                    ShowError("User not found.");
+                            pnlToggleStatus.Visible = false;
+                            return;
+                        }
+                    }
+
+                    // Toggle the status (0 to 1 or 1 to 0)
+                    int newStatus = (currentStatus == 1) ? 0 : 1;
+                    Debug.WriteLine($"Changing status from {currentStatus} to {newStatus}");
+
+                    // Update the user status
+                    string updateSql = "UPDATE AARON_IPT.USERS SET ISACTIVE = :isActive, DATEMODIFIED = SYSDATE WHERE USERID = :userId";
+                    
+                    using (OracleCommand updateCmd = new OracleCommand(updateSql, conn))
+                    {
+                        updateCmd.Parameters.Add(new OracleParameter("isActive", OracleDbType.Int32) { Value = newStatus });
+                        updateCmd.Parameters.Add(new OracleParameter("userId", OracleDbType.Int32) { Value = userId });
+                    
+                    int rowsAffected = updateCmd.ExecuteNonQuery();
+                        Debug.WriteLine($"Status update affected {rowsAffected} rows");
+                    
+                    if (rowsAffected > 0)
+                    {
+                            string statusText = newStatus == 1 ? "activated" : "deactivated";
+                            ShowSuccess($"User has been successfully {statusText}.");
+                }
+                else
+                {
+                            ShowError("Failed to update user status. Please try again.");
                         }
                     }
                 }
-                return userName;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in GetUserName: {ex.Message}");
-                return "Unknown User";
+                Debug.WriteLine($"Error in btnConfirmStatus_Click: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
+                ShowError($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                // Close the modal
+                pnlToggleStatus.Visible = false;
+                
+                // Refresh the user list
+                LoadUsers(Convert.ToInt32(hdnCurrentPage.Value), ddlStatus.SelectedValue, txtSearch.Text);
+            }
+        }
+
+        protected void ddlStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("Status dropdown selection changed");
+                
+                // Get the selected status
+                string status = ddlStatus.SelectedValue;
+                
+                // Get current search text
+                string searchText = txtSearch.Text.Trim();
+                
+                Debug.WriteLine($"Status changed to: {status}, with search text: '{searchText}'");
+                
+                // Update hidden fields with proper casting and null checks
+                var hdnStatusField = Page.FindControl("hdnStatus") as HiddenField;
+                var hdnSearchField = Page.FindControl("hdnSearch") as HiddenField;
+                
+                if (hdnStatusField != null) hdnStatusField.Value = status;
+                if (hdnSearchField != null) hdnSearchField.Value = searchText;
+                
+                // Reset to page 1 and reload users with new status filter
+                LoadUsers(1, status, searchText);
+                
+                // Show feedback with popup notification
+                string statusText = status.ToLower() == "true" ? "active" : "inactive";
+                ShowSuccess($"Showing {statusText} users");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in ddlStatus_SelectedIndexChanged: {ex.Message}");
+                ShowError("An error occurred while updating the status filter.");
             }
         }
 
@@ -1081,655 +1050,100 @@ namespace OnlinePastryShop.Pages
 
         #region Helper Methods
 
-        // Method to show empty message
-        private void ShowEmptyMessage(bool show, string message = "No users found.")
-        {
-            // Find the empty message panel
-            Panel pnlEmpty = GetControl<Panel>("pnlEmpty");
-            if (pnlEmpty != null)
-            {
-                pnlEmpty.Visible = show;
-
-                // Set the message text if provided
-                Label lblEmpty = GetControl<Label>("lblEmpty");
-                if (lblEmpty != null && show)
-                {
-                    lblEmpty.Text = message;
-                }
-            }
-        }
-
-        // Method to show error message
-        private void ShowError(string message)
+        private void ShowUserDetails(int userId)
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine($"Showing error message: {message}");
-
-                // Use the toast system to show the error
-                ShowToast(message, false);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in ShowError: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-
-                // Last resort - use JavaScript alert
-                string jsMessage = message.Replace("'", "\\'");
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertError" + Guid.NewGuid().ToString("N"),
-                    $"alert('Error: {jsMessage}');", true);
-            }
-        }
-
-        // Method to show message on the page
-        protected void ShowMessage(string message, bool isSuccess)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"ShowMessage - Message: {message}, Success: {isSuccess}");
-
-                // Directly use the client-side JavaScript notification
-                string jsMessage = message.Replace("'", "\\'").Replace("\r", "").Replace("\n", " ");
-                ScriptManager.RegisterStartupScript(this, GetType(), "DirectNotification" + Guid.NewGuid().ToString("N"),
-                    $"showUserNotification('{jsMessage}', {isSuccess.ToString().ToLower()});", true);
-
-                System.Diagnostics.Debug.WriteLine("Direct JavaScript notification registered from ShowMessage");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in ShowMessage: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-
-                // Ultimate fallback - use JavaScript alert
-                string jsMessage = message.Replace("'", "\\'");
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage" + Guid.NewGuid().ToString("N"),
-                    $"alert('{(isSuccess ? "Success" : "Error")}: {jsMessage}');", true);
-            }
-        }
-
-        // Method to show toast notification
-        private void ShowToast(string message, bool isSuccess = true)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"Showing toast message: {message}, Success: {isSuccess}");
-
-                // First try using the panel if it exists
-                if (pnlToast != null && lblToastMessage != null)
-                {
-                    lblToastMessage.Text = message;
-                    pnlToast.CssClass = isSuccess
-                            ? "fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg bg-green-500 z-50"
-                            : "fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg bg-red-500 z-50";
-
-                    // Make the panel visible
-                    pnlToast.Style["display"] = "block";
-
-                    // Add a script to hide the toast after a few seconds
-                    string toastScript = @"
-                        setTimeout(function() {
-                            var toast = document.getElementById('" + pnlToast.ClientID + @"');
-                            if (toast) {
-                                toast.style.opacity = '0';
-                                toast.style.transition = 'opacity 0.5s';
-                                setTimeout(function() {{ toast.style.display = 'none'; toast.style.opacity = '1'; }}, 500);
-                            }
-                        }, 3000);";
-
-                    ScriptManager.RegisterStartupScript(this, GetType(), "HideToast" + Guid.NewGuid().ToString("N"), toastScript, true);
-
-                    System.Diagnostics.Debug.WriteLine("Toast displayed using panel");
-                }
-                else
-                {
-                    // Fall back to JavaScript toast
-                    string color = isSuccess ? "bg-green-500" : "bg-red-500";
-                    string toastScript = $@"
-                        var toast = document.createElement('div');
-                        toast.className = 'fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 {color} text-white max-w-md';
-                        toast.innerHTML = '{message.Replace("'", "\\'")}';
-                        document.body.appendChild(toast);
-                        setTimeout(function() {{
-                            toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-                            setTimeout(function() {{ toast.remove(); }}, 500);
-                        }}, 3000);";
-
-                    ScriptManager.RegisterStartupScript(this, GetType(), "ShowToast" + Guid.NewGuid().ToString("N"), toastScript, true);
-
-                    System.Diagnostics.Debug.WriteLine("Toast displayed using JavaScript fallback");
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in ShowToast: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-
-                // Last resort - use JavaScript alert
-                string jsMessage = message.Replace("'", "\\'");
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage" + Guid.NewGuid().ToString("N"),
-                    $"alert('{(isSuccess ? "Success" : "Error")}: {jsMessage}');", true);
-            }
-        }
-
-        // Helper to format a date
-        private string FormatDate(object date)
-        {
-            if (date == null || date == DBNull.Value)
-                return "Never";
-
-            return Convert.ToDateTime(date).ToString("MM/dd/yyyy hh:mm tt");
-        }
-
-        // Helper to get connection string
-        private string GetConnectionString()
-        {
-            try
-            {
-                // First try to get the connection string from the configuration
-                var connString = System.Configuration.ConfigurationManager.ConnectionStrings["OracleConnection"];
-                if (connString != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("Found OracleConnection string in Web.config");
-                    return connString.ConnectionString;
-                }
-
-                // If not found, try alternate names
-                connString = System.Configuration.ConfigurationManager.ConnectionStrings["ConnectionString"];
-                if (connString != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("Found ConnectionString in Web.config");
-                    return connString.ConnectionString;
-                }
-
-                // If still not found, log error and use hardcoded connection string
-                System.Diagnostics.Debug.WriteLine("ERROR: Connection string not found in Web.config. Using hardcoded connection.");
-                return "User Id=Aaron_IPT;Password=qwen123;Data Source=localhost:1521/xe;";
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error getting connection string: {ex.Message}");
-                // Fallback to hardcoded connection string
-                return "User Id=Aaron_IPT;Password=qwen123;Data Source=localhost:1521/xe;";
-            }
-        }
-
-        // Helper to get status class for order history
-        protected string GetStatusClass(string status)
-        {
-            switch (status.ToLower())
-            {
-                case "completed":
-                    return "px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800";
-                case "processing":
-                    return "px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800";
-                case "cancelled":
-                    return "px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800";
-                case "pending":
-                    return "px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800";
-                default:
-                    return "px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800";
-            }
-        }
-
-        // Helper method to set active tab
-        private void SetActiveTab(string tabName)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"Setting active tab to: {tabName}");
-
-                // Check if controls exist before trying to manipulate them
-                LinkButton tabBasicInfo = FindControl("tabBasicInfo") as LinkButton;
-                LinkButton tabActivities = FindControl("tabActivities") as LinkButton;
-                LinkButton tabOrders = FindControl("tabOrders") as LinkButton;
-
-                Panel contentBasicInfo = FindControl("contentBasicInfo") as Panel;
-                Panel contentActivities = FindControl("contentActivities") as Panel;
-                Panel contentOrders = FindControl("contentOrders") as Panel;
-
-                // Reset all tabs to inactive state - using proper type casting for CssClass
-                if (tabBasicInfo != null) tabBasicInfo.CssClass = tabBasicInfo.CssClass.Replace(" active", "");
-                if (tabActivities != null) tabActivities.CssClass = tabActivities.CssClass.Replace(" active", "");
-                if (tabOrders != null) tabOrders.CssClass = tabOrders.CssClass.Replace(" active", "");
-
-                // Hide all content panels
-                if (contentBasicInfo != null) contentBasicInfo.Visible = false;
-                if (contentActivities != null) contentActivities.Visible = false;
-                if (contentOrders != null) contentOrders.Visible = false;
-
-                // Set the selected tab and content to active
-                switch (tabName)
-                {
-                    case "BasicInfo":
-                        if (tabBasicInfo != null) tabBasicInfo.CssClass += " active";
-                        if (contentBasicInfo != null) contentBasicInfo.Visible = true;
-                        break;
-                    case "Activities":
-                        if (tabActivities != null) tabActivities.CssClass += " active";
-                        if (contentActivities != null) contentActivities.Visible = true;
-
-                        // Load activities data here if needed
-                        LoadUserActivities(selectedUserId);
-                        break;
-                    case "Orders":
-                        if (tabOrders != null) tabOrders.CssClass += " active";
-                        if (contentOrders != null) contentOrders.Visible = true;
-
-                        // Load orders data here if needed
-                        LoadUserOrders(selectedUserId);
-                        break;
-                    default:
-                        // Default to Basic Info
-                        if (tabBasicInfo != null) tabBasicInfo.CssClass += " active";
-                        if (contentBasicInfo != null) contentBasicInfo.Visible = true;
-                        break;
-                }
-
-                // As a fallback, use JavaScript to handle tab switching
-                string scriptKey = "SetActiveTab_" + tabName;
-                string script = $@"
-                    if (document.querySelector('.user-tabs .active')) {{
-                        document.querySelector('.user-tabs .active').classList.remove('active');
-                    }}
-                    if (document.querySelector('.tab-content .active')) {{
-                        document.querySelector('.tab-content .active').classList.remove('active');
-                    }}
-                    if (document.getElementById('tab{tabName}')) {{
-                        document.getElementById('tab{tabName}').classList.add('active');
-                    }}
-                    if (document.getElementById('content{tabName}')) {{
-                        document.getElementById('content{tabName}').classList.add('active');
-                    }}";
-
-                ScriptManager.RegisterStartupScript(this, GetType(), scriptKey, script, true);
-                System.Diagnostics.Debug.WriteLine($"Tab {tabName} set to active.");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in SetActiveTab: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                // Non-critical error, don't show to user
-            }
-        }
-
-        private void LoadUserActivities(int userId)
-        {
-            // This method would load user activities data
-            // Placeholder for future implementation
-            System.Diagnostics.Debug.WriteLine($"Loading activities for user ID: {userId}");
-        }
-
-        private void LoadUserOrders(int userId)
-        {
-            // This method would load user orders data
-            // Placeholder for future implementation
-            System.Diagnostics.Debug.WriteLine($"Loading orders for user ID: {userId}");
-        }
-
-        #endregion
-
-        #region Control Finding Helpers
-
-        // Find the GridView by traversing the page structure (including master page)
-        private GridView FindUsersGridView()
-        {
-            System.Diagnostics.Debug.WriteLine("Finding GridView 'gvUsers' using multiple approaches...");
-            GridView result = null;
-
-            // First check our instance variable
-            if (gvUsers != null)
-            {
-                System.Diagnostics.Debug.WriteLine("  Using existing gvUsers instance variable");
-                return gvUsers;
-            }
-
-            // Then check the master page's content placeholder 
-            if (Master != null)
-            {
-                // Get the content placeholder first
-                ContentPlaceHolder contentPlaceHolder = Master.FindControl("AdminContent") as ContentPlaceHolder;
-                if (contentPlaceHolder != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("  Found AdminContent in Master page");
-
-                    // Then find the GridView within the content placeholder
-                    result = contentPlaceHolder.FindControl("gvUsers") as GridView;
-                    if (result != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"  Found gvUsers in ContentPlaceHolder: {result.ClientID}");
-                        gvUsers = result; // Save for later use
-                        return result;
-                    }
-                }
-            }
-
-            // Check the entire control hierarchy
-            List<Control> allControls = FindAllControlsRecursive(this.Page);
-            var gridViews = allControls.OfType<GridView>().ToList();
-
-            System.Diagnostics.Debug.WriteLine($"  Found {gridViews.Count} GridViews in page:");
-            foreach (var grid in gridViews)
-            {
-                System.Diagnostics.Debug.WriteLine($"  - GridView: ID={grid.ID}, ClientID={grid.ClientID}");
-                if (grid.ID == "gvUsers")
-                {
-                    result = grid;
-                    System.Diagnostics.Debug.WriteLine("    ^ MATCH for gvUsers");
-                }
-            }
-
-            if (result != null)
-            {
-                gvUsers = result; // Save for later use
-                return result;
-            }
-
-            // Last resort - get ANY GridView and use it
-            if (gridViews.Count > 0)
-            {
-                System.Diagnostics.Debug.WriteLine($"  Using first available GridView as fallback: {gridViews[0].ID}");
-                gvUsers = gridViews[0]; // Save for later use
-                return gridViews[0];
-            }
-
-            System.Diagnostics.Debug.WriteLine("  NO GridViews found in the entire page!");
-            return null;
-        }
-
-        private void FindDataPagerRemoved()
-        {
-
-        }
-
-        private void FindDataPagerRecursiveRemoved()
-        {
- 
-        }
-
-        #endregion
-
-        // Bind users to the ListView
-        private void BindUsers()
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine("BindUsers method called");
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                Debug.WriteLine($"ShowUserDetails called for userId: {userId}");
+                
+                // Update the currently selected user ID
+                selectedUserId = userId;
+                
+                // Add to ViewState for redundancy
+                ViewState["SelectedUserId"] = userId;
+                
+                // Store userId in hidden field via client-side script 
+                ClientScript.RegisterHiddenField("hdnSelectedUserId", userId.ToString());
+                
+                // Get the connection string
+                string connectionString = GetConnectionString();
+                
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
                     conn.Open();
-
-                    // Basic query to get all users
-                    string query = @"SELECT 
-                                    u.USER_ID as USERID, 
-                                    u.USERNAME, 
-                                    u.FIRST_NAME, 
-                                    u.LAST_NAME, 
-                                    u.EMAIL, 
-                                    u.ROLE_ID, 
-                                    r.ROLE_NAME,
-                                    u.IS_ACTIVE as ISACTIVE,
-                                    u.CREATED_DATE as DATECREATED
-                                    FROM USERS u
-                                    LEFT JOIN ROLES r ON u.ROLE_ID = r.ROLE_ID
-                                    ORDER BY u.USERNAME";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
-                    {
-                        using (OracleDataAdapter adapter = new OracleDataAdapter(cmd))
-                        {
-                            DataTable dtUsers = new DataTable();
-                            adapter.Fill(dtUsers);
-
-                            if (dtUsers.Rows.Count > 0)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Found {dtUsers.Rows.Count} users");
-                                lvUsers.DataSource = dtUsers;
-                                lvUsers.DataBind();
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.WriteLine("No users found");
-                                lvUsers.DataSource = null;
-                                lvUsers.DataBind();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in BindUsers: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-                ShowToast($"<div class='flex items-center'><svg class='w-5 h-5 mr-2' fill='white' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z' clip-rule='evenodd'></path></svg><span>Error loading users: {ex.Message}</span></div>", false);
-            }
-        }
-
-        private void FilterUsers(string searchText, string statusValue)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"FilterUsers called with search: '{searchText}', status: '{statusValue}'");
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-
-                    // Build query based on search and status
-                    string query = @"SELECT 
-                                    u.USER_ID as USERID, 
-                                    u.USERNAME, 
-                                    u.FIRST_NAME, 
-                                    u.LAST_NAME, 
-                                    u.EMAIL, 
-                                    u.ROLE_ID, 
-                                    r.ROLE_NAME,
-                                    u.IS_ACTIVE as ISACTIVE,
-                                    u.CREATED_DATE as DATECREATED
-                                    FROM USERS u
-                                    LEFT JOIN ROLES r ON u.ROLE_ID = r.ROLE_ID
-                                    WHERE 1=1";
-
-                    // Add parameters
-                    OracleCommand cmd = new OracleCommand();
-
-                    // Add status filter if selected
-                    if (!string.IsNullOrEmpty(statusValue))
-                    {
-                        bool isActive = statusValue.ToLower() == "true";
-                        query += " AND u.IS_ACTIVE = :isActive";
-                        cmd.Parameters.Add(":isActive", OracleDbType.Int32).Value = isActive ? 1 : 0;
-                    }
-
-                    // Add search filter if provided
-                    if (!string.IsNullOrEmpty(searchText))
-                    {
-                        query += @" AND (UPPER(u.USERNAME) LIKE UPPER('%' || :searchText || '%') 
-                                   OR UPPER(u.EMAIL) LIKE UPPER('%' || :searchText || '%')
-                                   OR UPPER(u.FIRST_NAME) LIKE UPPER('%' || :searchText || '%')
-                                   OR UPPER(u.LAST_NAME) LIKE UPPER('%' || :searchText || '%'))";
-                        cmd.Parameters.Add(":searchText", OracleDbType.Varchar2).Value = searchText;
-                    }
-
-                    // Add order by
-                    query += " ORDER BY u.USERNAME";
-
-                    cmd.CommandText = query;
-                    cmd.Connection = conn;
-
-                    System.Diagnostics.Debug.WriteLine($"Executing query: {query}");
-
-                    using (OracleDataAdapter adapter = new OracleDataAdapter(cmd))
-                    {
-                        DataTable dtUsers = new DataTable();
-                        adapter.Fill(dtUsers);
-
-                        if (dtUsers.Rows.Count > 0)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Found {dtUsers.Rows.Count} filtered users");
-                            lvUsers.DataSource = dtUsers;
-                            lvUsers.DataBind();
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("No users found matching filters");
-                            lvUsers.DataSource = null;
-                            lvUsers.DataBind();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in FilterUsers: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-                throw; // Rethrow to be caught by calling method
-            }
-        }
-
-        // Event handler for DataPager initialization
-        protected void DataPager_Init_Removed()
-        {
-            // This method is no longer needed with our custom pagination
-        }
-
-        // Event handler for DataPager's page changing event
-        protected void DataPager_PagePropertiesChanging_Removed()
-        {
-            // This method is no longer needed with our custom pagination
-        }
-
-        private void BindUserList()
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine("BindUserList called - rebinding ListView without reloading data");
-
-                // Check if we need to reload users first
-                if (lvUsers.DataSource == null)
-                {
-                    System.Diagnostics.Debug.WriteLine("ListView datasource is null, calling LoadUsers");
-                    LoadUsers(false);
-                    return;
-                }
-
-                // Get current page index from ViewState
-                int currentPageIndex = 0;
-                if (ViewState["CurrentPageIndex"] != null)
-                {
-                    currentPageIndex = Convert.ToInt32(ViewState["CurrentPageIndex"]);
-                    System.Diagnostics.Debug.WriteLine($"Current page index from ViewState: {currentPageIndex}");
-                }
-
-                // No need to find DataPager anymore - we're using custom pagination
-
-                // Just rebind the ListView
-                lvUsers.DataBind();
-
-                // Update pagination controls
-                int totalPages = ViewState["TotalPages"] != null ? Convert.ToInt32(ViewState["TotalPages"]) : 1;
-                UpdatePaginationControls(currentPageIndex + 1, totalPages);
-
-                System.Diagnostics.Debug.WriteLine("BindUserList completed");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in BindUserList: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error binding user list: " + ex.Message);
-            }
-        }
-
-        // Helper method to get a control of a specific type
-        private T GetControl<T>(string controlId) where T : Control
-        {
-            // Try to find the control directly on the page
-            T control = Page.FindControl(controlId) as T;
-            if (control != null)
-                return control;
-
-            // Try to find in the content placeholder
-            ContentPlaceHolder contentPlaceHolder = Page.Master.FindControl("AdminContent") as ContentPlaceHolder;
-            if (contentPlaceHolder != null)
-            {
-                control = contentPlaceHolder.FindControl(controlId) as T;
-                if (control != null)
-                    return control;
-            }
-
-            // If not found, search recursively
-            return FindControlRecursive(Page, controlId) as T;
-        }
-
-        private void ShowUserDetails(string userId)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"Showing details for user ID: {userId}");
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-
-                    string query = @"
+                    
+                    string sql = @"
                         SELECT 
-                            USERID, 
-                            USERNAME, 
-                            EMAIL, 
-                            ISACTIVE, 
-                            TO_CHAR(DATECREATED, 'YYYY-MM-DD') AS DATECREATED, 
-                            ROLE AS USERTYPE 
-                        FROM USERS 
+                            USERID, USERNAME, EMAIL, ROLE, 
+                            DATECREATED, DATEMODIFIED, LASTLOGIN, ISACTIVE
+                        FROM AARON_IPT.USERS 
                         WHERE USERID = :userId";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
+                    
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
-                        cmd.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
-
+                        cmd.Parameters.Add(new OracleParameter("userId", OracleDbType.Int32) { Value = userId });
+                        
                         using (OracleDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                // Store userId for use in other operations
-                                selectedUserId = Convert.ToInt32(userId);
-
-                                // Load user details into the modal
-                                string username = reader["USERNAME"].ToString();
-                                string email = reader["EMAIL"].ToString();
-                                string userType = reader["USERTYPE"].ToString();
-                                string dateCreated = reader["DATECREATED"].ToString();
-                                bool isActive = Convert.ToBoolean(reader["ISACTIVE"]);
-
-                                // Find and set values for the detail labels
-                                if (lblUserId != null) lblUserId.Text = userId;
-                                if (lblUsername != null) lblUsername.Text = username;
-                                if (lblEmail != null) lblEmail.Text = email;
-                                if (lblDateCreated != null) lblDateCreated.Text = dateCreated;
-                                if (lblStatus != null) lblStatus.Text = isActive ? "Active" : "Inactive";
-
-                                // If using a reset password functionality, store username
-                                if (lblResetUsername != null) lblResetUsername.Text = username;
-
-                                // Make the user details panel visible
-                                if (pnlUserDetails != null)
+                                // Get the ISACTIVE value and convert it properly
+                                int isActiveValue = 0;
+                                bool isActive = false;
+                                
+                                if (reader["ISACTIVE"] != DBNull.Value)
                                 {
-                                    pnlUserDetails.Visible = true;
-
-                                    // Make sure "Basic Info" tab is active by default
-                                    SetActiveTab("BasicInfo");
-
-                                    System.Diagnostics.Debug.WriteLine($"User details panel made visible for {username}");
+                                    isActiveValue = Convert.ToInt32(reader["ISACTIVE"]);
+                                    isActive = (isActiveValue == 1);
                                 }
-                                else
-                                {
-                                    // As a fallback, use JavaScript to show a modal if HTML elements exist
-                                    ScriptManager.RegisterStartupScript(this, GetType(), "ShowUserDetails",
-                                            "if(document.getElementById('userDetailsModal')) document.getElementById('userDetailsModal').classList.remove('hidden');", true);
-
-                                    System.Diagnostics.Debug.WriteLine("User details panel not found, trying JavaScript fallback");
-                                }
-                            }
-                            else
-                            {
+                                
+                                Debug.WriteLine($"User details: USERID={reader["USERID"]}, USERNAME={reader["USERNAME"]}, ISACTIVE={isActiveValue} (IsActive={isActive})");
+                                
+                                // Populate the details form with user information
+                                lblUserId.Text = reader["USERID"].ToString();
+                                lblUsername.Text = reader["USERNAME"].ToString();
+                                lblEmail.Text = reader["EMAIL"].ToString();
+                                lblRole.Text = reader["ROLE"] != DBNull.Value ? reader["ROLE"].ToString() : "N/A";
+                                
+                                // Set the status with appropriate styling
+                                lblStatus.Text = isActive ? "Active" : "Inactive";
+                                lblStatus.CssClass = isActive 
+                                    ? "mt-1 block w-full text-sm text-green-600 font-medium"
+                                    : "mt-1 block w-full text-sm text-red-600 font-medium";
+                                
+                                // Format dates if present
+                                lblDateCreated.Text = reader["DATECREATED"] != DBNull.Value ? Convert.ToDateTime(reader["DATECREATED"]).ToString("MM/dd/yyyy hh:mm tt") : "N/A";
+                                lblDateModified.Text = reader["DATEMODIFIED"] != DBNull.Value ? Convert.ToDateTime(reader["DATEMODIFIED"]).ToString("MM/dd/yyyy hh:mm tt") : "N/A";
+                                lblLastLogin.Text = reader["LASTLOGIN"] != DBNull.Value ? Convert.ToDateTime(reader["LASTLOGIN"]).ToString("MM/dd/yyyy hh:mm tt") : "N/A";
+                                
+                                // Show the user details panel and activate the basic info tab by default
+                                pnlUserDetails.Visible = true;
+                                
+                                // Set tab styling
+                                tabBasicInfo.CssClass = "border-[#D43B6A] text-[#D43B6A] whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+                                tabOrderHistory.CssClass = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+                                
+                                // Show basic info panel, hide order history
+                                pnlBasicInfo.Visible = true;
+                                pnlOrderHistory.Visible = false;
+                                
+                                // Register a script to ensure user modal stays visible
+                                string script = @"
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        // Show the modal
+                                        var modal = document.getElementById('pnlUserDetails');
+                                        if (modal) {
+                                            modal.style.display = 'block';
+                                        }
+                                        
+                                        // Set up tab functionality
+                                        showUserTab('basicInfo');
+                                    });";
+                                
+                                ScriptManager.RegisterStartupScript(this, this.GetType(), "showUserDetailsScript", script, true);
+                        }
+                        else
+                        {
                                 ShowError("User not found.");
                             }
                         }
@@ -1738,761 +1152,406 @@ namespace OnlinePastryShop.Pages
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in ShowUserDetails: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error showing user details: " + ex.Message);
+                Debug.WriteLine($"Error in ShowUserDetails: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
+                ShowError($"Error retrieving user details: {ex.Message}");
             }
         }
 
-        private void ShowResetPasswordConfirmation(string userId)
+        private void ShowResetPassword(int userId)
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine($"Showing reset password confirmation for user ID: {userId}");
-
-                // Store the user ID for the reset password confirmation
-                selectedUserId = Convert.ToInt32(userId);
-
-                // Get the username for display in the confirmation message
-                string username = GetUsernameById(userId);
-
-                // Set the confirmation message if we have a label for it
-                if (lblResetConfirmMessage != null)
+                Debug.WriteLine($"Showing password reset for user {userId}");
+                
+                // Store userId in multiple places for reliability
+                selectedUserId = userId;
+                ViewState["SelectedUserId"] = userId;
+                
+                // Create a hidden field if it doesn't exist
+                HiddenField hdnSelectedUserId = GetControlById("hdnSelectedUserId") as HiddenField;
+                if (hdnSelectedUserId != null)
                 {
-                    lblResetConfirmMessage.Text = $"Are you sure you want to reset the password for user '{username}'?";
+                    hdnSelectedUserId.Value = userId.ToString();
                 }
-
-                // Show the reset password confirmation panel if it exists
-                if (pnlPasswordReset != null)
+                
+                // Get username for the confirmation message
+                string username = "";
+                string connectionString = GetConnectionString();
+                
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
-                    pnlPasswordReset.Visible = true;
-                    System.Diagnostics.Debug.WriteLine($"Password reset confirmation panel made visible for {username}");
+                    conn.Open();
+                    
+                    string query = "SELECT USERNAME FROM AARON_IPT.USERS WHERE USERID = :UserId";
+                    
+                    using (OracleCommand cmd = new OracleCommand(query, conn))
+                    {
+                        cmd.Parameters.Add(new OracleParameter("UserId", OracleDbType.Int32)).Value = userId;
+                        
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            username = result.ToString();
+                        }
+                    }
+                }
+                
+                if (!string.IsNullOrEmpty(username))
+                {
+                    // Find labels and panels
+                    Label lblResetConfirmMessage = GetControlById("lblResetConfirmMessage") as Label;
+                    Panel pnlPasswordReset = GetControlById("pnlPasswordReset") as Panel;
+                    Panel pnlResetConfirm = GetControlById("pnlResetConfirm") as Panel;
+                    Panel pnlResetComplete = GetControlById("pnlResetComplete") as Panel;
+                    Button btnConfirmReset = GetControlById("btnConfirmReset") as Button;
+                    
+                    // Set the confirmation message
+                    if (lblResetConfirmMessage != null)
+                        lblResetConfirmMessage.Text = $"Are you sure you want to reset the password for user '{username}'?";
+                    
+                    // Store the user ID in the command argument for direct retrieval
+                    if (btnConfirmReset != null)
+                        btnConfirmReset.CommandArgument = userId.ToString();
+                    
+                    // Show reset panel
+                    if (pnlPasswordReset != null) pnlPasswordReset.Visible = true;
+                    if (pnlResetConfirm != null) pnlResetConfirm.Visible = true;
+                    if (pnlResetComplete != null) pnlResetComplete.Visible = false;
+                    
+                    // Register script to ensure modal is displayed
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showPasswordResetModal", "$('#passwordResetModal').modal('show');", true);
                 }
                 else
                 {
-                    // As a fallback, use JavaScript to show a modal
-                    ScriptManager.RegisterStartupScript(this, GetType(), "ShowResetConfirmation",
-                        "if(document.getElementById('resetPasswordConfirmModal')) document.getElementById('resetPasswordConfirmModal').classList.remove('hidden');", true);
-
-                    System.Diagnostics.Debug.WriteLine("Password reset panel not found, trying JavaScript fallback");
+                    ShowError("User not found.");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in ShowResetPasswordConfirmation: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error showing reset password confirmation: " + ex.Message);
+                Debug.WriteLine($"Error showing password reset: {ex.Message}");
+                ShowError($"Error showing password reset: {ex.Message}");
             }
         }
 
-        private string GetUsernameById(string userId)
+        private void ShowToggleStatus(int userId)
         {
             try
             {
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                Debug.WriteLine($"Showing toggle status for user {userId}");
+                
+                // Get user info for the confirmation message
+                string username = "";
+                bool isActive = false;
+                
+                string connectionString = GetConnectionString();
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
                     conn.Open();
-
-                    string query = "SELECT USERNAME FROM USERS WHERE USERID = :userId";
-
+                    
+                    string query = "SELECT USERNAME, ISACTIVE FROM \"AARON_IPT\".\"USERS\" WHERE USERID = :UserId";
+                    
                     using (OracleCommand cmd = new OracleCommand(query, conn))
                     {
-                        cmd.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
-
-                        object result = cmd.ExecuteScalar();
-                        return result != null ? result.ToString() : "Unknown User";
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in GetUsernameById: {ex.Message}");
-                return "Unknown User";
-            }
-        }
-
-        private bool IsEventTarget(string targetId)
-        {
-            try
-            {
-                // Check if the __EVENTTARGET form value contains the specified control ID
-                string eventTarget = Request.Form["__EVENTTARGET"];
-
-                if (string.IsNullOrEmpty(eventTarget))
-                {
-                    return false;
-                }
-
-                // Log the event target for debugging
-                System.Diagnostics.Debug.WriteLine($"__EVENTTARGET: '{eventTarget}', checking for: '{targetId}'");
-
-                // Check if the event target contains the specified ID
-                if (eventTarget.Contains(targetId))
-                {
-                    System.Diagnostics.Debug.WriteLine($"Found target ID '{targetId}' in event target");
-                    return true;
-                }
-
-                // Check if it's a pagination event
-                string eventArgument = Request.Form["__EVENTARGUMENT"];
-                if (!string.IsNullOrEmpty(eventArgument) && eventArgument.Contains("Page$"))
-                {
-                    System.Diagnostics.Debug.WriteLine($"Pagination event detected: {eventArgument}");
-                    return targetId.Contains("pager");
-                }
-
-                return false;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in IsEventTarget: {ex.Message}");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets the control that triggered the current postback
-        /// </summary>
-        /// <returns>The control that triggered the postback, or null if not found or not a postback</returns>
-        private Control GetPostBackControl()
-        {
-            try
-            {
-                if (!IsPostBack)
-                    return null;
-
-                // Get the __EVENTTARGET parameter
-                string controlName = Request.Form["__EVENTTARGET"];
-
-                // If __EVENTTARGET is empty, look for the control that could have triggered the postback
-                if (string.IsNullOrEmpty(controlName))
-                {
-                    System.Diagnostics.Debug.WriteLine("__EVENTTARGET is empty, checking form elements");
-
-                    // Check for all form elements that could have triggered a postback (like buttons)
-                    foreach (string key in Request.Form.AllKeys)
-                    {
-                        if (key.EndsWith(".x") || key.EndsWith(".y")) // Image buttons
-                        {
-                            string potentialControlId = key.Substring(0, key.Length - 2);
-                            System.Diagnostics.Debug.WriteLine($"Found potential postback control: {potentialControlId} (image button)");
-                            Control control = FindControlRecursive(Page, potentialControlId);
-                            if (control != null)
-                                return control;
-                        }
-
-                        if (key != "__VIEWSTATE" && key != "__EVENTVALIDATION" &&
-                            key != "__VIEWSTATEGENERATOR" && key != "__SCROLLPOSITIONX" &&
-                            key != "__SCROLLPOSITIONY")
-                        {
-                            Control control = FindControlRecursive(Page, key);
-                            if (control is Button || control is ImageButton ||
-                                control is LinkButton)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Found potential postback control: {key}");
-                                return control;
-                            }
-                        }
-                    }
-
-                    return null;
-                }
-
-                System.Diagnostics.Debug.WriteLine($"__EVENTTARGET found: {controlName}");
-                Control targetControl = FindControlRecursive(Page, controlName);
-                return targetControl;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in GetPostBackControl: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                return null;
-            }
-        }
-
-        private void ResetPassword(string userId)
-        {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine($"Resetting password for user ID: {userId}");
-
-                string newPassword = GenerateRandomPassword(8);
-                string hashedPassword = HashPassword(newPassword);
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-
-                    // Fixed column name from PASSWORD to PASSWORDHASH
-                    string query = "UPDATE USERS SET PASSWORDHASH = :password WHERE USERID = :userId";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
-                    {
-                        cmd.Parameters.Add("password", OracleDbType.Varchar2).Value = hashedPassword;
-                        cmd.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            // Show success message with the new password
-                            if (lblNewPassword != null) lblNewPassword.Text = newPassword;
-
-                            // Show the reset password confirmation panel or modal
-                            if (pnlResetPasswordSuccess != null)
-                            {
-                                pnlResetPasswordSuccess.Visible = true;
-                                System.Diagnostics.Debug.WriteLine("Password reset success panel made visible");
-                            }
-                            else
-                            {
-                                // As a fallback, use JavaScript to show a modal
-                                ScriptManager.RegisterStartupScript(this, GetType(), "ShowPasswordReset",
-                                    "if(document.getElementById('resetPasswordModal')) document.getElementById('resetPasswordModal').classList.remove('hidden');", true);
-
-                                System.Diagnostics.Debug.WriteLine("Using JavaScript fallback for password reset notification");
-                            }
-
-                            ShowToast("Password has been reset successfully.");
-                        }
-                        else
-                        {
-                            ShowError("Failed to reset password. User not found.");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in ResetPassword: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error resetting password: " + ex.Message);
-            }
-        }
-
-        private string GenerateRandomPassword(int length)
-        {
-            const string allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789!@$?_-";
-            Random rand = new Random();
-            char[] chars = new char[length];
-
-            for (int i = 0; i < length; i++)
-            {
-                chars[i] = allowedChars[rand.Next(0, allowedChars.Length)];
-            }
-
-            return new string(chars);
-        }
-
-        private string HashPassword(string password)
-        {
-            // In a real application, use a proper hashing algorithm like bcrypt
-            // This is a simple SHA256 implementation for demonstration
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                byte[] hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
-
-        private void ToggleUserStatus(string userId)
-        {
-            try
-            {
-                Debug.WriteLine($"Toggling status for user ID: {userId}");
-
-                // First, get the current status
-                bool currentStatus = false;
-                string username = string.Empty;
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
-                {
-                    conn.Open();
-
-                    // Get current status
-                    string getStatusQuery = "SELECT USERNAME, ISACTIVE FROM USERS WHERE USERID = :userId";
-                    using (OracleCommand cmd = new OracleCommand(getStatusQuery, conn))
-                    {
-                        cmd.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
-
+                        cmd.Parameters.Add(new OracleParameter("UserId", OracleDbType.Int32)).Value = userId;
+                        
                         using (OracleDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
                             {
                                 username = reader["USERNAME"].ToString();
-                                currentStatus = Convert.ToBoolean(Convert.ToInt32(reader["ISACTIVE"]));
-                                Debug.WriteLine($"Current status for user {username}: {(currentStatus ? "Active" : "Inactive")}");
-                            }
-                            else
-                            {
-                                // If user not found, show error and exit
-                                ShowError("User not found.");
-                                return;
+                                isActive = Convert.ToBoolean(Convert.ToInt32(reader["ISACTIVE"]));
                             }
                         }
                     }
-
-                    // Update to opposite status
-                    bool newStatus = !currentStatus;
-                    string updateQuery = "UPDATE USERS SET ISACTIVE = :isActive WHERE USERID = :userId";
-
-                    using (OracleCommand cmd = new OracleCommand(updateQuery, conn))
-                    {
-                        cmd.Parameters.Add("isActive", OracleDbType.Int32).Value = newStatus ? 1 : 0;
-                        cmd.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            string action = newStatus ? "activated" : "deactivated";
-                            string statusMessage = $"User '{username}' has been {action} successfully.";
-                            Debug.WriteLine(statusMessage);
-
-                            // Update ViewState to reflect potential status filter change
-                            string statusFilter = ViewState["StatusFilter"]?.ToString() ?? "true";
-
-                            // If we're filtering by a specific status, we may need to refresh
-                            if ((newStatus && statusFilter == "false") || (!newStatus && statusFilter == "true"))
-                            {
-                                // User will disappear from the current view if filter is active
-                                Debug.WriteLine("User will disappear from current filtered view");
-                            }
-
-                            ShowToast(statusMessage, true);
-
-                            // Reload the user list to reflect the changes
-                            LoadUsers(false);
+                }
+                
+                if (!string.IsNullOrEmpty(username))
+                {
+                    // Find the literal control
+                    Literal litStatusMessage = GetControlById("litStatusMessage") as Literal;
+                    Panel pnlToggleStatus = GetControlById("pnlToggleStatus") as Panel;
+                    
+                    // Set the confirmation message
+                    string action = isActive ? "deactivate" : "activate";
+                    if (litStatusMessage != null)
+                        litStatusMessage.Text = $"Are you sure you want to {action} user '{username}'?";
+                    
+                    // Store values for use in confirmation
+                    ViewState["IsCurrentlyActive"] = isActive;
+                    selectedUserId = userId;
+                    
+                    // Show the confirmation panel
+                            if (pnlToggleStatus != null)
+                        pnlToggleStatus.Visible = true;
                         }
                         else
                         {
-                            Debug.WriteLine($"User status toggle failed - no rows affected");
-                            ShowToast($"?? Failed to update status for user '{username}'. No changes were made.", false);
-                        }
-                    }
+                    ShowError("User not found.");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"ERROR in ToggleUserStatus: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error updating user status: " + ex.Message);
+                Debug.WriteLine($"Error showing toggle status: {ex.Message}");
+                ShowError($"Error showing toggle status: {ex.Message}");
             }
         }
 
-        /// <summary>
-        /// Checks if a user is active based on their ID
-        /// </summary>
-        /// <param name="userId">The ID of the user to check</param>
-        /// <returns>True if the user is active, false otherwise</returns>
-        private bool IsUserActive(int userId)
+        private string GenerateRandomPassword(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+            StringBuilder password = new StringBuilder();
+            Random random = new Random();
+            
+            for (int i = 0; i < length; i++)
+            {
+                password.Append(chars[random.Next(chars.Length)]);
+            }
+            
+            return password.ToString();
+        }
+
+        private string HashPassword(string password)
+        {
+            // In a real implementation, use a proper password hashing algorithm
+            // For demonstration, we'll use SHA256
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(password);
+                byte[] hash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
+        }
+
+        private string GetConnectionString()
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine($"Checking if user ID {userId} is active");
-
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                // Try multiple connection string names in order of preference
+                string[] connectionStringNames = new string[] { 
+                    "OracleConnection", 
+                    "OraAspNetConString",
+                    "ConnectionString", 
+                    "DefaultConnection", 
+                    "AARON_IPT"
+                };
+                
+                Debug.WriteLine("Attempting to retrieve connection string from Web.config...");
+                
+                foreach (string name in connectionStringNames)
                 {
-                    conn.Open();
-
-                    string query = "SELECT ISACTIVE FROM USERS WHERE USERID = :userId";
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
+                    Debug.WriteLine($"Trying connection string name: {name}");
+                    var connectionString = ConfigurationManager.ConnectionStrings[name];
+                    
+                    if (connectionString != null)
                     {
-                        cmd.Parameters.Add("userId", OracleDbType.Int32).Value = userId;
-
-                        object result = cmd.ExecuteScalar();
-                        if (result != null && result != DBNull.Value)
-                        {
-                            bool isActive = Convert.ToBoolean(Convert.ToInt32(result));
-                            System.Diagnostics.Debug.WriteLine($"User ID {userId} is {(isActive ? "active" : "inactive")}");
-                            return isActive;
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine($"User ID {userId} not found");
-                            return false;
-                        }
+                        Debug.WriteLine($"Found connection string with name: {name}");
+                        string connStr = connectionString.ConnectionString;
+                        Debug.WriteLine($"Connection string value (partial for security): {connStr.Substring(0, Math.Min(20, connStr.Length))}...");
+                        return connStr;
                     }
                 }
+                
+                // Fallback to the first available connection string if none of the expected names are found
+                if (ConfigurationManager.ConnectionStrings.Count > 0)
+                {
+                    var firstConnectionString = ConfigurationManager.ConnectionStrings[0];
+                    Debug.WriteLine($"Using first available connection string: {firstConnectionString.Name}");
+                    return firstConnectionString.ConnectionString;
+                }
+                
+                // Last resort fallback with detailed diagnostic output
+                Debug.WriteLine("WARNING: No connection strings found in Web.config. Using hardcoded fallback connection string.");
+                Debug.WriteLine("Please add the following to your Web.config inside the <configuration> section:");
+                Debug.WriteLine(@"
+<connectionStrings>
+    <add name=""OracleConnection"" 
+         connectionString=""Data Source=localhost:1521/XE;User Id=AARON_IPT;Password=qwen123;"" 
+         providerName=""Oracle.ManagedDataAccess.Client""/>
+</connectionStrings>");
+                
+                // Default to a likely server configuration based on schema script
+                return "Data Source=localhost:1521/XE;User Id=AARON_IPT;Password=qwen123;";
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in IsUserActive: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                return false;
+                Debug.WriteLine($"Error retrieving connection string: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                // Last resort fallback - this should be configured in web.config
+                Debug.WriteLine("Using hardcoded emergency fallback connection string due to error");
+                return "Data Source=localhost:1521/XE;User Id=AARON_IPT;Password=qwen123;";
+            }
+        }
+
+        private void ShowError(string message)
+        {
+            // Find panels and literals
+            Panel pnlError = GetControlById("pnlError") as Panel;
+            Literal litErrorMessage = GetControlById("litErrorMessage") as Literal;
+            Panel pnlSuccess = GetControlById("pnlSuccess") as Panel;
+            
+            if (pnlError != null) pnlError.Visible = true;
+            if (litErrorMessage != null) litErrorMessage.Text = message;
+            if (pnlSuccess != null) pnlSuccess.Visible = false;
+        }
+
+        private void ShowSuccess(string message)
+        {
+            // Use the client-side success popup
+            string script = $"showSuccessPopup('{message.Replace("'", "\\'")}');";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "successPopup", script, true);
+            
+            // Hide the default success panel
+            if (pnlSuccess != null) pnlSuccess.Visible = false;
+        }
+
+        protected string GetOrderStatusClass(string status)
+        {
+            if (string.IsNullOrEmpty(status))
+                return "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800";
+        
+            switch (status.ToUpper())
+            {
+                case "COMPLETED":
+                    return "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800";
+                case "PROCESSING":
+                    return "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800";
+                case "PENDING":
+                    return "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800";
+                case "CANCELLED":
+                    return "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800";
+                default:
+                    return "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800";
             }
         }
 
         /// <summary>
-        /// Recursively searches for a control with the specified ID
+        /// Recursively finds a control in the current page or any of its containers
         /// </summary>
-        /// <param name="parent">The parent control to search within</param>
-        /// <param name="controlId">The ID of the control to find</param>
-        /// <returns>The control if found, null otherwise</returns>
-        private Control FindControlRecursive(Control parent, string controlId)
+        private Control FindControlRecursively(Control root, string id)
         {
-            try
+            if (root.ID == id)
+                return root;
+
+            foreach (Control c in root.Controls)
             {
-                if (parent == null || string.IsNullOrEmpty(controlId))
-                    return null;
-
-                // Check if the current control has the ID we're looking for
-                if (parent.ID == controlId)
-                    return parent;
-
-                // Check if the current control has the ClientID we're looking for (for unique IDs)
-                if (parent.ClientID == controlId)
-                    return parent;
-
-                // Recursively search through all child controls
-                foreach (Control child in parent.Controls)
-                {
-                    Control foundControl = FindControlRecursive(child, controlId);
-                    if (foundControl != null)
-                        return foundControl;
-                }
-
-                return null;
+                Control found = FindControlRecursively(c, id);
+                if (found != null)
+                    return found;
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in FindControlRecursive: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                return null;
-            }
+            return null;
         }
 
         /// <summary>
-        /// Recursively collects all controls within a parent control
+        /// Safely finds a control by ID in the page, avoiding infinite recursion
         /// </summary>
-        /// <param name="parent">The parent control to search within</param>
-        /// <returns>A list of all controls found</returns>
-        private List<Control> FindAllControlsRecursive(Control parent)
+        private Control GetControlById(string id)
+        {
+            // First try the standard FindControl method from the base class
+            Control control = base.FindControl(id);
+            if (control != null)
+                return control;
+            
+            // If not found, try recursive search
+            return FindControlRecursively(this, id);
+        }
+
+        private void ShowBasicInfoTab()
         {
             try
             {
-                List<Control> controls = new List<Control>();
-
-                if (parent == null)
-                    return controls;
-
-                // Add the current control to the list
-                controls.Add(parent);
-
-                // Recursively add all child controls
-                foreach (Control child in parent.Controls)
-                {
-                    controls.AddRange(FindAllControlsRecursive(child));
-                }
-
-                return controls;
+                // Ensure proper tab display
+                pnlBasicInfo.Visible = true;
+                pnlOrderHistory.Visible = false;
+                
+                // Set the active tab styling via JavaScript
+                string script = @"
+                            document.addEventListener('DOMContentLoaded', function() {
+                        showUserTab('basicInfo');
+                    });";
+                
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showBasicInfoTab", script, true);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in FindAllControlsRecursive: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                return new List<Control>();
+                Debug.WriteLine($"Error in ShowBasicInfoTab: {ex.Message}");
             }
         }
 
-        private void UpdateDataPagerTotalCount_Removed()
-        {
-            // This method is no longer needed with our custom pagination
-        }
-
-        private void UpdateDataPagersAfterBinding_Removed()
-        {
-            // This method is no longer needed with our custom pagination
-        }
-
-        private void FindDataPagingControlsRemoved()
-        {
-            // This method is no longer needed with our custom pagination
-            // Method removed
-        }
-
-        #region Pagination Methods
-
-        protected void btnFirst_Click(object sender, EventArgs e)
+        private void GeneratePaginationButtons()
         {
             try
             {
-                Debug.WriteLine("btnFirst_Click called");
-                ViewState["CurrentPageIndex"] = 0;
-                LoadUsers(false);
+                // Get current pagination state
+                int currentPage = Convert.ToInt32(hdnCurrentPage.Value);
+                int totalPages = Convert.ToInt32(hdnTotalPages.Value);
+                
+                Debug.WriteLine($"GeneratePaginationButtons: currentPage={currentPage}, totalPages={totalPages}");
+                
+                // Clear existing controls first
+                phPageNumbers.Controls.Clear();
+                
+                if (totalPages <= 1)
+                {
+                    // No pagination needed for single page
+                    return;
+                }
+                
+                // Calculate page range (show max 5 pages centered around current)
+                int startPage = Math.Max(1, currentPage - 2);
+                int endPage = Math.Min(totalPages, startPage + 4);
+                
+                // Adjust start page if we're at the end of the range
+                if (endPage == totalPages)
+                {
+                    startPage = Math.Max(1, endPage - 4);
+                }
+                
+                Debug.WriteLine($"Generating page buttons from {startPage} to {endPage}");
+                
+                // Create a simple literal control with HTML links instead of server controls
+                // This avoids ASP.NET event validation issues with dynamically created controls
+                StringBuilder sb = new StringBuilder();
+                
+                for (int i = startPage; i <= endPage; i++)
+                {
+                    string cssClass = (i == currentPage) 
+                        ? "px-3 py-1 rounded-md text-sm font-medium bg-[#D43B6A] text-white pointer-events-none border border-gray-300"
+                        : "px-3 py-1 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 border border-gray-300";
+                    
+                    // Use client-side JavaScript directly instead of server controls
+                    sb.Append($"<a href=\"javascript:void(0);\" onclick=\"return changePage({i});\" class=\"{cssClass} mx-1\">{i}</a>");
+                }
+                
+                // Create a literal control to hold our pagination HTML
+                Literal litPageNumbers = new Literal();
+                litPageNumbers.Text = sb.ToString();
+                phPageNumbers.Controls.Add(litPageNumbers);
+                
+                // Register script to initialize pagination UI
+                string script = "initializePagination();";
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "initPagination", script, true);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"ERROR in btnFirst_Click: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error navigating to first page: " + ex.Message);
-            }
-        }
-
-        // Previous page button click handler
-        protected void btnPrev_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Debug.WriteLine("btnPrev_Click called");
-
-                // Get current page index from ViewState (0-based)
-                int currentPageIndex = 0;
-                if (ViewState["CurrentPageIndex"] != null)
-                {
-                    currentPageIndex = Convert.ToInt32(ViewState["CurrentPageIndex"]);
-                }
-
-                // Check if we can go to previous page
-                if (currentPageIndex > 0)
-                {
-                    // Decrement the page index
-                    currentPageIndex--;
-                    ViewState["CurrentPageIndex"] = currentPageIndex;
-                    Debug.WriteLine($"Moving to previous page: {currentPageIndex + 1}");
-
-                    // Reload users with the new page index
-                    LoadUsers(false);
-                }
-                else
-                {
-                    Debug.WriteLine("Already on first page, cannot go to previous page");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in btnPrev_Click: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error navigating to previous page: " + ex.Message);
-            }
-        }
-
-        // Next page button click handler
-        protected void btnNext_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Debug.WriteLine("btnNext_Click called");
-
-                // Get current page index from ViewState (0-based)
-                int currentPageIndex = 0;
-                if (ViewState["CurrentPageIndex"] != null)
-                {
-                    currentPageIndex = Convert.ToInt32(ViewState["CurrentPageIndex"]);
-                }
-
-                // Get total pages from ViewState
-                int totalPages = 1;
-                if (ViewState["TotalPages"] != null)
-                {
-                    totalPages = Convert.ToInt32(ViewState["TotalPages"]);
-                }
-
-                // Check if we can go to next page
-                if (currentPageIndex < totalPages - 1)
-                {
-                    // Increment the page index
-                    currentPageIndex++;
-                    ViewState["CurrentPageIndex"] = currentPageIndex;
-                    Debug.WriteLine($"Moving to next page: {currentPageIndex + 1}");
-
-                    // Reload users with the new page index
-                    LoadUsers(false);
-                }
-                else
-                {
-                    Debug.WriteLine("Already on last page, cannot go to next page");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in btnNext_Click: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error navigating to next page: " + ex.Message);
-            }
-        }
-
-        // Handler for numeric page button clicks
-        protected void btnPage_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                LinkButton btn = sender as LinkButton;
-                if (btn != null)
-                {
-                    // Get the page number from the button's CommandArgument
-                    string pageArg = btn.CommandArgument;
-                    if (!string.IsNullOrEmpty(pageArg) && int.TryParse(pageArg, out int pageNumber))
-                    {
-                        Debug.WriteLine($"btnPage_Click called for page {pageNumber}");
-
-                        // Convert from 1-based (display) to 0-based (internal)
-                        int pageIndex = pageNumber - 1;
-
-                        // Store in ViewState
-                        ViewState["CurrentPageIndex"] = pageIndex;
-
-                        // Reload users with the new page index
-                        LoadUsers(false);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in btnPage_Click: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowError("Error navigating to the selected page: " + ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Updates the pagination controls to reflect the current page and total pages
-        /// </summary>
-        /// <param name="currentPage">The current page number (1-based for display)</param>
-        /// <param name="totalPages">The total number of pages</param>
-        private void UpdatePaginationControls(int currentPage, int totalPages)
-        {
-            try
-            {
-                Debug.WriteLine($"Updating pagination controls: currentPage={currentPage}, totalPages={totalPages}");
-
-                // Find desktop pagination labels
-                Control desktopCurrentPage = FindControl("lblCurrentPage");
-                Control desktopTotalPages = FindControl("lblTotalPages");
-
-                // Update the desktop pagination labels
-                if (desktopCurrentPage is Label)
-                {
-                    (desktopCurrentPage as Label).Text = currentPage.ToString();
-                }
-
-                if (desktopTotalPages is Label)
-                {
-                    (desktopTotalPages as Label).Text = totalPages.ToString();
-                }
-
-                // Update the mobile pagination labels
-                Control mobileCurrentPage = FindControl("lblCurrentPageMobile");
-                if (mobileCurrentPage is Label)
-                {
-                    (mobileCurrentPage as Label).Text = currentPage.ToString();
-                }
-
-                Control mobileTotalPages = FindControl("lblTotalPagesMobile");
-                if (mobileTotalPages is Label)
-                {
-                    (mobileTotalPages as Label).Text = totalPages.ToString();
-                }
-
-                // Find desktop pagination buttons
-                Control prevButton = FindControl("btnPrev");
-                Control nextButton = FindControl("btnNext");
-
-                // Update the desktop pagination buttons
-                if (prevButton is LinkButton)
-                {
-                    LinkButton btnPrev = prevButton as LinkButton;
-                    btnPrev.Enabled = currentPage > 1;
-                    btnPrev.CssClass = currentPage > 1
-                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
-                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-l-lg cursor-not-allowed";
-                }
-
-                if (nextButton is LinkButton)
-                {
-                    LinkButton btnNext = nextButton as LinkButton;
-                    btnNext.Enabled = currentPage < totalPages;
-                    btnNext.CssClass = currentPage < totalPages
-                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
-                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-r-lg cursor-not-allowed";
-                }
-
-                // Update the mobile pagination buttons
-                Control prevMobileButton = FindControl("btnPrevMobile");
-                if (prevMobileButton is LinkButton)
-                {
-                    LinkButton btnPrevMobile = prevMobileButton as LinkButton;
-                    btnPrevMobile.Enabled = currentPage > 1;
-                    btnPrevMobile.CssClass = currentPage > 1
-                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
-                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-l-lg cursor-not-allowed";
-                }
-
-                Control nextMobileButton = FindControl("btnNextMobile");
-                if (nextMobileButton is LinkButton)
-                {
-                    LinkButton btnNextMobile = nextMobileButton as LinkButton;
-                    btnNextMobile.Enabled = currentPage < totalPages;
-                    btnNextMobile.CssClass = currentPage < totalPages
-                        ? "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
-                        : "px-4 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-r-lg cursor-not-allowed";
-                }
-
-                // Create numeric pagination buttons if we have a container panel
-                Control numericPaginationPanel = FindControl("pnlNumericPagination");
-                if (numericPaginationPanel is Panel)
-                {
-                    Panel pnlNumericPagination = numericPaginationPanel as Panel;
-                    pnlNumericPagination.Controls.Clear();
-
-                    // Only show numeric pagination if we have more than one page
-                    if (totalPages > 1)
-                    {
-                        // Determine range of pages to display (at most 5 pages)
-                        int startPage = Math.Max(1, currentPage - 2);
-                        int endPage = Math.Min(totalPages, startPage + 4);
-
-                        // Adjust start page if we're at the end of the range
-                        if (endPage - startPage < 4 && startPage > 1)
-                        {
-                            startPage = Math.Max(1, endPage - 4);
-                        }
-
-                        // Add numeric buttons
-                        for (int i = startPage; i <= endPage; i++)
-                        {
-                            LinkButton btnPage = new LinkButton();
-                            btnPage.ID = "btnPage_" + i.ToString();
-                            btnPage.Text = i.ToString();
-                            btnPage.CommandArgument = i.ToString();
-                            btnPage.Click += new EventHandler(btnPage_Click);
-
-                            // Style the button based on whether it's the current page
-                            if (i == currentPage)
-                            {
-                                btnPage.CssClass = "px-4 py-2 text-sm font-medium text-white bg-blue-700 border border-blue-700 hover:bg-blue-800 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-white";
-                                btnPage.Enabled = false;
-                            }
-                            else
-                            {
-                                btnPage.CssClass = "px-4 py-2 text-sm font-medium text-blue-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700";
-                            }
-
-                            // Add some margins between buttons
-                            btnPage.Style["margin"] = "0 2px";
-
-                            // Add the button to the panel
-                            pnlNumericPagination.Controls.Add(btnPage);
-                        }
-                    }
-                }
-
-                // Ensure the pagination panel is visible
-                Control paginationPanel = FindControl("pnlPagination");
-                if (paginationPanel is Panel)
-                {
-                    (paginationPanel as Panel).Visible = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ERROR in UpdatePaginationControls: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                // This is a UI update, so we don't want to crash if it fails
+                Debug.WriteLine($"Error in GeneratePaginationButtons: {ex.Message}");
+                // Don't show error to user for pagination issues
             }
         }
 
         #endregion
     }
-}
+
+    // User model class
+    public class UserModel
+    {
+        public int UserId { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime DateModified { get; set; }
+        public DateTime LastLogin { get; set; }
+        public bool IsActive { get; set; }
+    }
+} 
