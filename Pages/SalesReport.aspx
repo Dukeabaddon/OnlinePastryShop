@@ -1,42 +1,40 @@
-﻿<%@ Page Title="Sales Report" 
-         Language="C#" 
-         MasterPageFile="~/Pages/AdminMaster.Master" 
-         AutoEventWireup="true" 
-         CodeBehind="SalesReport.aspx.cs" 
+﻿<%@ Page Title="Sales Report"
+         Language="C#"
+         MasterPageFile="~/Pages/AdminMaster.Master"
+         AutoEventWireup="true"
+         CodeBehind="SalesReport.aspx.cs"
          Inherits="OnlinePastryShop.Pages.SalesReport" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="AdminContent" runat="server">
-    <form runat="server">
-        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-        
+
         <!-- Chart Data Initialization -->
         <script type="text/javascript">
             // Global object to hold chart data from server
             var chartData = {};
         </script>
-        
+
         <div class="container mx-auto p-4">
             <!-- Error Message -->
-            <asp:Label ID="lblErrorMessage" runat="server" 
-                       CssClass="text-red-500 text-center block mb-4" 
+            <asp:Label ID="lblErrorMessage" runat="server"
+                       CssClass="text-red-500 text-center block mb-4"
                        Visible="false"></asp:Label>
-            
+
             <!-- Success Message -->
-            <asp:Label ID="lblSuccessMessage" runat="server" 
-                       CssClass="text-green-500 text-center block mb-4" 
+            <asp:Label ID="lblSuccessMessage" runat="server"
+                       CssClass="text-green-500 text-center block mb-4"
                        Visible="false"></asp:Label>
-            
+
             <!-- Dashboard Header with Time Selector -->
             <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-[#D43B6A] mb-4 md:mb-0">Sales Report Dashboard</h1>
-                
+
                 <!-- Time Range Controls -->
                 <div class="flex flex-col sm:flex-row gap-2 items-end w-full md:w-auto">
                     <div class="flex-1 md:flex-none">
                         <label for="TimeRangeSelector" class="block text-sm font-medium text-gray-700 mb-1">Time Range</label>
-                        <asp:DropDownList ID="TimeRangeSelector" runat="server" 
-                                         AutoPostBack="true" 
-                                         OnSelectedIndexChanged="TimeRangeSelector_SelectedIndexChanged" 
+                        <asp:DropDownList ID="TimeRangeSelector" runat="server"
+                                         AutoPostBack="true"
+                                         OnSelectedIndexChanged="TimeRangeSelector_SelectedIndexChanged"
                                          CssClass="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <asp:ListItem Text="Daily" Value="Daily" />
                             <asp:ListItem Text="Weekly" Value="Weekly" Selected="True" />
@@ -45,33 +43,33 @@
                             <asp:ListItem Text="Custom Range" Value="Custom" />
                         </asp:DropDownList>
                     </div>
-                    
+
                     <!-- Custom Date Range Controls -->
                     <div id="customDateRange" runat="server" class="flex flex-col sm:flex-row gap-2 w-full md:w-auto mt-2 sm:mt-0">
                         <div class="flex-1 md:flex-none">
                             <label for="txtStartDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                            <asp:TextBox ID="txtStartDate" runat="server" TextMode="Date" 
+                            <asp:TextBox ID="txtStartDate" runat="server" TextMode="Date"
                                        CssClass="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></asp:TextBox>
                         </div>
                         <div class="flex-1 md:flex-none">
                             <label for="txtEndDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                            <asp:TextBox ID="txtEndDate" runat="server" TextMode="Date" 
+                            <asp:TextBox ID="txtEndDate" runat="server" TextMode="Date"
                                        CssClass="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></asp:TextBox>
                         </div>
                         <div class="flex-none flex items-end">
-                            <asp:Button ID="btnFilterReport" runat="server" Text="Apply Filter" 
-                                      OnClick="btnFilterReport_Click" 
+                            <asp:Button ID="btnFilterReport" runat="server" Text="Apply Filter"
+                                      OnClick="btnFilterReport_Click"
                                       CssClass="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#D43B6A] hover:bg-[#c02f5c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" />
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Message for no data -->
             <asp:Label ID="lblMessage" runat="server" CssClass="text-gray-500 text-center block my-8" Visible="false">
                 No sales data available for the selected time period.
             </asp:Label>
-            
+
             <!-- KPI Cards Row -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <!-- Total Revenue Card -->
@@ -95,7 +93,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Order Count Card -->
                 <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
                     <div class="flex justify-between items-start">
@@ -117,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Items Per Order Card (replacing Average Order Value) -->
                 <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
                     <div class="flex justify-between items-start">
@@ -140,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Main Charts Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <!-- Sales Trend Chart -->
@@ -152,7 +150,7 @@
                         <canvas id="salesTrendChart"></canvas>
                     </div>
                 </div>
-                
+
                 <!-- Revenue by Category -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex justify-between items-center mb-4">
@@ -163,7 +161,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Secondary Charts Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <!-- Top Selling Products -->
@@ -175,7 +173,7 @@
                         <canvas id="topProductsChart"></canvas>
                     </div>
                 </div>
-                
+
                 <!-- Inventory Status -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex justify-between items-center mb-4">
@@ -186,13 +184,13 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Product Performance Table -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-8">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-800">Product Performance</h3>
                 </div>
-                
+
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -278,13 +276,13 @@
             </div>
         </div>
     </form>
-    
+
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0/dist/chartjs-adapter-luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    
+
     <!-- Chart Initialization -->
     <script type="text/javascript">
         let salesTrendChart = null;

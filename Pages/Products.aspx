@@ -1,14 +1,11 @@
-﻿<%@ Page Title="Products" 
-         Language="C#" 
-         MasterPageFile="~/Pages/AdminMaster.master" 
-         AutoEventWireup="true" 
-         CodeBehind="Products.aspx.cs" 
+﻿<%@ Page Title="Products"
+         Language="C#"
+         MasterPageFile="~/Pages/AdminMaster.master"
+         AutoEventWireup="true"
+         CodeBehind="Products.aspx.cs"
          Inherits="OnlinePastryShop.Pages.Products" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="AdminContent" runat="server">
-    <form id="form1" runat="server" novalidate>
-        <!-- ScriptManager for AJAX -->
-        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-        
+
         <!-- Add this right after your ScriptManager -->
         <div id="debugInfo" class="bg-gray-100 p-4 mb-4 hidden">
             <h3 class="font-bold">Debug Information</h3>
@@ -22,10 +19,10 @@
             </div>
             <pre id="debugOutput" class="whitespace-pre-wrap"></pre>
         </div>
-        
+
         <!-- Message Label -->
         <asp:Label ID="lblMessage" runat="server" CssClass="text-red-500 mb-4" Visible="false"></asp:Label>
-        
+
         <!-- Dashboard Stats -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="bg-white p-4 rounded-lg shadow">
@@ -41,12 +38,12 @@
                 <p class="text-2xl font-bold text-red-500" id="outOfStockCount">0</p>
             </div>
         </div>
-        
+
         <!-- Search and Filters -->
         <div class="bg-white p-4 rounded-lg shadow mb-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="relative">
-                    <input type="text" id="searchInput" placeholder="Search products..." 
+                    <input type="text" id="searchInput" placeholder="Search products..."
                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" />
                     <span class="absolute right-3 top-2.5 text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,13 +65,13 @@
                         <option value="stock_desc">Stock (High to Low)</option>
                     </select>
                 </div>
-                <button type="button" onclick="openAddModal()" 
+                <button type="button" onclick="openAddModal()"
                         class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
                     Add Product
                 </button>
             </div>
         </div>
-        
+
         <!-- Products List -->
         <div class="bg-white rounded-lg shadow">
             <!-- Filter indicator for live search -->
@@ -128,7 +125,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Add/Edit Product Modal - Updated with better UI/UX and scrolling -->
         <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
             <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] flex flex-col">
@@ -187,7 +184,7 @@
                             <div class="mt-1 flex justify-center px-4 pt-3 pb-4 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#D43B6A] transition-colors">
                                 <div class="space-y-1 text-center">
                                     <div class="relative mx-auto" style="width: 96px; height: 96px;">
-                                        <img id="imagePreview" class="h-24 w-24 object-cover hidden rounded-lg shadow-md cursor-pointer" 
+                                        <img id="imagePreview" class="h-24 w-24 object-cover hidden rounded-lg shadow-md cursor-pointer"
                                              onclick="document.getElementById('productImage').click();"
                                              title="Click to change image">
                                         <div id="imageOverlay" class="absolute inset-0 hidden flex items-center justify-center bg-black bg-opacity-40 rounded-lg cursor-pointer transition-opacity"
@@ -218,7 +215,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Delete Confirmation Modal -->
         <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
             <div class="bg-white rounded-lg p-6 w-full max-w-md">
@@ -235,21 +232,20 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Toast Notification -->
         <div id="toast" class="fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg hidden">
             <div class="flex items-center">
                 <span id="toastMessage" class="text-white"></span>
             </div>
         </div>
-        
+
         <!-- Developer Debug Tools (hidden in footer) -->
         <div class="fixed bottom-0 left-0 p-2 opacity-30 hover:opacity-100 transition-opacity z-40">
             <button type="button" id="devModeToggle" class="text-xs bg-gray-100 p-1 rounded mr-1" onclick="toggleDevMode()">Dev: OFF</button>
             <button type="button" class="text-xs bg-gray-100 p-1 rounded" onclick="showDebugInfo()">Show Debug</button>
         </div>
-    </form>
-    
+
     <script type="text/javascript">
         let currentPage = 1;
         const pageSize = 10;
@@ -451,10 +447,10 @@
                 const imageCell = `
                     <div class="h-10 w-10 rounded-full bg-gray-200 mr-3 flex items-center justify-center overflow-hidden">
                         ${product.HasImage ?
-                        `<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                        `<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                                  data-product-id="${product.ProductId}"
                                  data-lazy-load="true"
-                                 alt="${product.Name}" 
+                                 alt="${product.Name}"
                                  class="h-10 w-10 object-cover rounded-full">` :
                         '<span class="text-gray-500 text-xs">No image</span>'}
                     </div>
