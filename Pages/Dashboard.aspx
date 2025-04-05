@@ -1,15 +1,14 @@
 ﻿<%@ Page Title="Dashboard" Language="C#" MasterPageFile="~/Pages/AdminMaster.Master" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="OnlinePastryShop.Pages.Dashboard" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="AdminContent" runat="server">
-    <form id="dashboardForm" runat="server">
     <div class="container mx-auto p-4">
         <!-- Error Message -->
         <asp:Label ID="lblErrorMessage" runat="server" CssClass="text-red-500 text-center mb-4" Visible="false"></asp:Label>
-        
+
         <!-- Dashboard Header -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-[#D43B6A] mb-4 md:mb-0">Dashboard</h1>
-            
+
             <div class="flex flex-wrap gap-3">
                 <!-- Date Filter -->
                 <div class="flex items-center">
@@ -25,7 +24,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Real-time Status Banner -->
         <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-md p-4 mb-6 border-l-4 border-[#D43B6A]">
             <div class="flex items-center">
@@ -43,7 +42,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- KPI Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Daily Revenue -->
@@ -67,7 +66,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Today's Orders -->
             <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
                 <div class="flex items-center justify-between">
@@ -91,7 +90,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Pending Orders -->
             <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-amber-500">
                 <div class="flex items-center justify-between">
@@ -109,7 +108,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Low Stock Items -->
             <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
                 <div class="flex items-center justify-between">
@@ -128,12 +127,12 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <!-- Pending Orders Section (Wider) -->
             <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <div class="p-4 border-b border-gray-200 flex justify-between items-center">
                     <h3 class="text-lg font-semibold text-gray-800 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -142,57 +141,66 @@
                     </h3>
                     <a href="Orders.aspx?filter=pending" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
                 </div>
-                
+
                 <!-- Orders Table -->
                 <div class="overflow-x-auto" style="max-height: 400px;">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200 bg-gray-50">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody>
                             <asp:Repeater ID="PendingOrdersRepeater" runat="server" OnItemCommand="PendingOrdersRepeater_ItemCommand">
                                 <ItemTemplate>
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">#<%# Eval("OrderId") %></div>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50"
+                                        data-order-id="<%# Eval("ORDERID") %>"
+                                        data-customer="<%# Eval("CUSTOMERNAME") %>"
+                                        data-email="<%# Eval("EMAIL") %>"
+                                        data-date="<%# Convert.ToDateTime(Eval("ORDERDATE")).ToString("MMM dd, yyyy") %>"
+                                        data-amount="<%# Eval("TOTALAMOUNT", "{0:N2}") %>"
+                                        data-status="<%# Eval("STATUS") %>"
+                                        data-address="<%# Eval("SHIPPINGADDRESS") %>"
+                                        data-payment="<%# Eval("PAYMENTMETHOD") %>">
+                                        <td class="px-4 py-3">
+                                            <div class="text-sm font-medium text-gray-900">#<%# Eval("ORDERID") %></div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900"><%# Eval("CustomerName") %></div>
-                                            <div class="text-sm text-gray-500"><%# Eval("Email") %></div>
+                                        <td class="px-4 py-3">
+                                            <div class="text-sm text-gray-900"><%# Eval("CUSTOMERNAME") %></div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900"><%# Convert.ToDateTime(Eval("OrderDate")).ToString("MMM dd, yyyy") %></div>
-                                            <div class="text-sm text-gray-500"><%# Convert.ToDateTime(Eval("OrderDate")).ToString("h:mm tt") %></div>
+                                        <td class="px-4 py-3">
+                                            <div class="text-sm text-gray-900"><%# Convert.ToDateTime(Eval("ORDERDATE")).ToString("MMM dd, yyyy") %></div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">₱<%# Eval("TotalAmount", "{0:N2}") %></div>
+                                        <td class="px-4 py-3">
+                                            <div class="text-sm font-medium text-gray-900">₱<%# Eval("TOTALAMOUNT", "{0:N2}") %></div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-4 py-3">
                                             <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                <%# Eval("Status") %>
+                                                <%# Eval("STATUS") %>
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td class="px-4 py-3">
                                             <div class="flex space-x-2">
-                                                <asp:LinkButton ID="btnApprove" runat="server" 
-                                                    CommandName="Approve" 
+                                                <asp:LinkButton ID="btnApprove" runat="server"
+                                                    CommandName="Approve"
                                                     CommandArgument='<%# Eval("OrderId") %>'
                                                     CssClass="text-white bg-green-500 hover:bg-green-600 px-3 py-1 rounded-md">
                                                     Approve
                                                 </asp:LinkButton>
-                                                <asp:LinkButton ID="btnReject" runat="server" 
-                                                    CommandName="Reject" 
+                                                <asp:LinkButton ID="btnReject" runat="server"
+                                                    CommandName="Reject"
                                                     CommandArgument='<%# Eval("OrderId") %>'
                                                     CssClass="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded-md">
                                                     Reject
                                                 </asp:LinkButton>
+                                                <button type="button" onclick="showOrderDetails(<%# Eval("ORDERID") %>)" class="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-md text-xs">
+                                                    View
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -210,7 +218,7 @@
                     </table>
                 </div>
             </div>
-            
+
             <!-- Top Products Table -->
             <div class="col-span-2 lg:col-span-1 bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
@@ -222,7 +230,7 @@
                     </h3>
                 </div>
                 <div class="p-4">
-                    <div class="max-h-[350px] overflow-y-auto"> 
+                    <div class="max-h-[350px] overflow-y-auto">
                         <table class="min-w-full table-fixed">
                             <thead class="bg-gray-50 sticky top-0">
                                 <tr>
@@ -259,7 +267,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Additional Insights Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <!-- Sales Overview Chart -->
@@ -280,7 +288,7 @@
                     </div>
                 </div>
             </div>
-            
+
         <!-- Low Stock Products -->
             <div class="col-span-1 md:col-span-1 bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
@@ -321,11 +329,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log("DOM content loaded, initializing charts");
-            
+
             // Debug logging for labels and data
             console.log("Sales Overview Labels:", '<%= SalesOverviewLabels %>');
             console.log("Sales Overview Data:", '<%= SalesOverviewData %>');
-            
+
             // Helper function to check for valid JSON data
             function isValidJsonString(str) {
                 if (!str || str.trim() === '' || str === '[]') return false;
@@ -337,30 +345,30 @@
                     return false;
                 }
             }
-            
+
             // Sales Overview Chart
             const salesOverviewChartElement = document.getElementById('salesOverviewChart');
             const noSalesDataElement = document.getElementById('noSalesData');
-            
+
             if (salesOverviewChartElement) {
                 try {
                     // Check if we have valid data first
                     const salesLabelsJson = '<%= SalesOverviewLabels %>';
                     const salesDataJson = '<%= SalesOverviewData %>';
-                    
+
                     if (!isValidJsonString(salesLabelsJson) || !isValidJsonString(salesDataJson)) {
                         throw new Error("Invalid or empty sales data");
                     }
-                    
+
                     const salesOverviewCtx = salesOverviewChartElement.getContext('2d');
                     const salesLabels = JSON.parse(salesLabelsJson);
                     const salesData = JSON.parse(salesDataJson);
-                    
+
                     console.log('Sales overview data:', {
                         labels: salesLabels,
                         data: salesData
                     });
-                    
+
                     // Only create chart if we have actual data
                     if (salesLabels.length > 0 && salesData.length > 0) {
                         new Chart(salesOverviewCtx, {
@@ -417,7 +425,7 @@
                     }
                 } catch (error) {
                     console.error('Error initializing sales overview chart:', error);
-                    
+
                     // Hide the canvas and show the no data message
                     if (salesOverviewChartElement) salesOverviewChartElement.style.display = 'none';
                     if (noSalesDataElement) noSalesDataElement.classList.remove('hidden');
@@ -425,7 +433,7 @@
             } else {
                 console.warn('salesOverviewChart element not found');
             }
-            
+
             // Update the last updated time every minute
             setInterval(function() {
                 const now = new Date();
@@ -439,18 +447,18 @@
                     hour12: true
                 });
             }, 60000);
-            
+
             // Make the time range selector actually do something
             const timeRangeSelector = document.getElementById('TimeRangeSelector');
             if (timeRangeSelector) {
                 timeRangeSelector.addEventListener('change', function() {
                     // Store the selected value in sessionStorage
                     sessionStorage.setItem('selectedTimeRange', this.value);
-                    
+
                     // Redirect to the same page with the new time range parameter
                     window.location.href = window.location.pathname + '?timeRange=' + this.value;
                 });
-                
+
                 // Set the value from URL parameter or sessionStorage if available
                 const urlParams = new URLSearchParams(window.location.search);
                 const timeRangeParam = urlParams.get('timeRange');
@@ -460,7 +468,7 @@
                     timeRangeSelector.value = sessionStorage.getItem('selectedTimeRange');
                 }
             }
-            
+
             // Periodically check connection status (every 30 seconds)
             setInterval(function() {
                 fetch('CheckDatabaseConnection.aspx')
@@ -502,7 +510,7 @@
                         </svg>
                     </button>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <div class="mb-4">
@@ -528,7 +536,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mb-4">
                             <h4 class="text-sm font-medium text-gray-500 mb-1">Sales Metrics</h4>
                             <div class="bg-gray-50 p-4 rounded-lg">
@@ -553,7 +561,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div>
                         <div class="mb-4">
                             <h4 class="text-sm font-medium text-gray-500 mb-1">Sales Trend</h4>
@@ -561,7 +569,7 @@
                                 <canvas id="productSalesChart"></canvas>
                             </div>
                         </div>
-                        
+
                         <div>
                             <h4 class="text-sm font-medium text-gray-500 mb-1">Customer Reviews</h4>
                             <div class="bg-gray-50 p-4 rounded-lg max-h-40 overflow-y-auto" id="modalReviews">
@@ -593,7 +601,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end space-x-3">
                     <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" onclick="closeProductModal()">
                         Close
@@ -620,32 +628,32 @@
             document.getElementById('modalRevenue').textContent = '₱18,900.00';
             document.getElementById('modalProfitMargin').textContent = '35%';
             document.getElementById('modalGrowthRate').textContent = '+8.5%';
-            
+
             // Show modal
             document.getElementById('productDetailModal').classList.remove('hidden');
-            
+
             // Initialize chart
             initProductSalesChart();
         }
-        
+
         function closeProductModal() {
             document.getElementById('productDetailModal').classList.add('hidden');
         }
-        
+
         function openEditModal(productId) {
             // Redirect to product edit page
             window.location.href = 'ProductEdit.aspx?id=' + productId;
         }
-        
+
         function initProductSalesChart() {
             const chartCanvas = document.getElementById('productSalesChart');
             if (!chartCanvas) {
                 console.warn('productSalesChart canvas not found');
                 return;
             }
-            
+
             var ctx = chartCanvas.getContext('2d');
-            
+
             // Sample data
             var salesData = {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -658,7 +666,7 @@
                     tension: 0.4
                 }]
             };
-            
+
             var salesChart = new Chart(ctx, {
                 type: 'line',
                 data: salesData,
@@ -677,7 +685,7 @@
                 }
             });
         }
-        
+
         // Add event listeners to product cards for hover effects
         document.addEventListener('DOMContentLoaded', function() {
             const productCards = document.querySelectorAll('.product-card');
@@ -707,5 +715,4 @@
             }
         }
     </script>
-    </form>
 </asp:Content>

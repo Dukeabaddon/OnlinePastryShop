@@ -14,6 +14,11 @@ namespace OnlinePastryShop.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Initialize properties with default values
+            PendingOrdersCount = 0;
+            LowStockCount = 0;
+            NewOrdersCount = 0;
+
             if (!IsPostBack)
             {
                 // Load badge counts
