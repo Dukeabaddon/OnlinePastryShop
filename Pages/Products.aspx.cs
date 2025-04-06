@@ -165,8 +165,13 @@ namespace OnlinePastryShop.Pages
                                         continue;
                                     }
 
-                                    // Apply category filter in memory
-                                    if (!string.IsNullOrEmpty(categoryId) && categoryId != "0" &&
+                                    // Check if we're filtering by "latest" products
+                                    if (categoryId == "latest" && !isLatest)
+                                    {
+                                        continue;
+                                    }
+                                    // Apply regular category filter in memory
+                                    else if (!string.IsNullOrEmpty(categoryId) && categoryId != "latest" && categoryId != "0" &&
                                         catId.ToString() != categoryId)
                                     {
                                         continue;

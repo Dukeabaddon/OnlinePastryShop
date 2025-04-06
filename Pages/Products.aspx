@@ -53,6 +53,7 @@
                 </div>
                 <select id="categoryFilter" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent">
                     <option value="">All Categories</option>
+                    <option value="latest">Latest Products</option>
                 </select>
                 <div class="flex items-center gap-4">
                     <select id="sortOptions" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent flex-grow">
@@ -395,7 +396,7 @@
                     const productCategory = document.getElementById('productCategory');
 
                     // Clear existing options
-                    categoryFilter.innerHTML = '<option value="">All Categories</option>';
+                    categoryFilter.innerHTML = '<option value="">All Categories</option><option value="latest">Latest Products</option>';
                     productCategory.innerHTML = '<option value="">Select Category</option>';
 
                     categories.forEach(category => {
@@ -469,7 +470,13 @@
                             <div class="flex items-center">
                                 ${imageCell}
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900">${product.Name}</div>
+                                    <div class="text-sm font-medium text-gray-900">
+                                        ${product.Name}
+                                        ${product.IsLatest ? 
+                                          `<span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+                                            Latest
+                                           </span>` : ''}
+                                    </div>
                                     <div class="text-xs text-gray-500">${product.Description || ''}</div>
                                 </div>
                             </div>
