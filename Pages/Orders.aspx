@@ -212,63 +212,85 @@
                                 </asp:TemplateField>
                             </Columns>
                             <HeaderStyle CssClass="bg-gray-50 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" />
-                            <RowStyle CssClass="border-b border-gray-200 bg-white hover:bg-gray-50 text-sm text-gray-500" />
-                            <AlternatingRowStyle CssClass="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 text-sm text-gray-500" />
+                            <RowStyle CssClass="border-b border-gray-200 hover:bg-gray-50" />
+                            <AlternatingRowStyle CssClass="border-b border-gray-200 bg-gray-50 hover:bg-gray-100" />
+                            <PagerStyle CssClass="px-3 py-2 flex items-center justify-between border-t border-gray-200 bg-white" />
+                            <PagerSettings Mode="NextPreviousFirstLast" Position="Bottom" />
                             <PagerTemplate>
                                 <div class="bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between">
                                     <div class="flex-1 flex justify-between sm:hidden">
-                                        <asp:LinkButton ID="btnPrevMobile" runat="server" CommandArgument="Prev" CommandName="Page"
-                                            CssClass="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                            &laquo; Previous
-                                        </asp:LinkButton>
-                                        <asp:LinkButton ID="btnNextMobile" runat="server" CommandArgument="Next" CommandName="Page"
-                                            CssClass="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                            Next &raquo;
-                                        </asp:LinkButton>
+                                        <button type="button" id="prevPageMobile" onclick="if(<%# ((GridView)Container.NamingContainer).PageIndex > 0 %>) { __doPostBack('<%# ((GridView)Container.NamingContainer).ClientID %>','Page$Prev') }" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">&laquo; Previous</button>
+                                        <button type="button" id="nextPageMobile" onclick="__doPostBack('<%# ((GridView)Container.NamingContainer).ClientID %>','Page$Next')" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next &raquo;</button>
                                     </div>
                                     <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                         <div>
                                             <p class="text-sm text-gray-700">
                                                 <span>Showing page </span>
-                                                <span class="font-medium"><%# ((GridView)Container.Parent.Parent).PageIndex + 1 %></span>
+                                                <span id="currentPageDisplay" class="font-medium"><%# ((GridView)Container.NamingContainer).PageIndex + 1 %></span>
                                                 <span> of </span>
-                                                <span id="spanTotalPages" runat="server" class="font-medium"></span>
+                                                <span id="totalPagesDisplay" class="font-medium"><%# Math.Ceiling((double)((GridView)Container.NamingContainer).DataItemCount / ((GridView)Container.NamingContainer).PageSize) %></span>
                                             </p>
                                         </div>
                                         <div>
                                             <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                                <!-- First Page -->
-                                                <asp:LinkButton ID="btnFirst" runat="server" CommandArgument="First" CommandName="Page"
-                                                    CssClass="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <!-- First Page Button -->
+                                                <asp:LinkButton ID="lnkFirst" runat="server" CommandName="Page" CommandArgument="First" 
+                                                    CssClass="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                                    Enabled="<%# ((GridView)Container.NamingContainer).PageIndex > 0 %>">
                                                     <span class="sr-only">First</span>
                                                     <span>&laquo;</span>
                                                 </asp:LinkButton>
                                                 
-                                                <!-- Previous Page -->
-                                                <asp:LinkButton ID="btnPrevious" runat="server" CommandArgument="Prev" CommandName="Page"
-                                                    CssClass="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <!-- Previous Page Button -->
+                                                <asp:LinkButton ID="lnkPrevious" runat="server" CommandName="Page" CommandArgument="Prev"
+                                                    CssClass="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                                    Enabled="<%# ((GridView)Container.NamingContainer).PageIndex > 0 %>">
                                                     <span class="sr-only">Previous</span>
-                                                    <span>&lsaquo;</span>
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                    </svg>
                                                 </asp:LinkButton>
                                                 
-                                                <!-- Numeric pages -->
-                                                <asp:DataList ID="dlPaging" runat="server" RepeatDirection="Horizontal" OnItemCommand="dlPaging_ItemCommand" OnItemDataBound="dlPaging_ItemDataBound">
-                                                    <ItemTemplate>
-                                                        <asp:LinkButton ID="lnkPage" runat="server" Text='<%# Eval("Text") %>' CommandName="Page" CommandArgument='<%# Eval("Value") %>'
-                                                            CssClass='<%# Convert.ToBoolean(Eval("Selected")) ? "relative inline-flex items-center px-4 py-2 border border-[#D43B6A] bg-[#D43B6A] text-sm font-medium text-white" : "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" %>' />
-                                                    </ItemTemplate>
-                                                </asp:DataList>
+                                                <!-- Numeric Page Buttons -->
+                                                <% 
+                                                int currentPage = ((GridView)Container.NamingContainer).PageIndex + 1;
+                                                int totalPages = (int)Math.Ceiling((double)((GridView)Container.NamingContainer).DataItemCount / ((GridView)Container.NamingContainer).PageSize);
+                                                int startPage = Math.Max(1, currentPage - 2);
+                                                int endPage = Math.Min(totalPages, startPage + 4);
                                                 
-                                                <!-- Next Page -->
-                                                <asp:LinkButton ID="btnNext" runat="server" CommandArgument="Next" CommandName="Page"
-                                                    CssClass="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                // Adjust if we're near the end
+                                                if (endPage - startPage < 4 && totalPages > 5)
+                                                {
+                                                    startPage = Math.Max(1, endPage - 4);
+                                                }
+                                                
+                                                for (int i = startPage; i <= endPage; i++)
+                                                {
+                                                    bool isCurrentPage = i == currentPage;
+                                                    string pageButtonClass = isCurrentPage 
+                                                        ? "relative inline-flex items-center px-4 py-2 border border-pink-600 bg-pink-600 text-sm font-medium text-white" 
+                                                        : "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50";
+                                                %>
+                                                    <asp:LinkButton ID="lnkPage<%# i %>" runat="server" CommandName="Page" CommandArgument="<%# i %>" 
+                                                        CssClass="<%# pageButtonClass %>" Enabled="<%# !isCurrentPage %>">
+                                                        <%# i %>
+                                                    </asp:LinkButton>
+                                                <% } %>
+                                                
+                                                <!-- Next Page Button -->
+                                                <asp:LinkButton ID="lnkNext" runat="server" CommandName="Page" CommandArgument="Next"
+                                                    CssClass="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                                    Enabled="<%# ((GridView)Container.NamingContainer).PageIndex < ((GridView)Container.NamingContainer).PageCount - 1 %>">
                                                     <span class="sr-only">Next</span>
-                                                    <span>&rsaquo;</span>
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                    </svg>
                                                 </asp:LinkButton>
                                                 
-                                                <!-- Last Page -->
-                                                <asp:LinkButton ID="btnLast" runat="server" CommandArgument="Last" CommandName="Page"
-                                                    CssClass="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <!-- Last Page Button -->
+                                                <asp:LinkButton ID="lnkLast" runat="server" CommandName="Page" CommandArgument="Last"
+                                                    CssClass="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                                    Enabled="<%# ((GridView)Container.NamingContainer).PageIndex < ((GridView)Container.NamingContainer).PageCount - 1 %>">
                                                     <span class="sr-only">Last</span>
                                                     <span>&raquo;</span>
                                                 </asp:LinkButton>
@@ -445,5 +467,22 @@
         var prm = Sys.WebForms.PageRequestManager.getInstance();
         prm.add_beginRequest(function() { showLoading(); });
         prm.add_endRequest(function() { hideLoading(); });
+
+        function dlPaging_ItemCommand(source, args) {
+            if (source.get_command() == "Page") {
+                __doPostBack('gvOrders', 'Page$' + args.get_commandArgument());
+            }
+        }
+
+        function dlPaging_ItemDataBound(sender, e) {
+            var lnkPage = e.get_item().findControl("lnkPage");
+            
+            // Highlight the current page
+            if (e.get_item().get_dataItem().get_dataItem()["Selected"]) {
+                lnkPage.addCssClass("relative inline-flex items-center px-4 py-2 border border-pink-600 bg-pink-600 text-sm font-medium text-white");
+            } else {
+                lnkPage.addCssClass("relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50");
+            }
+        }
     </script>
 </asp:Content>

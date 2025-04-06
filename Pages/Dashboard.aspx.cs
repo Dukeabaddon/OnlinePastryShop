@@ -93,7 +93,7 @@ namespace OnlinePastryShop.Pages
 
                 InitializeTimeParameters();
 
-                // Load dashboard data 
+                // Load dashboard data
                 LoadDashboardData();
             }
         }
@@ -323,13 +323,13 @@ namespace OnlinePastryShop.Pages
 
                     // Simplify the query to get total revenue directly from ORDERS table
                     string currentPeriodQuery = @"
-                        SELECT 
+                        SELECT
                             NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
-                        FROM 
+                        FROM
                             ORDERS
-                        WHERE 
+                        WHERE
                             " + dateCriteria + @"
-                        AND 
+                        AND
                             STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
 
                     System.Diagnostics.Debug.WriteLine($"Revenue Query: {currentPeriodQuery}");
@@ -368,16 +368,16 @@ namespace OnlinePastryShop.Pages
                         {
                             // Let's examine the order table to see if there are any orders for today
                             string ordersQuery = @"
-                                SELECT 
-                                    ORDERID, 
-                                    TO_CHAR(ORDERDATE, 'YYYY-MM-DD HH24:MI:SS') AS ORDERDATE_STR, 
-                                    STATUS, 
+                                SELECT
+                                    ORDERID,
+                                    TO_CHAR(ORDERDATE, 'YYYY-MM-DD HH24:MI:SS') AS ORDERDATE_STR,
+                                    STATUS,
                                     TOTALAMOUNT
-                                FROM 
-                                    ORDERS  
-                                WHERE 
+                                FROM
+                                    ORDERS
+                                WHERE
                                     TRUNC(ORDERDATE) = TRUNC(SYSDATE)
-                                ORDER BY 
+                                ORDER BY
                                     ORDERID";
 
                             using (OracleCommand ordersCmd = new OracleCommand(ordersQuery, conn))
@@ -478,13 +478,13 @@ namespace OnlinePastryShop.Pages
 
                     // Now calculate previous period revenue for comparison
                     string previousPeriodQuery = @"
-                        SELECT 
+                        SELECT
                             NVL(SUM(TOTALAMOUNT), 0) AS TotalRevenue
-                        FROM 
+                        FROM
                             ORDERS
-                        WHERE 
+                        WHERE
                             " + prevDateCriteria + @"
-                        AND 
+                        AND
                             STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
 
                     System.Diagnostics.Debug.WriteLine($"Previous Period Revenue Query: {previousPeriodQuery}");
@@ -696,7 +696,7 @@ namespace OnlinePastryShop.Pages
 
                     // Debug: test case-sensitivity in Oracle
                     string caseTestQuery = @"
-                        SELECT 
+                        SELECT
                             (SELECT COUNT(*) FROM ORDERS WHERE STATUS = 'Pending') AS PendingExact,
                             (SELECT COUNT(*) FROM ORDERS WHERE STATUS = 'PENDING') AS PendingUpper,
                             (SELECT COUNT(*) FROM ORDERS WHERE STATUS = 'pending') AS PendingLower,
@@ -720,7 +720,7 @@ namespace OnlinePastryShop.Pages
 
                     // Count all pending orders with an IN clause to handle case variance
                     string query = @"
-                        SELECT 
+                        SELECT
                             COUNT(*) AS PendingCount
                         FROM ORDERS
                         WHERE STATUS IN ('Pending', 'PENDING', 'pending')";
@@ -736,7 +736,7 @@ namespace OnlinePastryShop.Pages
 
                         // Double check with a query that returns all IDs
                         string verifyQuery = @"
-                            SELECT ORDERID FROM ORDERS 
+                            SELECT ORDERID FROM ORDERS
                             WHERE STATUS IN ('Pending', 'PENDING', 'pending')
                             ORDER BY ORDERID";
 
@@ -782,7 +782,7 @@ namespace OnlinePastryShop.Pages
                     // First, check the Orders table structure to confirm fields
                     string tableStructureQuery = @"
                         SELECT column_name, data_type
-                        FROM user_tab_columns 
+                        FROM user_tab_columns
                         WHERE table_name = 'ORDERS'
                         ORDER BY column_id";
 
@@ -814,7 +814,7 @@ namespace OnlinePastryShop.Pages
                     // Now list all pending order IDs for debugging
                     string debugIdsQuery = @"
                         SELECT ORDERID, USERID, ORDERDATE, STATUS
-                        FROM ORDERS 
+                        FROM ORDERS
                         WHERE STATUS IN ('Pending', 'PENDING', 'pending')
                         ORDER BY ORDERDATE DESC";
 
@@ -833,14 +833,14 @@ namespace OnlinePastryShop.Pages
                     // Use a simple query with Oracle 11g compatible syntax (no ANSI JOIN)
                     // Make sure we're not limiting the results with ROWNUM or similar
                     string query = @"
-                        SELECT 
+                        SELECT
                             O.ORDERID,
                             U.USERNAME AS CustomerName,
                             U.EMAIL,
                             O.ORDERDATE AS OrderDate,
                             O.TOTALAMOUNT,
                             O.STATUS
-                        FROM ORDERS O, USERS U 
+                        FROM ORDERS O, USERS U
                         WHERE O.USERID = U.USERID
                         AND O.STATUS IN ('Pending', 'PENDING', 'pending')
                         ORDER BY O.ORDERDATE DESC";
@@ -941,7 +941,7 @@ namespace OnlinePastryShop.Pages
 
                     // Use a dead simple query for low stock products without any joins
                     string query = @"
-                        SELECT 
+                        SELECT
                             PRODUCTID,
                             NAME,
                             STOCKQUANTITY,
@@ -1050,7 +1050,7 @@ namespace OnlinePastryShop.Pages
                     string priceColumn = "PRICE"; // Default
                     string schemaQuery = @"
                         SELECT column_name
-                        FROM user_tab_columns 
+                        FROM user_tab_columns
                         WHERE table_name = 'ORDERDETAILS'
                         ORDER BY column_id";
 
@@ -1100,7 +1100,7 @@ namespace OnlinePastryShop.Pages
                         case "today":
                             // Group by hour for today
                             query = $@"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
                                 FROM ORDERS O, ORDERDETAILS OD
@@ -1120,7 +1120,7 @@ namespace OnlinePastryShop.Pages
                         case "yesterday":
                             // Group by hour for yesterday
                             query = $@"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
                                 FROM ORDERS O, ORDERDETAILS OD
@@ -1140,7 +1140,7 @@ namespace OnlinePastryShop.Pages
                         case "week":
                             // Group by day for week
                             query = $@"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'DY') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
                                 FROM ORDERS O, ORDERDETAILS OD
@@ -1161,7 +1161,7 @@ namespace OnlinePastryShop.Pages
                         case "month":
                             // Group by week for month
                             query = $@"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'IW') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
                                 FROM ORDERS O, ORDERDETAILS OD
@@ -1182,7 +1182,7 @@ namespace OnlinePastryShop.Pages
                         default:
                             // Default to daily view for today
                             query = $@"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * OD.{priceColumn}), 0) AS Revenue
                                 FROM ORDERS O, ORDERDETAILS OD
@@ -1321,7 +1321,7 @@ namespace OnlinePastryShop.Pages
                     // Debug query to check ORDERDETAILS structure first
                     string schemaQuery = @"
                         SELECT column_name, data_type
-                        FROM user_tab_columns 
+                        FROM user_tab_columns
                         WHERE table_name = 'ORDERDETAILS'
                         ORDER BY column_id";
 
@@ -1377,7 +1377,7 @@ namespace OnlinePastryShop.Pages
                     // Use Oracle 11g compatible join syntax (no ANSI JOIN)
                     string query = $@"
                         SELECT * FROM (
-                            SELECT 
+                            SELECT
                                 P.NAME AS ProductName,
                                 SUM(OD.QUANTITY) AS QuantitySold,
                                 SUM(OD.QUANTITY * OD.{priceColumn}) AS Revenue
