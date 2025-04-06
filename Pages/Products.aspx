@@ -42,13 +42,16 @@
     <div class="bg-white p-4 rounded-lg shadow mb-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="relative">
-                <input type="text" id="searchInput" placeholder="Search products..." 
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" />
-                <span class="absolute right-3 top-2.5 text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </span>
+                <div id="searchWrapper" class="w-full">
+                    <input type="text" id="searchInput" placeholder="Search products..." 
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" 
+                        onkeydown="handleSearchKeyDown(event)" />
+                    <span class="absolute right-3 top-2.5 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </span>
+                </div>
             </div>
             <select id="categoryFilter" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent">
                 <option value="">All Categories</option>
@@ -264,8 +267,12 @@
             // Initialize the page
             initPage();
             
-            // Add event listeners
+            // Add event listeners - only using input for live search with debounce
             document.getElementById('searchInput').addEventListener('input', debounce(searchProducts, 500));
+            
+            // Remove the keypress listener that might be conflicting
+            // The direct onkeydown attribute will handle Enter key
+            
             document.getElementById('categoryFilter').addEventListener('change', searchProducts);
             document.getElementById('sortOptions').addEventListener('change', searchProducts);
             document.getElementById('productImage').addEventListener('change', handleImageUpload);
@@ -509,8 +516,24 @@
         
         // Search products (debounced)
         function searchProducts() {
-            currentPage = 1; // Reset to first page on new search
+            // Log for debugging
+            console.log('Search triggered');
+            
+            // Show an indicator that search is happening
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput ? searchInput.value.trim() : '';
+            console.log('Searching for: ' + searchTerm);
+            
+            // Reset to first page on new search
+            currentPage = 1;
+            
+            // Show loading indicator
+            document.getElementById('productsList').innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center">Searching products...</td></tr>';
+            
+            // Call the load function
             loadProducts();
+            
+            return false; // Prevent default behavior
         }
         
         // Handle image upload
@@ -856,6 +879,18 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(context, args), wait);
             };
+        }
+        
+        // Direct handler for Enter key in search
+        function handleSearchKeyDown(event) {
+            // Check if the Enter key was pressed
+            if (event.key === 'Enter' || event.keyCode === 13) {
+                event.preventDefault();
+                event.stopPropagation();
+                // Directly call search without debounce
+                searchProducts();
+                return false;
+            }
         }
     </script>
 </asp:Content>

@@ -1,0 +1,11 @@
+"SETTINGID","KEY","VALUE","DATECREATED","DATEMODIFIED","ISACTIVE"
+1,"SHOP_NAME","Online Pastry Shop",04/06/2025,04/06/2025,1
+2,"CURRENCY","PHP",04/06/2025,04/06/2025,1
+3,"DELIVERY_FEE","150",04/06/2025,04/06/2025,1
+4,"FREE_DELIVERY_THRESHOLD","1500",04/06/2025,04/06/2025,1
+5,"CONTACT_EMAIL","pastryshop@example.com",04/06/2025,04/06/2025,1
+6,"CONTACT_PHONE","+639123456789",04/06/2025,04/06/2025,1
+7,"BUSINESS_HOURS","8:00 AM - 7:00 PM",04/06/2025,04/06/2025,1
+8,"SOCIAL_FACEBOOK","https://facebook.com/onlinepastryshop",04/06/2025,04/06/2025,1
+9,"SOCIAL_INSTAGRAM","https://instagram.com/onlinepastryshop",04/06/2025,04/06/2025,1
+10,"ABOUT_US","We are a premier online pastry shop offering delicious Filipino pastries and international desserts made with the finest ingredients.",04/06/2025,04/06/2025,1

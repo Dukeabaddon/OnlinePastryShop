@@ -3,7 +3,8 @@
 --------------------------------------------------------
 set define off;
 
-  CREATE OR REPLACE PROCEDURE "AARON_IPT"."GET_INVENTORY_ALERTS" (
+  CREATE OR REPLACE PROCEDURE "AARON_IPT"."GET_INVENTORY_ALERTS" 
+(
     p_low_stock_cursor OUT SYS_REFCURSOR,
     p_low_stock_count OUT NUMBER
 ) AS

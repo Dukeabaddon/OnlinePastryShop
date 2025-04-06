@@ -48,15 +48,8 @@ BEGIN
     -- Update order status
     UPDATE ORDERS
     SET STATUS = p_new_status,
-        STATUSUPDATEDATE = SYSDATE  -- Changed from DATE to STATUSUPDATEDATE
+        DATE = SYSDATE  -- Using DATE instead of STATUSCHANGEDATE
     WHERE ORDERID = p_order_id;
-
-    -- Add STATUSUPDATEDATE column if it doesn't exist
-    BEGIN
-        EXECUTE IMMEDIATE 'ALTER TABLE ORDERS ADD (STATUSUPDATEDATE DATE)';
-    EXCEPTION
-        WHEN OTHERS THEN NULL; -- Column already exists
-    END;
 
     -- Add DATEDELIVERED column if it doesn't exist
     BEGIN

@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Net.Mail;
 using System.Text;
 using System.Web.Script.Serialization;
+using System.Text.Json;
 
 namespace OnlinePastryShop.Pages
 {
@@ -265,19 +266,16 @@ namespace OnlinePastryShop.Pages
                     System.Diagnostics.Debug.WriteLine($"Date Criteria: {dateCriteria}");
                     System.Diagnostics.Debug.WriteLine($"Prev Date Criteria: {prevDateCriteria}");
 
-                    // Calculate true profit (revenue - cost) using ORDERDETAILS and PRODUCTS table
+                    // Calculate revenue based on approved orders using case-insensitive status matching
+                    // Include total order amount rather than calculating from order details
                     string currentPeriodQuery = @"
                         SELECT
-                            NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS TrueProfit
+                            NVL(SUM(O.TOTALAMOUNT), 0) AS TotalRevenue
                         FROM 
-                            AARON_IPT.ORDERDETAILS OD,
-                            AARON_IPT.PRODUCTS P,
                             AARON_IPT.ORDERS O
                         WHERE
-                            OD.PRODUCTID = P.PRODUCTID
-                            AND OD.ORDERID = O.ORDERID
-                            AND " + dateCriteria + @"
-                            AND O.STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
+                            " + dateCriteria + @"
+                            AND UPPER(O.STATUS) IN ('APPROVED', 'COMPLETED', 'DELIVERED', 'SHIPPED', 'PROCESSING')";
 
                     System.Diagnostics.Debug.WriteLine($"Revenue Query: {currentPeriodQuery}");
 
@@ -307,36 +305,32 @@ namespace OnlinePastryShop.Pages
                         }
 
                         DailyRevenue = currentRevenue.ToString("N2");
-                        System.Diagnostics.Debug.WriteLine($"Current period profit: {DailyRevenue}");
+                        System.Diagnostics.Debug.WriteLine($"Current period revenue: {DailyRevenue}");
                     }
 
-                    // Calculate previous period profit for comparison
+                    // Calculate previous period revenue for comparison with case-insensitive status matching
                     string previousPeriodQuery = @"
                         SELECT
-                            NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS TrueProfit
+                            NVL(SUM(O.TOTALAMOUNT), 0) AS TotalRevenue
                         FROM 
-                            AARON_IPT.ORDERDETAILS OD,
-                            AARON_IPT.PRODUCTS P,
                             AARON_IPT.ORDERS O
                         WHERE
-                            OD.PRODUCTID = P.PRODUCTID
-                            AND OD.ORDERID = O.ORDERID
-                            AND " + prevDateCriteria + @"
-                            AND O.STATUS IN ('Completed', 'Approved', 'Delivered', 'Shipped', 'Processing')";
+                            " + prevDateCriteria + @"
+                            AND UPPER(O.STATUS) IN ('APPROVED', 'COMPLETED', 'DELIVERED', 'SHIPPED', 'PROCESSING')";
 
-                    System.Diagnostics.Debug.WriteLine($"Previous Period Profit Query: {previousPeriodQuery}");
+                    System.Diagnostics.Debug.WriteLine($"Previous Period Revenue Query: {previousPeriodQuery}");
 
                     decimal previousRevenue = 0;
                     using (OracleCommand cmd = new OracleCommand(previousPeriodQuery, conn))
                     {
                         object result = cmd.ExecuteScalar();
                         previousRevenue = (result != DBNull.Value) ? Convert.ToDecimal(result) : 0;
-                        System.Diagnostics.Debug.WriteLine($"Previous period profit: {previousRevenue}");
+                        System.Diagnostics.Debug.WriteLine($"Previous period revenue: {previousRevenue}");
                     }
 
                     // Calculate percentage change
                     RevenuePercentChange = CalculatePercentChange(Convert.ToDecimal(DailyRevenue), previousRevenue);
-                    System.Diagnostics.Debug.WriteLine($"Profit percent change: {RevenuePercentChange}%");
+                    System.Diagnostics.Debug.WriteLine($"Revenue percent change: {RevenuePercentChange}%");
 
                     // Format the change for display
                     DailyRevenueChange = Math.Abs(RevenuePercentChange).ToString("N1");
@@ -820,274 +814,187 @@ namespace OnlinePastryShop.Pages
 
         private void GenerateSalesOverviewData(string timeRange)
         {
-            // Declare lists outside the try block to ensure they're accessible in catch blocks
-            List<string> labels = new List<string>();
-            List<decimal> dataPoints = new List<decimal>();
-
             try
             {
+                List<string> labels = new List<string>();
+                List<decimal> data = new List<decimal>();
+                string labelFormat = "HH24";  // Default hourly format
+                string groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
+                
+                // Determine date range and format based on selected time range
+                switch (timeRange.ToLower())
+                {
+                    case "today":
+                        // Hourly breakdown for today
+                        labels = Enumerable.Range(0, 24).Select(i => i.ToString("00") + ":00").ToList();
+                        data = Enumerable.Range(0, 24).Select(i => 0M).ToList();
+                        labelFormat = "HH24";
+                        groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
+                        break;
+                        
+                    case "yesterday":
+                        // Hourly breakdown for yesterday
+                        labels = Enumerable.Range(0, 24).Select(i => i.ToString("00") + ":00").ToList();
+                        data = Enumerable.Range(0, 24).Select(i => 0M).ToList();
+                        labelFormat = "HH24";
+                        groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
+                        break;
+                        
+                    case "week":
+                        // Daily breakdown for past week
+                        DateTime weekStart = DateTime.Now.AddDays(-6);
+                        labels = Enumerable.Range(0, 7)
+                            .Select(i => weekStart.AddDays(i).ToString("MMM dd"))
+                            .ToList();
+                        data = Enumerable.Range(0, 7).Select(i => 0M).ToList();
+                        labelFormat = "YYYY-MM-DD";
+                        groupByClause = "TO_CHAR(O.ORDERDATE, 'YYYY-MM-DD')";
+                        break;
+                        
+                    case "month":
+                        // Weekly breakdown for past month
+                        DateTime monthStart = DateTime.Now.AddDays(-30);
+                        labels = Enumerable.Range(0, 5)
+                            .Select(i => $"Week {i+1}")
+                            .ToList();
+                        data = Enumerable.Range(0, 5).Select(i => 0M).ToList();
+                        labelFormat = "'Week '||TO_CHAR(TRUNC((SYSDATE - O.ORDERDATE)/7)+1)";
+                        groupByClause = "TRUNC((SYSDATE - O.ORDERDATE)/7)+1";
+                        break;
+                        
+                    default:
+                        // Default to today's hourly breakdown
+                        labels = Enumerable.Range(0, 24).Select(i => i.ToString("00") + ":00").ToList();
+                        data = Enumerable.Range(0, 24).Select(i => 0M).ToList();
+                        labelFormat = "HH24";
+                        groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
+                        break;
+                }
+                
+                // Prepare date filter based on time range
+                string dateFilter = "";
+                switch (timeRange.ToLower())
+                {
+                    case "today":
+                        dateFilter = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
+                        break;
+                    case "yesterday":
+                        dateFilter = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
+                        break;
+                    case "week":
+                        dateFilter = "O.ORDERDATE >= TRUNC(SYSDATE) - 7";
+                        break;
+                    case "month":
+                        dateFilter = "O.ORDERDATE >= TRUNC(SYSDATE) - 30";
+                        break;
+                    default:
+                        dateFilter = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
+                        break;
+                }
+                
+                // Get actual data from the database
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
                     conn.Open();
-
-                    string query = "";
-                    string dateCriteria = "";
-
-                    // Set the correct date criteria based on the time range
-                    switch (timeRange.ToLower())
-                    {
-                        case "today":
-                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
-                            break;
-                        case "yesterday":
-                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
-                            break;
-                        case "week":
-                            dateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 7";
-                            break;
-                        case "month":
-                            dateCriteria = "O.ORDERDATE >= TRUNC(SYSDATE) - 30";
-                            break;
-                        default:
-                            dateCriteria = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
-                            break;
-                    }
-
-                    switch (timeRange.ToLower())
-                    {
-                        case "today":
-                            // Group by hour for today, showing profit
-                            query = @"
+                    
+                    // Query to get revenue data by time period
+                    string query = @"
                                 SELECT
-                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
+                                    " + groupByClause + @" AS TimeLabel,
+                                    NVL(SUM(O.TOTALAMOUNT), 0) AS Revenue
                                 FROM 
-                                    AARON_IPT.ORDERS O,
-                                    AARON_IPT.ORDERDETAILS OD,
-                                    AARON_IPT.PRODUCTS P
+                                    AARON_IPT.ORDERS O
                                 WHERE 
-                                    O.ORDERID = OD.ORDERID
-                                    AND OD.PRODUCTID = P.PRODUCTID
-                                    AND " + dateCriteria + @"
+                                    " + dateFilter + @"
+                                    AND UPPER(O.STATUS) IN ('APPROVED', 'COMPLETED', 'DELIVERED', 'SHIPPED', 'PROCESSING')
                                 GROUP BY 
-                                    TO_CHAR(O.ORDERDATE, 'HH24')
+                                    " + groupByClause + @"
                                 ORDER BY 
                                     TimeLabel";
-
-                            // Create all 24 hours as labels
-                            for (int hour = 0; hour < 24; hour++)
-                            {
-                                labels.Add($"{hour:D2}:00");
-                                dataPoints.Add(0); // Default to 0, will be replaced if data exists
-                            }
-                            break;
-
-                        case "yesterday":
-                            // Same approach for yesterday
-                            query = @"
-                                SELECT
-                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
-                                FROM 
-                                    AARON_IPT.ORDERS O,
-                                    AARON_IPT.ORDERDETAILS OD,
-                                    AARON_IPT.PRODUCTS P
-                                WHERE 
-                                    O.ORDERID = OD.ORDERID
-                                    AND OD.PRODUCTID = P.PRODUCTID
-                                    AND " + dateCriteria + @"
-                                GROUP BY 
-                                    TO_CHAR(O.ORDERDATE, 'HH24')
-                                ORDER BY 
-                                    TimeLabel";
-
-                            // Create all 24 hours as labels
-                            for (int hour = 0; hour < 24; hour++)
-                            {
-                                labels.Add($"{hour:D2}:00");
-                                dataPoints.Add(0);
-                            }
-                            break;
-
-                        case "week":
-                            // Group by day for week, showing profit
-                            query = @"
-                                SELECT
-                                    TO_CHAR(O.ORDERDATE, 'DY') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
-                                FROM 
-                                    AARON_IPT.ORDERS O,
-                                    AARON_IPT.ORDERDETAILS OD,
-                                    AARON_IPT.PRODUCTS P
-                                WHERE 
-                                    O.ORDERID = OD.ORDERID
-                                    AND OD.PRODUCTID = P.PRODUCTID
-                                    AND " + dateCriteria + @"
-                                GROUP BY 
-                                    TO_CHAR(O.ORDERDATE, 'DY')
-                                ORDER BY 
-                                    TimeLabel";
-
-                            // Create all days of the week as labels
-                            string[] dayNames = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-                            for (int i = 0; i < 7; i++)
-                            {
-                                labels.Add(dayNames[i]);
-                                dataPoints.Add(0);
-                            }
-                            break;
-
-                        case "month":
-                            // Group by week for month, showing profit
-                            query = @"
-                                SELECT
-                                    TO_CHAR(O.ORDERDATE, 'IW') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
-                                FROM 
-                                    AARON_IPT.ORDERS O,
-                                    AARON_IPT.ORDERDETAILS OD,
-                                    AARON_IPT.PRODUCTS P
-                                WHERE 
-                                    O.ORDERID = OD.ORDERID
-                                    AND OD.PRODUCTID = P.PRODUCTID
-                                    AND " + dateCriteria + @"
-                                GROUP BY 
-                                    TO_CHAR(O.ORDERDATE, 'IW')
-                                ORDER BY 
-                                    TimeLabel";
-
-                            // Get current week number
-                            int currentWeek = DateTime.Now.DayOfYear / 7 + 1;
-                            for (int week = currentWeek - 4; week <= currentWeek; week++)
-                            {
-                                labels.Add($"Week {week}");
-                                dataPoints.Add(0);
-                            }
-                            break;
-
-                        default:
-                            // Default to daily view for today
-                            query = @"
-                                SELECT
-                                    TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
-                                    NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
-                                FROM 
-                                    AARON_IPT.ORDERS O,
-                                    AARON_IPT.ORDERDETAILS OD,
-                                    AARON_IPT.PRODUCTS P
-                                WHERE 
-                                    O.ORDERID = OD.ORDERID
-                                    AND OD.PRODUCTID = P.PRODUCTID
-                                    AND " + dateCriteria + @"
-                                GROUP BY 
-                                    TO_CHAR(O.ORDERDATE, 'HH24')
-                                ORDER BY 
-                                    TimeLabel";
-
-                            // Create 6-hour intervals as labels for the default view
-                            for (int hour = 0; hour < 24; hour += 6)
-                            {
-                                labels.Add($"{hour:D2}:00");
-                                dataPoints.Add(0);
-                            }
-                            break;
-                    }
-
+                                    
                     System.Diagnostics.Debug.WriteLine($"Sales overview query: {query}");
-
-                    // Execute the query to get actual sales data
+                    
                     using (OracleCommand cmd = new OracleCommand(query, conn))
                     {
                         using (OracleDataReader reader = cmd.ExecuteReader())
                         {
-                            System.Diagnostics.Debug.WriteLine("Sales overview data from database:");
-
-                            // Dictionary to map time labels from query to index in our labels array
-                            Dictionary<string, int> labelMapping = new Dictionary<string, int>();
-
-                            if (timeRange.ToLower() == "today" || timeRange.ToLower() == "yesterday")
+                            if (reader.HasRows)
                             {
-                                // For hours (00-23), map directly to index
-                                for (int i = 0; i < 24; i++)
+                                System.Diagnostics.Debug.WriteLine("Sales overview data from database:");
+                                
+                                while (reader.Read())
                                 {
-                                    labelMapping[i.ToString("D2")] = i;
-                                }
-                            }
-                            else if (timeRange.ToLower() == "week")
-                            {
-                                // Map abbreviated day names to index
-                                labelMapping["MON"] = 0;
-                                labelMapping["TUE"] = 1;
-                                labelMapping["WED"] = 2;
-                                labelMapping["THU"] = 3;
-                                labelMapping["FRI"] = 4;
-                                labelMapping["SAT"] = 5;
-                                labelMapping["SUN"] = 6;
-                            }
-
-                            bool hasData = false;
-
-                            while (reader.Read())
-                            {
-                                hasData = true;
-                                string timeLabel = reader["TimeLabel"].ToString().Trim().ToUpper();
-                                decimal profit = Convert.ToDecimal(reader["Profit"]);
-
-                                System.Diagnostics.Debug.WriteLine($"  {timeLabel}: {profit}");
-
-                                // Try to map the time label to our predefined labels
-                                if (labelMapping.ContainsKey(timeLabel))
-                                {
-                                    int index = labelMapping[timeLabel];
-                                    if (index < dataPoints.Count)
+                                    string timeLabel = reader["TimeLabel"].ToString();
+                                    decimal revenue = Convert.ToDecimal(reader["Revenue"]);
+                                    
+                                    System.Diagnostics.Debug.WriteLine($"- {timeLabel}: {revenue}");
+                                    
+                                    // Map the database result to our prepared arrays
+                                    if (timeRange.ToLower() == "today" || timeRange.ToLower() == "yesterday")
                                     {
-                                        dataPoints[index] = profit;
-                                    }
-                                }
-                                else if (timeRange.ToLower() == "month")
-                                {
-                                    // For month view, handle week numbers differently
-                                    if (int.TryParse(timeLabel, out int weekNum))
-                                    {
-                                        int currentWeek = DateTime.Now.DayOfYear / 7 + 1;
-                                        int index = weekNum - (currentWeek - 4);
-
-                                        if (index >= 0 && index < dataPoints.Count)
+                                        // For hourly data
+                                        int hour;
+                                        if (int.TryParse(timeLabel, out hour) && hour >= 0 && hour < 24)
                                         {
-                                            dataPoints[index] = profit;
+                                            data[hour] = revenue;
+                                        }
+                                    }
+                                    else if (timeRange.ToLower() == "week")
+                                    {
+                                        // For daily data (past week)
+                                        try
+                                        {
+                                            DateTime date = DateTime.Parse(timeLabel);
+                                            string formattedDate = date.ToString("MMM dd");
+                                            int index = labels.IndexOf(formattedDate);
+                                            if (index >= 0)
+                                            {
+                                                data[index] = revenue;
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"Error parsing date: {ex.Message}");
+                                        }
+                                    }
+                                    else if (timeRange.ToLower() == "month")
+                                    {
+                                        // For weekly data (past month)
+                                        try
+                                        {
+                                            int week;
+                                            if (int.TryParse(timeLabel, out week) && week > 0 && week <= 5)
+                                            {
+                                                data[week - 1] = revenue;
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"Error parsing week: {ex.Message}");
                                         }
                                     }
                                 }
                             }
-
-                            if (!hasData)
+                            else
                             {
                                 System.Diagnostics.Debug.WriteLine("No sales data found for the selected period.");
                             }
                         }
                     }
                 }
-
-                // Convert to JSON strings for JavaScript
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                SalesOverviewLabels = serializer.Serialize(labels);
-                SalesOverviewData = serializer.Serialize(dataPoints);
-
-                // Log the generated data for debugging
+                
+                // Convert data to JSON for the chart
+                SalesOverviewLabels = JsonSerializer.Serialize(labels);
+                SalesOverviewData = JsonSerializer.Serialize(data);
+                
                 System.Diagnostics.Debug.WriteLine($"Sales Overview Labels ({timeRange}): {SalesOverviewLabels}");
                 System.Diagnostics.Debug.WriteLine($"Sales Overview Data ({timeRange}): {SalesOverviewData}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in GenerateSalesOverviewData: {ex.Message}");
-
-                // Provide fallback data on error
-                List<string> fallbackLabels = new List<string> { "Error", "Loading", "Data" };
-                List<decimal> fallbackData = new List<decimal> { 0, 0, 0 };
-
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                SalesOverviewLabels = serializer.Serialize(fallbackLabels);
-                SalesOverviewData = serializer.Serialize(fallbackData);
+                System.Diagnostics.Debug.WriteLine($"Error generating sales overview data: {ex.Message}");
+                SalesOverviewLabels = "[]";
+                SalesOverviewData = "[]";
             }
         }
 
@@ -1374,34 +1281,34 @@ namespace OnlinePastryShop.Pages
         protected void TimeRangeSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
-        {
-            DropDownList dropdown = (DropDownList)sender;
-            TimeRange = dropdown.SelectedValue;
+            {
+                DropDownList dropdown = (DropDownList)sender;
+                TimeRange = dropdown.SelectedValue;
 
-            System.Diagnostics.Debug.WriteLine($"========================================");
-            System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
+                System.Diagnostics.Debug.WriteLine($"========================================");
+                System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
 
-            // Reinitialize time parameters
-            InitializeTimeParameters();
-            System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
-            System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
+                // Reinitialize time parameters
+                InitializeTimeParameters();
+                System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
+                System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
 
-            // Update card titles based on time range
-            UpdateCardTitles();
-            System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
+                // Update card titles based on time range
+                UpdateCardTitles();
+                System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
 
                 // Clear existing data
                 DailyRevenue = "0.00";
                 TodayOrderCount = "0";
                 PendingOrderCount = "0";
 
-            // Reload dashboard data with new time range
-            System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
-            LoadDashboardData();
+                // Reload dashboard data with new time range
+                System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
+                LoadDashboardData();
 
-            System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
-            System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
-            System.Diagnostics.Debug.WriteLine($"========================================");
+                System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
+                System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
+                System.Diagnostics.Debug.WriteLine($"========================================");
             }
             catch (Exception ex)
             {
