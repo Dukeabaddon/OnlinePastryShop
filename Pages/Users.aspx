@@ -4,9 +4,9 @@
 
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold text-gray-800 mb-6">User Management</h1>
-
+            
             <asp:Label ID="lblMessage" runat="server" Visible="false" CssClass="text-red-500 mb-4"></asp:Label>
-
+            
             <!-- User Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <!-- Total Users Card -->
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <!-- New Users Card -->
                 <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
                     <div class="flex items-center">
@@ -45,7 +45,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- Search and Filter Controls -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -66,7 +66,7 @@
                     <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" CssClass="bg-[#D43B6A] text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors" />
                 </div>
             </div>
-
+            
             <!-- Users Table -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
                 <asp:ListView ID="lvUsers" runat="server"
@@ -157,7 +157,7 @@
                                             </svg>
                                             </asp:LinkButton>
                                     </div>
-                                </asp:Panel>
+                        </asp:Panel>
                             </div>
                         </div>
                     </LayoutTemplate>
@@ -295,7 +295,7 @@
                     </EmptyDataTemplate>
                 </asp:ListView>
             </div>
-
+            
             <!-- User Details Modal -->
             <asp:Panel ID="pnlUserDetails" runat="server" Visible="false" CssClass="fixed inset-0 z-50 overflow-y-auto" DefaultButton="">
                 <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
@@ -312,8 +312,8 @@
                                 </svg>
                             </asp:LinkButton>
                         </div>
-
-                        <!-- Tabs -->
+                        
+                    <!-- Tabs -->
                         <div class="border-b border-gray-200">
                             <div class="flex flex-wrap">
                                 <asp:LinkButton ID="tabBasicInfo" runat="server" OnClick="tabBasicInfo_Click"
@@ -326,11 +326,11 @@
                                 </asp:LinkButton>
                             </div>
                         </div>
-
+                        
                         <!-- Tab Content -->
                         <div class="p-6">
                             <!-- Basic Info Panel -->
-                            <asp:Panel ID="pnlBasicInfo" runat="server" Visible="true">
+                    <asp:Panel ID="pnlBasicInfo" runat="server" Visible="true">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="space-y-4">
                                         <div>
@@ -366,9 +366,9 @@
                                     </div>
                                 </div>
                             </asp:Panel>
-
+                            
                             <!-- Order History Panel -->
-                            <asp:Panel ID="pnlOrderHistory" runat="server" Visible="false">
+                    <asp:Panel ID="pnlOrderHistory" runat="server" Visible="false">
                                 <div class="overflow-x-auto">
                                     <asp:GridView ID="gvOrderHistory" runat="server" AutoGenerateColumns="false"
                                         CssClass="min-w-full divide-y divide-gray-200"
@@ -411,7 +411,7 @@
                     </div>
                 </div>
             </asp:Panel>
-
+            
             <!-- Password Reset Confirmation Modal -->
             <asp:Panel ID="pnlPasswordReset" runat="server" Visible="false" CssClass="fixed inset-0 z-50 overflow-y-auto">
                 <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
@@ -446,7 +446,7 @@
                     </div>
                 </div>
             </asp:Panel>
-
+            
             <!-- Status Toggle Confirmation Modal -->
             <asp:Panel ID="pnlToggleStatus" runat="server" Visible="false" CssClass="fixed inset-0 z-50 overflow-y-auto">
                 <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
@@ -511,9 +511,9 @@
                        console.log('Enter key pressed - using default form submission');
                        // Form will submit naturally due to DefaultButton="btnSearch"
                    }
-               });
-           }
-       });
+                });
+            }
+        });
    </script>
 
 </asp:Content>

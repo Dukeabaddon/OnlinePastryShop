@@ -8,6 +8,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.UI.HtmlControls;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 
@@ -90,6 +91,67 @@ namespace OnlinePastryShop.Pages
 
                         conn.Open();
                         adapter.Fill(dt);
+
+                        // Store the total number of records for pagination
+                        int totalRecords = dt.Rows.Count;
+                        int totalPages = (int)Math.Ceiling((double)totalRecords / gvOrders.PageSize);
+
+                        // Set up page number buttons for DataList
+                        if (dt.Rows.Count > 0)
+                        {
+                            DataTable dtPaging = new DataTable();
+                            dtPaging.Columns.Add("Text", typeof(string));
+                            dtPaging.Columns.Add("Value", typeof(string));
+                            dtPaging.Columns.Add("Selected", typeof(bool));
+
+                            // Get the current page index
+                            int currentPage = gvOrders.PageIndex + 1;
+
+                            // Determine range of page numbers to show
+                            int startPage = Math.Max(1, currentPage - 2);
+                            int endPage = Math.Min(totalPages, startPage + 4);
+
+                            // Adjust if we're near the end
+                            if (endPage - startPage < 4 && totalPages > 5)
+                            {
+                                startPage = Math.Max(1, endPage - 4);
+                            }
+
+                            // Add page number buttons
+                            for (int i = startPage; i <= endPage; i++)
+                            {
+                                DataRow dr = dtPaging.NewRow();
+                                dr["Text"] = i.ToString();
+                                dr["Value"] = i.ToString();
+                                dr["Selected"] = (i == currentPage);
+                                dtPaging.Rows.Add(dr);
+                            }
+
+                            // Find the DataList in the GridView's PagerTemplate
+                            GridViewRow pagerRow = gvOrders.BottomPagerRow;
+                            if (pagerRow != null)
+                            {
+                                DataList dlPaging = (DataList)pagerRow.FindControl("dlPaging");
+                                if (dlPaging != null)
+                                {
+                                    dlPaging.DataSource = dtPaging;
+                                    dlPaging.DataBind();
+                                }
+
+                                // Set the total pages count
+                                Label lblTotalPagesMobile = (Label)pagerRow.FindControl("lblTotalPagesMobile");
+                                if (lblTotalPagesMobile != null)
+                                {
+                                    lblTotalPagesMobile.Text = totalPages.ToString();
+                                }
+
+                                HtmlGenericControl spanTotalPages = (HtmlGenericControl)pagerRow.FindControl("spanTotalPages");
+                                if (spanTotalPages != null)
+                                {
+                                    spanTotalPages.InnerText = totalPages.ToString();
+                                }
+                            }
+                        }
 
                         // Bind data to GridView
                         gvOrders.DataSource = dt;
@@ -612,6 +674,8 @@ namespace OnlinePastryShop.Pages
                     return "px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800";
                 case "Delivered":
                     return "px-2 py-1 rounded-full text-xs bg-green-100 text-green-800";
+                case "Approved":
+                    return "px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800";
                 case "Cancelled":
                     return "px-2 py-1 rounded-full text-xs bg-red-100 text-red-800";
                 default:
@@ -710,6 +774,62 @@ namespace OnlinePastryShop.Pages
             {
                 // Fail silently - this is just logging
                 System.Diagnostics.Debug.WriteLine("Error logging exception: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Next button in pagination
+        /// </summary>
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            // Increase the page index if not at the last page
+            if (gvOrders.PageIndex < gvOrders.PageCount - 1)
+            {
+                gvOrders.PageIndex++;
+                BindOrders();
+            }
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Previous button in pagination
+        /// </summary>
+        protected void btnPrev_Click(object sender, EventArgs e)
+        {
+            // Decrease the page index if not at the first page
+            if (gvOrders.PageIndex > 0)
+            {
+                gvOrders.PageIndex--;
+                BindOrders();
+            }
+        }
+
+        /// <summary>
+        /// Handles the ItemCommand event of the numeric pagination DataList
+        /// </summary>
+        protected void dlPaging_ItemCommand(object source, DataListCommandEventArgs e)
+        {
+            if (e.CommandName == "Page")
+            {
+                gvOrders.PageIndex = Convert.ToInt32(e.CommandArgument) - 1;
+                BindOrders();
+            }
+        }
+
+        /// <summary>
+        /// Handles the ItemDataBound event of the numeric pagination DataList
+        /// </summary>
+        protected void dlPaging_ItemDataBound(object sender, DataListItemEventArgs e)
+        {
+            LinkButton lnkPage = (LinkButton)e.Item.FindControl("lnkPage");
+            
+            // Highlight the current page
+            if (Convert.ToBoolean(DataBinder.Eval(e.Item.DataItem, "Selected")))
+            {
+                lnkPage.CssClass = "relative inline-flex items-center px-4 py-2 border border-[#D43B6A] bg-[#D43B6A] text-sm font-medium text-white";
+            }
+            else
+            {
+                lnkPage.CssClass = "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50";
             }
         }
     }
