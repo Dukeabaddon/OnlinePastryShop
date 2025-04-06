@@ -694,16 +694,11 @@
     <!-- Add this script at the end of the file, just before </form> -->
     <script>
         function redirectToProducts() {
-            // Navigate to the Products page and set the sort dropdown to "Stock (Low to High)"
-            window.location.href = 'Products.aspx';
+            // Navigate to the Products page with explicit sort parameter for low stock items
+            window.location.href = 'Products.aspx?sortOption=stock_asc';
 
-            // Store the sort preference in localStorage to be read by Products page
+            // Also store the sort preference in localStorage as a backup
             localStorage.setItem('productSort', 'stock_asc');
-
-            // This is a backup approach - many pages use URL parameters
-            if (!localStorage) {
-                window.location.href = 'Products.aspx?sortOption=stock_asc';
-            }
         }
     </script>
 </asp:Content>

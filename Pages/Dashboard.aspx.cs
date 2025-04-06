@@ -409,6 +409,7 @@ namespace OnlinePastryShop.Pages
                         break;
                 }
 
+                System.Diagnostics.Debug.WriteLine($"LoadOrderCount - Time Range: {TimeRange}");
                 System.Diagnostics.Debug.WriteLine($"LoadOrderCount - Date Criteria: {dateCriteria}");
                 System.Diagnostics.Debug.WriteLine($"LoadOrderCount - Prev Date Criteria: {prevDateCriteria}");
 
@@ -417,8 +418,16 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    // Get list of matching orders for current period
-                    string listQuery = $@"SELECT ORDERID, ORDERDATE, STATUS FROM ""AARON_IPT"".""ORDERS"" WHERE {dateCriteria} ORDER BY ORDERDATE";
+                    // Get list of matching orders for current period with explicit WHERE clause
+                    // Only include approved/processing orders
+                    string listQuery = $@"
+                        SELECT ORDERID, ORDERDATE, STATUS 
+                        FROM ""AARON_IPT"".""ORDERS"" 
+                        WHERE {dateCriteria} 
+                            AND ISACTIVE = 1 
+                            AND UPPER(STATUS) IN ('APPROVED', 'COMPLETED', 'DELIVERED', 'SHIPPED', 'PROCESSING')
+                        ORDER BY ORDERDATE";
+                        
                     using (OracleCommand listCmd = new OracleCommand(listQuery, conn))
                     {
                         using (OracleDataReader reader = listCmd.ExecuteReader())
@@ -434,8 +443,15 @@ namespace OnlinePastryShop.Pages
                         }
                     }
 
-                    // Same for previous period
-                    string prevListQuery = $@"SELECT ORDERID, ORDERDATE, STATUS FROM ""AARON_IPT"".""ORDERS"" WHERE {prevDateCriteria} ORDER BY ORDERDATE";
+                    // Same for previous period with explicit WHERE clause
+                    string prevListQuery = $@"
+                        SELECT ORDERID, ORDERDATE, STATUS 
+                        FROM ""AARON_IPT"".""ORDERS"" 
+                        WHERE {prevDateCriteria} 
+                            AND ISACTIVE = 1 
+                            AND UPPER(STATUS) IN ('APPROVED', 'COMPLETED', 'DELIVERED', 'SHIPPED', 'PROCESSING')
+                        ORDER BY ORDERDATE";
+                        
                     using (OracleCommand prevListCmd = new OracleCommand(prevListQuery, conn))
                     {
                         using (OracleDataReader reader = prevListCmd.ExecuteReader())
@@ -451,8 +467,15 @@ namespace OnlinePastryShop.Pages
                         }
                     }
 
-                    // Now get the actual counts
-                    string countQuery = $@"SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE {dateCriteria}";
+                    // Now get the actual counts with proper filtering - only approved/processing orders
+                    string countQuery = $@"
+                        SELECT COUNT(*) 
+                        FROM ""AARON_IPT"".""ORDERS"" 
+                        WHERE {dateCriteria} 
+                            AND ISACTIVE = 1
+                            AND UPPER(STATUS) IN ('APPROVED', 'COMPLETED', 'DELIVERED', 'SHIPPED', 'PROCESSING')";
+                            
+                    System.Diagnostics.Debug.WriteLine($"Current period count query: {countQuery}");
                     int currentOrders = 0;
 
                     using (OracleCommand countCmd = new OracleCommand(countQuery, conn))
@@ -462,7 +485,14 @@ namespace OnlinePastryShop.Pages
                         System.Diagnostics.Debug.WriteLine($"Current period count from COUNT query: {currentOrders}");
                     }
 
-                    string prevCountQuery = $@"SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE {prevDateCriteria}";
+                    string prevCountQuery = $@"
+                        SELECT COUNT(*) 
+                        FROM ""AARON_IPT"".""ORDERS"" 
+                        WHERE {prevDateCriteria} 
+                            AND ISACTIVE = 1
+                            AND UPPER(STATUS) IN ('APPROVED', 'COMPLETED', 'DELIVERED', 'SHIPPED', 'PROCESSING')";
+                            
+                    System.Diagnostics.Debug.WriteLine($"Previous period count query: {prevCountQuery}");
                     int previousOrders = 0;
 
                     using (OracleCommand prevCountCmd = new OracleCommand(prevCountQuery, conn))
@@ -551,12 +581,13 @@ namespace OnlinePastryShop.Pages
                         }
                     }
 
-                    // Count all pending orders with an IN clause to handle case variance
+                    // Count all pending orders with proper case handling and active flag
                     string query = @"
                         SELECT
                             COUNT(*) AS PendingCount
                         FROM ""AARON_IPT"".""ORDERS""
-                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')";
+                        WHERE UPPER(STATUS) = 'PENDING'
+                        AND ISACTIVE = 1";
 
                     System.Diagnostics.Debug.WriteLine($"Pending order count query: {query}");
 
@@ -570,7 +601,8 @@ namespace OnlinePastryShop.Pages
                         // Double check with a query that returns all IDs
                         string verifyQuery = @"
                             SELECT ORDERID FROM ""AARON_IPT"".""ORDERS"" 
-                            WHERE STATUS IN ('Pending', 'PENDING', 'pending')
+                            WHERE UPPER(STATUS) = 'PENDING'
+                            AND ISACTIVE = 1
                             ORDER BY ORDERID";
 
                         using (OracleCommand verifyCmd = new OracleCommand(verifyQuery, conn))
@@ -612,7 +644,7 @@ namespace OnlinePastryShop.Pages
                 {
                     conn.Open();
 
-                    // Simple query to get pending orders - fix the invalid character issue by using proper quotes
+                    // Simple query to get ALL pending orders, regardless of time range
                     string query = @"
                         SELECT
                             O.ORDERID,
@@ -626,11 +658,12 @@ namespace OnlinePastryShop.Pages
                             AARON_IPT.USERS U
                         WHERE 
                             O.USERID = U.USERID
-                        AND O.STATUS IN ('Pending', 'PENDING', 'pending')
+                        AND UPPER(O.STATUS) IN ('PENDING')
+                        AND O.ISACTIVE = 1
                         ORDER BY 
                             O.ORDERDATE DESC";
 
-                    System.Diagnostics.Debug.WriteLine($"Pending orders query: {query}");
+                    System.Diagnostics.Debug.WriteLine($"Pending orders query (showing ALL pending orders): {query}");
 
                     using (OracleCommand cmd = new OracleCommand(query, conn))
                     {
@@ -642,7 +675,7 @@ namespace OnlinePastryShop.Pages
                                 adapter.Fill(dt);
                             }
 
-                            System.Diagnostics.Debug.WriteLine($"Pending orders found: {dt.Rows.Count}");
+                            System.Diagnostics.Debug.WriteLine($"Total pending orders found: {dt.Rows.Count}");
 
                             // For debugging, output the first few orders
                             for (int i = 0; i < Math.Min(dt.Rows.Count, 3); i++)
@@ -671,8 +704,7 @@ namespace OnlinePastryShop.Pages
                                         EmptyPendingOrdersMessage.Visible = false;
                                 }
 
-                                // Update pending order count
-                                PendingOrderCount = dt.Rows.Count.ToString();
+                                // Don't update PendingOrderCount here - it's set by LoadPendingOrderCount
                             }
                             else
                             {

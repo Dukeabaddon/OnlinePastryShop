@@ -1,0 +1,112 @@
+-- Create 3 pending orders with their details
+-- All in a single transaction to ensure consistency
+BEGIN
+    -- Variables for order and detail IDs
+    DECLARE
+        v_order_id_1 NUMBER;
+        v_order_id_2 NUMBER;
+        v_order_id_3 NUMBER;
+        v_max_order_id NUMBER;
+        v_max_detail_id NUMBER;
+    BEGIN
+        -- Get current max values to ensure unique IDs
+        SELECT NVL(MAX(ORDERID), 0) INTO v_max_order_id FROM AARON_IPT.ORDERS;
+        SELECT NVL(MAX(ORDERDETAILID), 0) INTO v_max_detail_id FROM AARON_IPT.ORDERDETAILS;
+        
+        -- Set new IDs
+        v_order_id_1 := v_max_order_id + 1;
+        v_order_id_2 := v_max_order_id + 2;
+        v_order_id_3 := v_max_order_id + 3;
+        
+        -- Insert Order 1
+        INSERT INTO AARON_IPT.ORDERS (
+            ORDERID, USERID, ORDERDATE, TOTALAMOUNT, ISACTIVE, STATUS, 
+            SHIPPINGADDRESS, PAYMENTMETHOD
+        ) VALUES (
+            v_order_id_1, 2, TRUNC(SYSDATE), 645.99, 1, 'Pending',
+            '123 Main Street, Metro City', 'Credit Card'
+        );
+        
+        -- Insert Order 1 Details
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 1, v_order_id_1, 1, 1, 399.99, 1, 160.00
+        );
+        
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 2, v_order_id_1, 2, 1, 246.00, 1, 98.40
+        );
+        
+        -- Insert Order 2
+        INSERT INTO AARON_IPT.ORDERS (
+            ORDERID, USERID, ORDERDATE, TOTALAMOUNT, ISACTIVE, STATUS, 
+            SHIPPINGADDRESS, PAYMENTMETHOD
+        ) VALUES (
+            v_order_id_2, 2, TRUNC(SYSDATE), 850.50, 1, 'Pending',
+            '456 Oak Avenue, Downtown', 'PayPal'
+        );
+        
+        -- Insert Order 2 Details
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 3, v_order_id_2, 1, 2, 299.99, 1, 120.00
+        );
+        
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 4, v_order_id_2, 2, 1, 175.50, 1, 70.20
+        );
+        
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 5, v_order_id_2, 3, 1, 75.02, 1, 30.00
+        );
+        
+        -- Insert Order 3
+        INSERT INTO AARON_IPT.ORDERS (
+            ORDERID, USERID, ORDERDATE, TOTALAMOUNT, ISACTIVE, STATUS, 
+            SHIPPINGADDRESS, PAYMENTMETHOD
+        ) VALUES (
+            v_order_id_3, 2, TRUNC(SYSDATE), 1280.00, 1, 'Pending',
+            '789 Pine Road, Uptown', 'Bank Transfer'
+        );
+        
+        -- Insert Order 3 Details
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 6, v_order_id_3, 1, 2, 200.00, 1, 80.00
+        );
+        
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 7, v_order_id_3, 2, 1, 120.00, 1, 48.00
+        );
+        
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 8, v_order_id_3, 3, 4, 150.00, 1, 60.00
+        );
+        
+        INSERT INTO AARON_IPT.ORDERDETAILS (
+            ORDERDETAILID, ORDERID, PRODUCTID, QUANTITY, PRICE, ISACTIVE, COSTPRICE
+        ) VALUES (
+            v_max_detail_id + 9, v_order_id_3, 1, 1, 110.00, 1, 44.00
+        );
+        
+        -- Commit the entire transaction
+        COMMIT;
+        
+        DBMS_OUTPUT.PUT_LINE('Successfully created 3 new orders with IDs: ' || 
+                           v_order_id_1 || ', ' || v_order_id_2 || ', ' || v_order_id_3);
+    END;
+END;
+/
