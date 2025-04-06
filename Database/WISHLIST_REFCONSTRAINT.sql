@@ -1,0 +1,8 @@
+--------------------------------------------------------
+--  Ref Constraints for Table WISHLIST
+--------------------------------------------------------
+
+  ALTER TABLE "AARON_IPT"."WISHLIST" ADD CONSTRAINT "FK_WISHLIST_PRODUCT" FOREIGN KEY ("PRODUCTID")
+	  REFERENCES "AARON_IPT"."PRODUCTS" ("PRODUCTID") ENABLE;
+  ALTER TABLE "AARON_IPT"."WISHLIST" ADD CONSTRAINT "FK_WISHLIST_USER" FOREIGN KEY ("USERID")
+	  REFERENCES "AARON_IPT"."USERS" ("USERID") ENABLE;

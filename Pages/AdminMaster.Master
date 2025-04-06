@@ -43,6 +43,8 @@
     </style>
 </head>
 <body class="bg-gray-100 font-poppins">
+   <form id="form1" runat="server">
+       <asp:ScriptManager ID="MasterScriptManager" runat="server" EnablePartialRendering="true" EnablePageMethods="true"></asp:ScriptManager>
    
     <!-- Sidebar -->
     <aside class="fixed top-0 left-0 h-screen w-64 bg-gray-50 overflow-y-auto flex flex-col justify-between border-r border-gray-200 transition-all duration-300 ease-in-out z-10 shadow-md">
@@ -101,7 +103,6 @@
                 </svg>
                 <span>Sales Report</span>
             </a>
-
             <a href="Orders.aspx" class="group relative flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-[#D43B6A] hover:to-[#9B274F] transition duration-300 ease-in-out">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -152,6 +153,7 @@
             <!-- Content pages will be injected here -->
         </asp:ContentPlaceHolder>
     </div>
+    </form>
     <script>
         // Add active class to the clicked link
         document.querySelectorAll('aside a').forEach(link => {

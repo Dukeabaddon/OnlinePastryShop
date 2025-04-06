@@ -1,0 +1,19 @@
+"SETTINGID"	"KEY"	"VALUE"	"DATECREATED"	"DATEMODIFIED"	"ISACTIVE"
+1	"ShopName"	"Ocakes Pastry Shop"	04/02/2025	04/02/2025	1
+2	"ShopEmail"	"contact@ocakespastry.com"	04/02/2025	04/02/2025	1
+3	"ShopPhone"	"+63 912 345 6789"	04/02/2025	04/02/2025	1
+4	"ShopAddress"	"123 Bakery Street, Manila, Philippines"	04/02/2025	04/02/2025	1
+5	"LogoPath"	"~/Images/Logo/default-logo.png"	04/02/2025	04/02/2025	1
+6	"Currency"	"PHP"	04/02/2025	04/02/2025	1
+7	"TaxRate"	"12"	04/02/2025	04/02/2025	1
+8	"ShippingRate"	"150"	04/02/2025	04/02/2025	1
+9	"FreeShippingThreshold"	"2000"	04/02/2025	04/02/2025	1
+10	"BannerUrl"	""	04/02/2025	04/02/2025	1
+11	"ProductsPerPage"	"12"	04/02/2025	04/02/2025	1
+12	"ShowOutOfStock"	"false"	04/02/2025	04/02/2025	1
+13	"EnableReviews"	"true"	04/02/2025	04/02/2025	1
+14	"FooterText"	"Quality pastries delivered to your door. We use only the finest ingredients for our products."	04/02/2025	04/02/2025	1
+15	"CopyrightText"	"© Ocakes Pastry Shop. All rights reserved."	04/02/2025	04/02/2025	1
+41	"EnableWishlist"	"true"	04/05/2025	04/05/2025	1
+42	"EnableBlog"	"true"	04/05/2025	04/05/2025	1
+43	"OrderMinimum"	"10"	04/05/2025	04/05/2025	1

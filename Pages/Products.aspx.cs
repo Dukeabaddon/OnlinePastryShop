@@ -90,17 +90,69 @@ namespace OnlinePastryShop.Pages
                 System.Diagnostics.Debug.WriteLine("======================== BEGIN GetProducts ========================");
                 System.Diagnostics.Debug.WriteLine($"Params: search='{search}', categoryId='{categoryId}', sort='{sort}', page={page}, pageSize={pageSize}, includeDeleted={includeDeleted}");
 
-                // Prepare return value in case of early exit
-                List<object> emptyList = new List<object>();
+                List<object> products = new List<object>();
+                int totalCount = 0;
 
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
-                    conn.Open();
-                    System.Diagnostics.Debug.WriteLine("Database connection opened");
+                    try
+                    {
+                        conn.Open();
+                        System.Diagnostics.Debug.WriteLine("Database connection opened successfully");
 
-                    // Modified query to handle includeDeleted parameter
-                    string sql = @"
-                        SELECT 
+                        // Build WHERE clause based on parameters
+                        string whereClause = !includeDeleted ? " WHERE p.ISACTIVE = 1" : " WHERE 1=1";
+
+                        if (!string.IsNullOrEmpty(search))
+                        {
+                            whereClause += " AND UPPER(p.NAME) LIKE UPPER(:search)";
+                        }
+
+                        if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
+                        {
+                            whereClause += " AND pc.CATEGORYID = :categoryId";
+                        }
+
+                        // First get total count
+                        string countSql = $@"
+                            SELECT COUNT(DISTINCT p.PRODUCTID) 
+                            FROM ""AARON_IPT"".""PRODUCTS"" p
+                            LEFT JOIN ""AARON_IPT"".""PRODUCTCATEGORIES"" pc ON p.PRODUCTID = pc.PRODUCTID 
+                            LEFT JOIN ""AARON_IPT"".""CATEGORIES"" c ON pc.CATEGORYID = c.CATEGORYID
+                            {whereClause}";
+
+                        using (OracleCommand countCmd = new OracleCommand(countSql, conn))
+                        {
+                            if (!string.IsNullOrEmpty(search))
+                            {
+                                countCmd.Parameters.Add("search", OracleDbType.Varchar2).Value = "%" + search + "%";
+                            }
+
+                            if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
+                            {
+                                countCmd.Parameters.Add("categoryId", OracleDbType.Int32).Value = Convert.ToInt32(categoryId);
+                            }
+
+                            try
+                            {
+                                totalCount = Convert.ToInt32(countCmd.ExecuteScalar());
+                                System.Diagnostics.Debug.WriteLine($"Total matching products count: {totalCount}");
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Error getting product count: {ex.Message}");
+                                totalCount = 0;
+                            }
+                        }
+
+                        // Modified query with pagination
+                        string orderByClause = GetOrderByClause(sort);
+
+                        // Oracle-specific pagination
+                        string paginatedSql = $@"
+                            SELECT * FROM (
+                                SELECT a.*, ROWNUM rnum FROM (
+                                    SELECT DISTINCT
                             p.PRODUCTID, 
                             p.NAME, 
                             p.DESCRIPTION, 
@@ -113,150 +165,160 @@ namespace OnlinePastryShop.Pages
                             c.CATEGORYID,
                             CASE WHEN p.IMAGE IS NOT NULL THEN 1 ELSE 0 END as HAS_IMAGE
                         FROM ""AARON_IPT"".""PRODUCTS"" p
-                        LEFT JOIN PRODUCTCATEGORIES pc ON p.PRODUCTID = pc.PRODUCTID 
-                        LEFT JOIN CATEGORIES c ON pc.CATEGORYID = c.CATEGORYID";
+                                    LEFT JOIN ""AARON_IPT"".""PRODUCTCATEGORIES"" pc ON p.PRODUCTID = pc.PRODUCTID 
+                                    LEFT JOIN ""AARON_IPT"".""CATEGORIES"" c ON pc.CATEGORYID = c.CATEGORYID
+                                    {whereClause}
+                                    {orderByClause}
+                                ) a 
+                                WHERE ROWNUM <= :endRow
+                            ) 
+                            WHERE rnum > :startRow";
 
-                    // Only filter by IsActive if we're not including deleted products
-                    if (!includeDeleted)
-                    {
-                        sql += " WHERE p.ISACTIVE = 1";
-                    }
+                        int startRow = (page - 1) * pageSize;
+                        int endRow = page * pageSize;
 
-                    sql += " ORDER BY p.PRODUCTID DESC";
-
-                    List<object> products = new List<object>();
-                    Dictionary<int, object> productMap = new Dictionary<int, object>(); // For deduplication
-                    int totalCount = 0;
-
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Executing query to get products {(includeDeleted ? "including deleted ones" : "active only")}");
-
-                        try
+                        using (OracleCommand cmd = new OracleCommand(paginatedSql, conn))
                         {
-                            using (OracleDataReader reader = cmd.ExecuteReader())
+                            cmd.Parameters.Add("endRow", OracleDbType.Int32).Value = endRow;
+                            cmd.Parameters.Add("startRow", OracleDbType.Int32).Value = startRow;
+
+                            if (!string.IsNullOrEmpty(search))
                             {
-                                System.Diagnostics.Debug.WriteLine("Reader opened successfully");
+                                cmd.Parameters.Add("search", OracleDbType.Varchar2).Value = "%" + search + "%";
+                            }
 
-                                while (reader.Read())
+                            if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
+                            {
+                                cmd.Parameters.Add("categoryId", OracleDbType.Int32).Value = Convert.ToInt32(categoryId);
+                            }
+
+                            try
+                            {
+                                using (OracleDataReader reader = cmd.ExecuteReader())
                                 {
-                                    int productId = Convert.ToInt32(reader["PRODUCTID"]);
-                                    bool hasImage = Convert.ToInt32(reader["HAS_IMAGE"]) == 1;
-                                    decimal price = Convert.ToDecimal(reader["PRICE"]);
-                                    decimal costPrice = reader["COSTPRICE"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["COSTPRICE"]);
-                                    int stockQuantity = Convert.ToInt32(reader["STOCKQUANTITY"]);
-                                    string name = reader["NAME"].ToString();
-                                    string description = reader["DESCRIPTION"] == DBNull.Value ? "" : reader["DESCRIPTION"].ToString();
-                                    bool isLatest = Convert.ToInt32(reader["ISLATEST"]) == 1;
-                                    bool isActive = Convert.ToInt32(reader["ISACTIVE"]) == 1;
-                                    string categoryName = reader["CATEGORYNAME"] == DBNull.Value ? "Uncategorized" : reader["CATEGORYNAME"].ToString();
-                                    int catId = reader["CATEGORYID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CATEGORYID"]);
+                                    System.Diagnostics.Debug.WriteLine("Product reader opened successfully");
+                                    int rowCount = 0;
 
-                                    // Skip duplicates (same product with multiple categories)
-                                    if (productMap.ContainsKey(productId))
+                                    while (reader.Read())
                                     {
-                                        continue;
+                                        rowCount++;
+                                        try
+                                        {
+                                            int productId = Convert.ToInt32(reader["PRODUCTID"]);
+                                            bool hasImage = reader["HAS_IMAGE"] != DBNull.Value && Convert.ToInt32(reader["HAS_IMAGE"]) == 1;
+                                            decimal price = reader["PRICE"] != DBNull.Value ? Convert.ToDecimal(reader["PRICE"]) : 0m;
+                                            decimal costPrice = reader["COSTPRICE"] != DBNull.Value ? Convert.ToDecimal(reader["COSTPRICE"]) : 0m;
+                                            int stockQuantity = reader["STOCKQUANTITY"] != DBNull.Value ? Convert.ToInt32(reader["STOCKQUANTITY"]) : 0;
+                                            string name = reader["NAME"] != DBNull.Value ? reader["NAME"].ToString() : "Unknown";
+                                            string description = reader["DESCRIPTION"] != DBNull.Value ? reader["DESCRIPTION"].ToString() : "";
+                                            bool isLatest = reader["ISLATEST"] != DBNull.Value && Convert.ToInt32(reader["ISLATEST"]) == 1;
+                                            bool isActive = reader["ISACTIVE"] != DBNull.Value && Convert.ToInt32(reader["ISACTIVE"]) == 1;
+                                            string categoryName = reader["CATEGORYNAME"] != DBNull.Value ? reader["CATEGORYNAME"].ToString() : "Uncategorized";
+                                            int catId = reader["CATEGORYID"] != DBNull.Value ? Convert.ToInt32(reader["CATEGORYID"]) : 0;
+
+                                            // Calculate profit
+                                            decimal profitAmount = price - costPrice;
+                                            decimal profitMargin = price > 0 ? Math.Round((profitAmount / price) * 100, 1) : 0;
+
+                                            var product = new
+                                            {
+                                                ProductId = productId,
+                                                Name = name,
+                                                Description = description,
+                                                Price = price,
+                                                CostPrice = costPrice,
+                                                StockQuantity = stockQuantity,
+                                                IsLatest = isLatest,
+                                                IsActive = isActive,
+                                                CategoryName = categoryName,
+                                                CategoryId = catId,
+                                                HasImage = hasImage,
+                                                ProfitAmount = profitAmount,
+                                                ProfitMargin = profitMargin,
+                                                Status = GetStockStatus(stockQuantity, isActive),
+                                                ImageUrl = hasImage ? GetProductImageUrl(productId) : null
+                                            };
+
+                                            products.Add(product);
+                                        }
+                                        catch (Exception rowEx)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"Error processing product row: {rowEx.Message}");
+                                            // Continue with next row instead of breaking
+                                        }
                                     }
-
-                                    // Apply search filter in memory
-                                    if (!string.IsNullOrEmpty(search) &&
-                                        !name.ToLower().Contains(search.ToLower()))
-                                    {
-                                        continue;
-                                    }
-
-                                    // Apply category filter in memory
-                                    if (!string.IsNullOrEmpty(categoryId) && categoryId != "0" &&
-                                        catId.ToString() != categoryId)
-                                    {
-                                        continue;
-                                    }
-
-                                    var product = new
-                                    {
-                                        ProductId = productId,
-                                        Name = name,
-                                        Description = description,
-                                        Price = price,
-                                        CostPrice = costPrice,
-                                        StockQuantity = stockQuantity,
-                                        IsLatest = isLatest,
-                                        IsActive = isActive,
-                                        CategoryName = categoryName,
-                                        CategoryId = catId,
-                                        HasImage = hasImage
-                                    };
-
-                                    productMap[productId] = product;
+                                    System.Diagnostics.Debug.WriteLine($"Read {rowCount} product rows");
                                 }
-
-                                // Convert dictionary to list
-                                products = productMap.Values.ToList();
-                                totalCount = products.Count;
-
-                                // Apply sorting in memory
-                                if (!string.IsNullOrEmpty(sort))
-                                {
-                                    switch (sort.ToLower())
-                                    {
-                                        case "name_asc":
-                                            products = products.OrderBy(p => ((dynamic)p).Name).ToList();
-                                            break;
-                                        case "name_desc":
-                                            products = products.OrderByDescending(p => ((dynamic)p).Name).ToList();
-                                            break;
-                                        case "price_asc":
-                                            products = products.OrderBy(p => ((dynamic)p).Price).ToList();
-                                            break;
-                                        case "price_desc":
-                                            products = products.OrderByDescending(p => ((dynamic)p).Price).ToList();
-                                            break;
-                                        case "stock_asc":
-                                            products = products.OrderBy(p => ((dynamic)p).StockQuantity).ToList();
-                                            break;
-                                        case "stock_desc":
-                                            products = products.OrderByDescending(p => ((dynamic)p).StockQuantity).ToList();
-                                            break;
-                                        default:
-                                            products = products.OrderByDescending(p => ((dynamic)p).ProductId).ToList();
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    // Default sort by ID descending
-                                    products = products.OrderByDescending(p => ((dynamic)p).ProductId).ToList();
-                                }
-
-                                // Apply pagination in memory
-                                int offset = (page - 1) * pageSize;
-                                products = products.Skip(offset).Take(pageSize).ToList();
-
-                                System.Diagnostics.Debug.WriteLine($"Processed {products.Count} products out of {totalCount} total");
+                            }
+                            catch (Exception readEx)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Error reading products: {readEx.Message}");
+                                System.Diagnostics.Debug.WriteLine($"Stack trace: {readEx.StackTrace}");
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Error in GetProducts: {ex.Message}");
-                            System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-
-                            // Return empty result on error rather than crashing
-                            System.Diagnostics.Debug.WriteLine("======================== END GetProducts (ERROR) ========================");
-                            return new { Products = emptyList, TotalCount = 0, Error = ex.Message };
-                        }
                     }
-
-                    System.Diagnostics.Debug.WriteLine($"Returning {products.Count} products to client");
-                    System.Diagnostics.Debug.WriteLine("======================== END GetProducts ========================");
-                    return new { Products = products, TotalCount = totalCount };
+                    catch (Exception connEx)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Database connection error: {connEx.Message}");
+                        System.Diagnostics.Debug.WriteLine($"Connection string: {GetConnectionString()}");
+                    }
                 }
+
+                // Calculate total pages
+                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                var result = new
+                {
+                    Products = products,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages,
+                    CurrentPage = page
+                };
+
+                System.Diagnostics.Debug.WriteLine($"Returning {products.Count} products (page {page} of {totalPages})");
+                System.Diagnostics.Debug.WriteLine("======================== END GetProducts ========================");
+
+                return result;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"EXCEPTION in GetProducts: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-                return new { Products = new List<object>(), TotalCount = 0, Error = ex.Message };
+                return new { Products = new List<object>(), TotalCount = 0, TotalPages = 0, CurrentPage = 1 };
             }
+        }
+
+        private static string GetOrderByClause(string sort)
+        {
+            switch (sort?.ToLower())
+            {
+                case "name_asc":
+                    return " ORDER BY p.NAME ASC";
+                case "name_desc":
+                    return " ORDER BY p.NAME DESC";
+                case "price_asc":
+                    return " ORDER BY p.PRICE ASC";
+                case "price_desc":
+                    return " ORDER BY p.PRICE DESC";
+                case "stock_asc":
+                    return " ORDER BY p.STOCKQUANTITY ASC";
+                case "stock_desc":
+                    return " ORDER BY p.STOCKQUANTITY DESC";
+                default:
+                    return " ORDER BY p.PRODUCTID DESC"; // Newest first by default
+            }
+        }
+
+        private static string GetStockStatus(int stockQuantity, bool isActive)
+        {
+            if (!isActive)
+                return "Inactive";
+            else if (stockQuantity <= 0)
+                return "Out of Stock";
+            else if (stockQuantity < 10)
+                return "Low Stock";
+            else
+                return "In Stock";
         }
 
         // Get categories for dropdowns with named parameters
@@ -714,9 +776,14 @@ namespace OnlinePastryShop.Pages
                             transaction.Commit();
                             System.Diagnostics.Debug.WriteLine("Transaction committed successfully");
 
+                            // The original dictionary response is not needed - we've standardized on the object format
+                            System.Diagnostics.Debug.WriteLine("Product added successfully");
+                            System.Diagnostics.Debug.WriteLine("=========== END AddProductSimple ===========");
+
                             response["status"] = "success";
                             response["message"] = "Product added successfully";
                             response["productId"] = newProductId;
+                            return response;
                         }
                         catch (Exception ex)
                         {
@@ -727,6 +794,7 @@ namespace OnlinePastryShop.Pages
                             response["status"] = "error";
                             response["message"] = $"Error adding product: {ex.Message}";
                             response["details"] = ex.ToString();
+                            return response;
                         }
                     }
                 }
@@ -739,12 +807,8 @@ namespace OnlinePastryShop.Pages
                 response["status"] = "error";
                 response["message"] = $"Unexpected error: {ex.Message}";
                 response["details"] = ex.ToString();
+                return response;
             }
-
-            System.Diagnostics.Debug.WriteLine($"Response: status={response["status"]}, message={response["message"]}");
-            System.Diagnostics.Debug.WriteLine("=========== END AddProductSimple ===========");
-
-            return response;
         }
 
         // Update existing product with the same improved parameter handling approach
@@ -757,22 +821,22 @@ namespace OnlinePastryShop.Pages
                 // Validate inputs
                 if (stockQuantity > 1000)
                 {
-                    return new { status = "error", message = "Stock quantity cannot exceed 1000 items." };
+                    return new { Success = false, Message = "Stock quantity cannot exceed 1000 items." };
                 }
 
                 if (costPrice <= 0)
                 {
-                    return new { status = "error", message = "Cost price must be greater than zero." };
+                    return new { Success = false, Message = "Cost price must be greater than zero." };
                 }
 
                 if (price <= 0)
                 {
-                    return new { status = "error", message = "Price must be greater than zero." };
+                    return new { Success = false, Message = "Price must be greater than zero." };
                 }
 
                 if (costPrice >= price)
                 {
-                    return new { status = "error", message = "Cost price must be less than selling price." };
+                    return new { Success = false, Message = "Cost price must be less than selling price." };
                 }
 
                 if (!string.IsNullOrEmpty(description))
@@ -781,14 +845,14 @@ namespace OnlinePastryShop.Pages
                     string[] words = description.Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
                     if (words.Length > 50)
                     {
-                        return new { status = "error", message = "Description cannot exceed 50 words." };
+                        return new { Success = false, Message = "Description cannot exceed 50 words." };
                     }
                 }
 
                 // Validate name contains at least one letter and no numbers
                 if (string.IsNullOrWhiteSpace(name))
                 {
-                    return new { status = "error", message = "Product name is required." };
+                    return new { Success = false, Message = "Product name is required." };
                 }
 
                 // Check for at least one letter character
@@ -808,12 +872,12 @@ namespace OnlinePastryShop.Pages
 
                 if (!containsLetter)
                 {
-                    return new { status = "error", message = "Product name must contain at least one letter." };
+                    return new { Success = false, Message = "Product name must contain at least one letter." };
                 }
 
                 if (containsNumber)
                 {
-                    return new { status = "error", message = "Product name cannot contain any numbers." };
+                    return new { Success = false, Message = "Product name cannot contain any numbers." };
                 }
 
                 System.Diagnostics.Debug.WriteLine($"UpdateProduct called for product {productId}");
@@ -843,7 +907,7 @@ namespace OnlinePastryShop.Pages
 
                                 if (Convert.ToInt32(checkCmd.ExecuteScalar()) > 0)
                                 {
-                                    return new { status = "error", message = "A product with this name already exists." };
+                                    return new { Success = false, Message = "A product with this name already exists." };
                                 }
                             }
 
@@ -964,7 +1028,7 @@ namespace OnlinePastryShop.Pages
 
                             transaction.Commit();
                             System.Diagnostics.Debug.WriteLine("Product update transaction committed successfully");
-                            return new { status = "success", message = "Product updated successfully." };
+                            return new { Success = true, Message = "Product updated successfully." };
                         }
                         catch (Exception ex)
                         {
@@ -980,7 +1044,7 @@ namespace OnlinePastryShop.Pages
             {
                 System.Diagnostics.Debug.WriteLine($"Error updating product: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-                return new { status = "error", message = $"Error updating product: {ex.Message}" };
+                return new { Success = false, Message = $"Error updating product: {ex.Message}" };
             }
         }
 
@@ -1021,7 +1085,7 @@ namespace OnlinePastryShop.Pages
                                 if (rowsAffected == 0)
                                 {
                                     System.Diagnostics.Debug.WriteLine($"Product {productId} not found for deletion");
-                                    return new { status = "error", message = "Product not found." };
+                                    return new { Success = false, Message = "Product not found." };
                                 }
 
                                 System.Diagnostics.Debug.WriteLine($"Product {productId} PERMANENTLY deleted successfully");
@@ -1031,8 +1095,8 @@ namespace OnlinePastryShop.Pages
 
                                 return new
                                 {
-                                    status = "success",
-                                    message = "Product permanently deleted from the database."
+                                    Success = true,
+                                    Message = "Product permanently deleted from the database."
                                 };
                             }
                         }
@@ -1049,7 +1113,7 @@ namespace OnlinePastryShop.Pages
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error deleting product: {ex.Message}");
-                return new { status = "error", message = $"Error deleting product: {ex.Message}" };
+                return new { Success = false, Message = $"Error deleting product: {ex.Message}" };
             }
         }
 
@@ -1135,7 +1199,12 @@ namespace OnlinePastryShop.Pages
                 return "User Id=mecate;Password=qwen123;Data Source=localhost:1521/xe;";
             }
         }
-    }
+    
+    private static string GetProductImageUrl(int productId)
+        {
+            return $"GetProductImage.ashx?id={productId}&t={DateTime.Now.Ticks}";
+        }
+        }
 
     public class ProductData
     {
@@ -1149,5 +1218,7 @@ namespace OnlinePastryShop.Pages
         public string CategoryName { get; set; }
         public int CategoryId { get; set; }
         public string ImageBase64 { get; set; }
+
     }
 }
+    

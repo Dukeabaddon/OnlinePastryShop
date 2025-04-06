@@ -1,0 +1,14 @@
+--------------------------------------------------------
+--  DDL for Trigger PRODUCTRATINGS_TRG
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AARON_IPT"."PRODUCTRATINGS_TRG" 
+    BEFORE INSERT ON PRODUCTRATINGS
+    FOR EACH ROW
+    BEGIN
+        IF :NEW.RATINGID IS NULL THEN
+            SELECT PRODUCTRATINGS_SEQ.NEXTVAL INTO :NEW.RATINGID FROM DUAL;
+        END IF;
+    END;
+/
+ALTER TRIGGER "AARON_IPT"."PRODUCTRATINGS_TRG" ENABLE;

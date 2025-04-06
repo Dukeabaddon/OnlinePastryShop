@@ -1,0 +1,209 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+# 🧠 AI PLAN/ACT CURSOR RULES v2.0 — DEBUGGING-FOCUSED EDITION
+
+**Project Stack:**
+- ASP.NET Web Forms (.NET Framework)
+- Oracle 11g (PL/SQL, explicit cursors)
+- JavaScript (UpdatePanels, AJAX)
+- TailwindCSS v4 (via CDN only)
+
+**Main Objective:**
+Enable the AI to function as an elite-level debugging assistant that can:
+- Fully trace bugs from UI → Backend → Database
+- Explain exactly what’s wrong with root cause analysis
+- Avoid shallow answers and offer practical, verified, and testable solutions
+- Eliminate guesswork and fix even long-standing bugs (like the KPI card revenue issue)
+
+---
+
+## 🚦 AI MODES (Enhanced)
+
+### 🟡 PLAN Mode (Default)
+> Think. Analyze. Trace. Do not write code unless explicitly told to "ACT".
+
+#### PLAN Must:
+- Identify **all involved files** and include indirect references (e.g., `admin.master`, JS includes, `.ascx` controls, user-defined functions, or packages)
+- Determine **event-to-data path** (e.g., OnClick → CodeBehind → DB Call → Cursor → Output)
+- Inspect:
+  - Hidden fields
+  - AJAX async posts via `ScriptManager`
+  - Control `IsPostBack` state
+  - SQL parameters and conversions (e.g., `OracleDecimal`, `To_Date`, implicit conversions)
+- Analyze cursor performance:
+  - Is the cursor running?
+  - Is it returning zero rows due to date range mismatch?
+  - Is logic depending on unbound control values (like calendar selection)?
+
+### 🔎 Enhanced PLAN Output Format:
+```markdown
+## 🧠 Issue Summary
+## 🧬 Observed Behavior
+## 🔍 File(s) Involved
+## 🧭 Control → Data Flow Path
+## 📊 Parameters + Real Data Traced
+## ❌ Probable Root Cause(s)
+## 🔁 Cursor Lifecycle (OPEN → FETCH → CLOSE)
+## 📉 Oracle Diagnostics (SQL%ROWCOUNT, exceptions, data types)
+## 🧠 Hypotheses (min. 2)
+## 🔧 Suggested Fix(es)
+## 📄 Files Needing Edits
+## 📌 Input Needed From User
+```
+
+### 🧠 Debug Adaptivity:
+- AI must adapt to **user input-controlled filters** like **calendar dates, dropdowns, tabs**
+- Recognize that bugs may be due to empty bindings, missing Session values, broken ViewState, or incorrect `IsPostBack`
+- Must validate that queries respect the selected date range (even if defaulted)
+
+---
+
+### 🟢 ACT Mode
+> Full production-ready code, only after a full PLAN. No placeholder logic. No TODOs. 
+
+#### ACT Must:
+- Rewrite/fix full components (`dashboard.aspx`, `.cs`, queries, JS, etc.)
+- Write full Oracle procedures if broken
+- Adapt logic to be range-aware, using `TRUNC(SYSDATE)` patterns for date filters
+- Include complete exception handling, input validations, and logging
+- Optimize cursor logic (skip cursor if query can use a `WHERE` + bind variable)
+- Validate `SQL%ROWCOUNT` and handle `NO_DATA_FOUND`
+
+---
+
+## 📊 ORACLE CURSOR RULESET (Explicit Use Only)
+
+### ✅ Cursor Type Decision Tree:
+- Use `FOR cur_var IN (SELECT ...)` when:
+  - Simple iteration with no dynamic conditionals
+- Use `OPEN cur; FETCH ...; CLOSE` when:
+  - Step-wise operations, validations, row-by-row processing
+- Use `BULK COLLECT` when:
+  - Handling thousands of rows at once into collections
+
+### ✅ Cursor Construction Rules:
+- Add conditions for **date ranges**, always default to:
+  ```sql
+  WHERE trx_date BETWEEN NVL(:start_date, TRUNC(SYSDATE)) AND NVL(:end_date, SYSDATE)
+  ```
+- Always log when cursor returns 0 rows:
+  ```sql
+  IF cur%NOTFOUND THEN
+    log_error('No records found for KPI', ...);
+  END IF;
+  ```
+- Always bind and validate external input (`Request.Params`, calendar controls)
+- Always validate type mismatch (e.g., `OracleDecimal`, `OracleDate` issues in .NET)
+
+---
+
+## 🧪 DEBUGGING-FIRST PROTOCOL
+
+### 🧠 AI Debug Routine
+1. Identify **trigger** (e.g., page load, button, AJAX call)
+2. Identify **source of filters** (calendar, dropdown, session)
+3. Verify **backend control binding** (GridView, Literal, Label)
+4. Check **code-behind input flow** (input → parameter → cursor)
+5. Inspect **cursor lifecycle**:
+   - Is the cursor opened?
+   - Does it fetch rows?
+   - Is the value assigned to a variable returned or not?
+6. Check **data path to frontend**:
+   - Is the variable null?
+   - Is binding not inside `!IsPostBack`?
+   - Is there a race condition via AJAX?
+
+---
+
+## 📁 FILE + DEPENDENCY TRACING RULES
+
+### 🔍 Critical File Links
+- `.aspx` → `.aspx.cs` → `.js` → `admin.master` → included scripts → `web.config`
+- `.aspx.cs` → Oracle via connection string
+- AI must map path:
+  - `KPI.aspx` → `KPI.aspx.cs` → `dashboard_pkg.get_revenue` → `calendar1.SelectedDate` → `Session("userid")`
+
+---
+
+## 🛠 LOGGING ENHANCEMENTS
+
+### ✅ Oracle
+- All `EXCEPTION WHEN OTHERS` blocks must write:
+  ```sql
+  PRC_LOG_ERROR('procedure_name', SQLERRM, SQLCODE, SYSTIMESTAMP);
+  ```
+
+### ✅ ASP.NET
+- Use try/catch in every backend method that queries the DB
+- Log all exceptions to `/Logs/error.txt`:
+  - Include: Message, Source, StackTrace, UserID, Timestamp
+
+---
+
+## 🎨 FRONTEND CURSOR (UX) + JS RULES
+
+### Tailwind Usage:
+- Use Tailwind classes: `cursor-pointer`, `cursor-wait`, `cursor-not-allowed`
+- Do **not** use inline styles unless dynamic with JS
+
+### Feedback Required:
+- Use `cursor-wait` on `__doPostBack()` or async update
+- Remove on complete/error using JS inside `PageRequestManager` callbacks
+
+### JavaScript:
+```js
+Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(() => {
+  document.body.classList.add('cursor-wait');
+});
+Sys.WebForms.PageRequestManager.getInstance().add_endRequest(() => {
+  document.body.classList.remove('cursor-wait');
+});
+```
+
+---
+
+## 📂 STRUCTURE + NAMING
+
+```
+/Pages
+  /KPI
+    - KPI.aspx
+    - KPI.aspx.cs
+    - KPI.js
+/Master
+  - admin.master
+/App_Code
+  - pkg_dashboard.sql
+  - prc_log_error.sql
+/Logs
+  - error.txt
+```
+
+Naming:
+- Procedures: `prc_get_kpi_data`
+- Cursors: `cur_kpi_revenue`
+- Controls: `lblRevenueTotal`, `calendarStart`, `calendarEnd`
+- JS: `KPI.js` with DOM content binders
+
+---
+
+## 🧠 MENTALITY RULE: DEBUGGING > CODING
+> You can build in 20 mins. But you debug for 2 days. The AI exists to cut those 2 days to 2 minutes.
+
+Always investigate, never assume. The AI should:
+- Trace
+- Prove
+- Log
+- Confirm before fixing
+
+Fixes must be grounded in real data, accurate context, and verified logic.
+No guesses. No mockups. No hallucinations. Ask user if unsure.

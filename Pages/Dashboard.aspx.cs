@@ -93,7 +93,7 @@ namespace OnlinePastryShop.Pages
 
                 InitializeTimeParameters();
 
-                // Load dashboard data 
+                // Load dashboard data
                 LoadDashboardData();
             }
         }
@@ -172,7 +172,7 @@ namespace OnlinePastryShop.Pages
             UpdateCardTitles();
 
             // First load product and order counts
-            LoadLowStockProducts();
+            LoadLowStockItems(new OracleConnection(GetConnectionString()));
             LoadPendingOrderCount();
 
             // Then load full data
@@ -267,13 +267,13 @@ namespace OnlinePastryShop.Pages
 
                     // Calculate true profit (revenue - cost) using ORDERDETAILS and PRODUCTS table
                     string currentPeriodQuery = @"
-                        SELECT 
+                        SELECT
                             NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS TrueProfit
                         FROM 
                             AARON_IPT.ORDERDETAILS OD,
                             AARON_IPT.PRODUCTS P,
                             AARON_IPT.ORDERS O
-                        WHERE 
+                        WHERE
                             OD.PRODUCTID = P.PRODUCTID
                             AND OD.ORDERID = O.ORDERID
                             AND " + dateCriteria + @"
@@ -312,13 +312,13 @@ namespace OnlinePastryShop.Pages
 
                     // Calculate previous period profit for comparison
                     string previousPeriodQuery = @"
-                        SELECT 
+                        SELECT
                             NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS TrueProfit
                         FROM 
                             AARON_IPT.ORDERDETAILS OD,
                             AARON_IPT.PRODUCTS P,
                             AARON_IPT.ORDERS O
-                        WHERE 
+                        WHERE
                             OD.PRODUCTID = P.PRODUCTID
                             AND OD.ORDERID = O.ORDERID
                             AND " + prevDateCriteria + @"
@@ -535,7 +535,7 @@ namespace OnlinePastryShop.Pages
 
                     // Debug: test case-sensitivity in Oracle
                     string caseTestQuery = @"
-                        SELECT 
+                        SELECT
                             (SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE STATUS = 'Pending') AS PendingExact,
                             (SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE STATUS = 'PENDING') AS PendingUpper,
                             (SELECT COUNT(*) FROM ""AARON_IPT"".""ORDERS"" WHERE STATUS = 'pending') AS PendingLower,
@@ -559,7 +559,7 @@ namespace OnlinePastryShop.Pages
 
                     // Count all pending orders with an IN clause to handle case variance
                     string query = @"
-                        SELECT 
+                        SELECT
                             COUNT(*) AS PendingCount
                         FROM ""AARON_IPT"".""ORDERS""
                         WHERE STATUS IN ('Pending', 'PENDING', 'pending')";
@@ -620,7 +620,7 @@ namespace OnlinePastryShop.Pages
 
                     // Simple query to get pending orders - fix the invalid character issue by using proper quotes
                     string query = @"
-                        SELECT 
+                        SELECT
                             O.ORDERID,
                             U.USERNAME AS CustomerName,
                             U.EMAIL,
@@ -632,7 +632,7 @@ namespace OnlinePastryShop.Pages
                             AARON_IPT.USERS U
                         WHERE 
                             O.USERID = U.USERID
-                            AND O.STATUS IN ('Pending', 'PENDING', 'pending')
+                        AND O.STATUS IN ('Pending', 'PENDING', 'pending')
                         ORDER BY 
                             O.ORDERDATE DESC";
 
@@ -703,87 +703,99 @@ namespace OnlinePastryShop.Pages
             }
         }
 
-        private void LoadLowStockProducts()
+        private void LoadLowStockItems(OracleConnection connection)
         {
+            // Add a null check for LowStockRepeater before proceeding
+            if (LowStockRepeater == null)
+            {
+                System.Diagnostics.Debug.WriteLine("LowStockRepeater control not found. Skipping low stock data binding.");
+                // Ensure the KPI card value is handled gracefully
+                LowStockCount = "N/A"; 
+                return; // Exit the method as we cannot bind data
+            }
+
             try
             {
-                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                if (connection.State != ConnectionState.Open)
                 {
-                    conn.Open();
+                    connection.Open();
+                }
 
-                    // Simple query for low stock products without any joins
-                    string query = @"
+                // Execute a direct query instead of using a stored procedure with RefCursor
+                using (OracleCommand directCommand = new OracleCommand())
+                {
+                    directCommand.Connection = connection;
+                    directCommand.CommandText = @"
                         SELECT 
-                            PRODUCTID,
-                            NAME,
-                            STOCKQUANTITY,
-                            'N/A' AS CategoryName,
-                            PRICE
-                        FROM AARON_IPT.PRODUCTS
-                        WHERE STOCKQUANTITY <= 10
-                        AND ISACTIVE = 1
-                        ORDER BY STOCKQUANTITY ASC";
-
-                    System.Diagnostics.Debug.WriteLine($"Low stock products query: {query}");
-
-                    using (OracleCommand cmd = new OracleCommand(query, conn))
+                            P.PRODUCTID as ProductId,
+                            P.NAME as Name,
+                            P.STOCKQUANTITY as StockQuantity,
+                            (SELECT C.NAME FROM CATEGORIES C, PRODUCTCATEGORIES PC 
+                             WHERE PC.PRODUCTID = P.PRODUCTID 
+                             AND PC.CATEGORYID = C.CATEGORYID
+                             AND ROWNUM = 1) AS CategoryName
+                        FROM ""AARON_IPT"".""PRODUCTS"" P
+                        WHERE P.STOCKQUANTITY > 0 
+                        AND P.STOCKQUANTITY <= 10
+                        AND P.ISACTIVE = 1
+                        ORDER BY P.STOCKQUANTITY ASC";
+                    
+                    // First get the count for the KPI card
+                    OracleCommand countCommand = new OracleCommand(
+                        @"SELECT COUNT(*) FROM ""AARON_IPT"".""PRODUCTS"" 
+                          WHERE STOCKQUANTITY > 0 AND STOCKQUANTITY <= 10 AND ISACTIVE = 1", 
+                        connection);
+                    
+                    // Get the count and update the KPI
+                    object countResult = countCommand.ExecuteScalar();
+                    if (countResult != null && countResult != DBNull.Value)
                     {
-                        DataTable dt = new DataTable();
-                        using (OracleDataAdapter adapter = new OracleDataAdapter(cmd))
+                        LowStockCount = countResult.ToString();
+                    }
+                    else
+                    {
+                        LowStockCount = "0";
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine($"Low stock count: {LowStockCount}");
+                    
+                    // Now get the actual data
+                    DataTable lowStockTable = new DataTable();
+                    using (OracleDataAdapter adapter = new OracleDataAdapter(directCommand))
+                    {
+                        adapter.Fill(lowStockTable);
+                        System.Diagnostics.Debug.WriteLine($"Low stock table loaded with {lowStockTable.Rows.Count} rows");
+                        
+                        // Log column names for debugging
+                        foreach (DataColumn col in lowStockTable.Columns)
                         {
-                            adapter.Fill(dt);
-                        }
-
-                        System.Diagnostics.Debug.WriteLine($"Low stock products found: {dt.Rows.Count}");
-
-                        // For debugging, output the first product if found
-                        if (dt.Rows.Count > 0)
-                        {
-                            System.Diagnostics.Debug.WriteLine("First low stock product details:");
-                            foreach (DataColumn column in dt.Columns)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"  {column.ColumnName}: {dt.Rows[0][column.ColumnName]}");
-                            }
-                        }
-
-                        // Bind low stock products to repeater
-                        if (LowStockRepeater != null)
-                        {
-                            LowStockRepeater.DataSource = dt;
-                            LowStockRepeater.DataBind();
-
-                            // Show/hide empty message
-                            if (dt.Rows.Count == 0)
-                            {
-                                LowStockRepeater.Visible = false;
-                                if (EmptyLowStockMessage != null)
-                                    EmptyLowStockMessage.Visible = true;
-                            }
-                            else
-                            {
-                                LowStockRepeater.Visible = true;
-                                if (EmptyLowStockMessage != null)
-                                    EmptyLowStockMessage.Visible = false;
-                            }
-
-                            // Update the count property
-                            LowStockCount = dt.Rows.Count.ToString();
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("ERROR: LowStockRepeater control is null");
+                            System.Diagnostics.Debug.WriteLine($"Column found: {col.ColumnName}, Type: {col.DataType}");
                         }
                     }
+
+                    // Data binding for Low Stock Items
+                    LowStockRepeater.DataSource = lowStockTable;
+                    LowStockRepeater.DataBind();
+
+                    // Handle empty data message visibility
+                    if (EmptyLowStockMessage != null)
+                    {
+                        EmptyLowStockMessage.Visible = (lowStockTable.Rows.Count == 0);
+                    }
+                    LowStockRepeater.Visible = (lowStockTable.Rows.Count > 0);
+
+                    System.Diagnostics.Debug.WriteLine($"Low stock items loaded: {lowStockTable.Rows.Count}");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in LoadLowStockProducts: {ex.Message}");
-                if (LowStockRepeater != null)
-                    LowStockRepeater.Visible = false;
-                if (EmptyLowStockMessage != null)
-                    EmptyLowStockMessage.Visible = true;
-                LowStockCount = "0";
+                System.Diagnostics.Debug.WriteLine($"Error loading low stock items: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                ShowError("Error loading low stock items.");
+                // Ensure UI elements are handled gracefully on error
+                if (EmptyLowStockMessage != null) EmptyLowStockMessage.Visible = true;
+                if (LowStockRepeater != null) LowStockRepeater.Visible = false;
+                LowStockCount = "Err"; // Indicate error on KPI
             }
         }
 
@@ -846,7 +858,7 @@ namespace OnlinePastryShop.Pages
                         case "today":
                             // Group by hour for today, showing profit
                             query = @"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
                                 FROM 
@@ -873,7 +885,7 @@ namespace OnlinePastryShop.Pages
                         case "yesterday":
                             // Same approach for yesterday
                             query = @"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
                                 FROM 
@@ -900,7 +912,7 @@ namespace OnlinePastryShop.Pages
                         case "week":
                             // Group by day for week, showing profit
                             query = @"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'DY') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
                                 FROM 
@@ -928,7 +940,7 @@ namespace OnlinePastryShop.Pages
                         case "month":
                             // Group by week for month, showing profit
                             query = @"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'IW') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
                                 FROM 
@@ -956,7 +968,7 @@ namespace OnlinePastryShop.Pages
                         default:
                             // Default to daily view for today
                             query = @"
-                                SELECT 
+                                SELECT
                                     TO_CHAR(O.ORDERDATE, 'HH24') AS TimeLabel,
                                     NVL(SUM(OD.QUANTITY * (OD.PRICE - P.COSTPRICE)), 0) AS Profit
                                 FROM 
@@ -1113,7 +1125,7 @@ namespace OnlinePastryShop.Pages
                     // Updated query to include profit calculation with consistent schema naming
                     string query = @"
                         SELECT * FROM (
-                            SELECT 
+                            SELECT
                                 P.NAME AS ProductName,
                                 SUM(OD.QUANTITY) AS QuantitySold,
                                 SUM(OD.QUANTITY * OD.PRICE) AS Revenue,
@@ -1125,8 +1137,8 @@ namespace OnlinePastryShop.Pages
                                 AARON_IPT.ORDERS O
                             WHERE 
                                 OD.PRODUCTID = P.PRODUCTID
-                                AND OD.ORDERID = O.ORDERID
-                                AND P.ISACTIVE = 1
+                            AND OD.ORDERID = O.ORDERID
+                            AND P.ISACTIVE = 1
                                 " + dateCriteria + @"
                             GROUP BY 
                                 P.NAME
@@ -1362,34 +1374,34 @@ namespace OnlinePastryShop.Pages
         protected void TimeRangeSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
-            {
-                DropDownList dropdown = (DropDownList)sender;
-                TimeRange = dropdown.SelectedValue;
+        {
+            DropDownList dropdown = (DropDownList)sender;
+            TimeRange = dropdown.SelectedValue;
 
-                System.Diagnostics.Debug.WriteLine($"========================================");
-                System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
+            System.Diagnostics.Debug.WriteLine($"========================================");
+            System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
 
-                // Reinitialize time parameters
-                InitializeTimeParameters();
-                System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
-                System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
+            // Reinitialize time parameters
+            InitializeTimeParameters();
+            System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
+            System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
 
-                // Update card titles based on time range
-                UpdateCardTitles();
-                System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
+            // Update card titles based on time range
+            UpdateCardTitles();
+            System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
 
                 // Clear existing data
                 DailyRevenue = "0.00";
                 TodayOrderCount = "0";
                 PendingOrderCount = "0";
-                
-                // Reload dashboard data with new time range
-                System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
-                LoadDashboardData();
 
-                System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
-                System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
-                System.Diagnostics.Debug.WriteLine($"========================================");
+            // Reload dashboard data with new time range
+            System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
+            LoadDashboardData();
+
+            System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
+            System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
+            System.Diagnostics.Debug.WriteLine($"========================================");
             }
             catch (Exception ex)
             {
@@ -1450,6 +1462,24 @@ namespace OnlinePastryShop.Pages
             {
                 return ConfigurationManager.ConnectionStrings["OracleConnection"]?.ConnectionString
                     ?? "User Id=AARON_IPT;Password=qwen123;Data Source=localhost:1521/xe;";
+            }
+        }
+
+        /// <summary>
+        /// Displays an error message to the user
+        /// </summary>
+        /// <param name="message">The error message to display</param>
+        private void ShowError(string message)
+        {
+            if (lblErrorMessage != null)
+            {
+                lblErrorMessage.Text = message;
+                lblErrorMessage.Visible = true;
+                System.Diagnostics.Debug.WriteLine($"Error displayed: {message}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"Unable to display error: {message} - lblErrorMessage control is null");
             }
         }
     }

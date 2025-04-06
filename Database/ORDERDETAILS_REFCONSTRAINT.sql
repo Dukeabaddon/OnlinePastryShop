@@ -1,0 +1,8 @@
+--------------------------------------------------------
+--  Ref Constraints for Table ORDERDETAILS
+--------------------------------------------------------
+
+  ALTER TABLE "AARON_IPT"."ORDERDETAILS" ADD FOREIGN KEY ("ORDERID")
+	  REFERENCES "AARON_IPT"."ORDERS" ("ORDERID") ON DELETE CASCADE ENABLE;
+  ALTER TABLE "AARON_IPT"."ORDERDETAILS" ADD FOREIGN KEY ("PRODUCTID")
+	  REFERENCES "AARON_IPT"."PRODUCTS" ("PRODUCTID") ON DELETE CASCADE ENABLE;

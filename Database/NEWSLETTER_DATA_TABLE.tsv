@@ -1,0 +1,7 @@
+"SUBSCRIPTIONID"	"EMAIL"	"ISACTIVE"	"SUBSCRIBEDDATE"	"UNSUBSCRIBEDDATE"	"USERID"
+10001	"john.doe@example.com"	1	03/06/2025		
+10002	"jane.smith@example.com"	1	03/11/2025		
+10003	"alex.johnson@example.com"	1	03/16/2025		
+10004	"maria.garcia@example.com"	1	03/21/2025		
+10005	"david.lee@example.com"	1	03/26/2025		
+10006	"robert.chen@example.com"	1	04/05/2025		

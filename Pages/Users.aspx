@@ -1,9 +1,6 @@
 <%@ Page Title="User Management" Language="C#" MasterPageFile="~/Pages/AdminMaster.Master" AutoEventWireup="true" CodeBehind="Users.aspx.cs" Inherits="OnlinePastryShop.Pages.Users" %>
 
 <asp:Content ID="AdminContent" ContentPlaceHolderID="AdminContent" runat="server">
-    <form runat="server" DefaultButton="btnSearch">
-        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold text-gray-800 mb-6">User Management</h1>
             
@@ -333,9 +330,7 @@
                 </div>
             </asp:Panel>
         </div>
-    </form>
     
-    <!-- JavaScript for Tab Switching and Password Copy -->
    <script type="text/javascript">
         function showUserTab(tabName) {
             // Get all tab buttons and content panels

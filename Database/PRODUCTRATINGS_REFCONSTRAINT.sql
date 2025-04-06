@@ -1,0 +1,8 @@
+--------------------------------------------------------
+--  Ref Constraints for Table PRODUCTRATINGS
+--------------------------------------------------------
+
+  ALTER TABLE "AARON_IPT"."PRODUCTRATINGS" ADD CONSTRAINT "FK_RATING_PRODUCT" FOREIGN KEY ("PRODUCTID")
+	  REFERENCES "AARON_IPT"."PRODUCTS" ("PRODUCTID") ENABLE;
+  ALTER TABLE "AARON_IPT"."PRODUCTRATINGS" ADD CONSTRAINT "FK_RATING_USER" FOREIGN KEY ("USERID")
+	  REFERENCES "AARON_IPT"."USERS" ("USERID") ENABLE;

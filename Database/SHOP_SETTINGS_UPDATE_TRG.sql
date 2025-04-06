@@ -1,0 +1,13 @@
+--------------------------------------------------------
+--  DDL for Trigger SHOP_SETTINGS_UPDATE_TRG
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AARON_IPT"."SHOP_SETTINGS_UPDATE_TRG" 
+BEFORE UPDATE ON AARON_IPT.SHOP_SETTINGS
+FOR EACH ROW
+BEGIN
+    :NEW.MODIFIED_DATE := SYSDATE;
+END;
+
+/
+ALTER TRIGGER "AARON_IPT"."SHOP_SETTINGS_UPDATE_TRG" ENABLE;

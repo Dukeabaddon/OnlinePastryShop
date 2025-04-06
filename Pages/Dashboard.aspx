@@ -1,7 +1,6 @@
 ﻿<%@ Page Title="Dashboard" Language="C#" MasterPageFile="~/Pages/AdminMaster.Master" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="OnlinePastryShop.Pages.Dashboard" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="AdminContent" runat="server">
-    <form id="dashboardForm" runat="server">
     <div class="container mx-auto p-4">
         <!-- Error Message -->
         <asp:Label ID="lblErrorMessage" runat="server" CssClass="text-red-500 text-center mb-4" Visible="false"></asp:Label>
@@ -707,5 +706,4 @@
             }
         }
     </script>
-    </form>
 </asp:Content>
