@@ -91,6 +91,61 @@ namespace OnlinePastryShop.Pages
                         conn.Open();
                         adapter.Fill(dt);
 
+                        // Store the total number of records for pagination
+                        int totalRecords = dt.Rows.Count;
+                        int totalPages = (int)Math.Ceiling((double)totalRecords / gvOrders.PageSize);
+
+                        // Set up page number buttons for DataList
+                        if (dt.Rows.Count > 0)
+                        {
+                            DataTable dtPaging = new DataTable();
+                            dtPaging.Columns.Add("Text", typeof(string));
+                            dtPaging.Columns.Add("Value", typeof(string));
+                            dtPaging.Columns.Add("Selected", typeof(bool));
+
+                            // Get the current page index
+                            int currentPage = gvOrders.PageIndex + 1;
+
+                            // Determine range of page numbers to show
+                            int startPage = Math.Max(1, currentPage - 2);
+                            int endPage = Math.Min(totalPages, startPage + 4);
+
+                            // Adjust if we're near the end
+                            if (endPage - startPage < 4 && totalPages > 5)
+                            {
+                                startPage = Math.Max(1, endPage - 4);
+                            }
+
+                            // Add page number buttons
+                            for (int i = startPage; i <= endPage; i++)
+                            {
+                                DataRow dr = dtPaging.NewRow();
+                                dr["Text"] = i.ToString();
+                                dr["Value"] = i.ToString();
+                                dr["Selected"] = (i == currentPage);
+                                dtPaging.Rows.Add(dr);
+                            }
+
+                            // Find the DataList in the GridView's PagerTemplate
+                            GridViewRow pagerRow = gvOrders.BottomPagerRow;
+                            if (pagerRow != null)
+                            {
+                                DataList dlPaging = (DataList)pagerRow.FindControl("dlPaging");
+                                if (dlPaging != null)
+                                {
+                                    dlPaging.DataSource = dtPaging;
+                                    dlPaging.DataBind();
+                                }
+
+                                // Set the total pages count for display
+                                Label totalPageLabel = (Label)pagerRow.FindControl("totalPagesDisplay");
+                                if (totalPageLabel != null)
+                                {
+                                    totalPageLabel.Text = totalPages.ToString();
+                                }
+                            }
+                        }
+
                         // Bind data to GridView
                         gvOrders.DataSource = dt;
                         gvOrders.DataBind();
@@ -732,6 +787,96 @@ namespace OnlinePastryShop.Pages
             {
                 // Fail silently - this is just logging
                 System.Diagnostics.Debug.WriteLine("Error logging exception: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets the total count of rows for pagination
+        /// </summary>
+        protected int GetTotalRowCount()
+        {
+            int count = 0;
+            
+            try
+            {
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    using (OracleCommand cmd = new OracleCommand())
+                    {
+                        cmd.Connection = conn;
+
+                        // Build the base SQL query with joins
+                        StringBuilder query = new StringBuilder();
+                        query.Append(@"SELECT COUNT(*) 
+                                      FROM AARON_IPT.Orders o 
+                                      INNER JOIN AARON_IPT.Users u ON o.UserID = u.UserID 
+                                      WHERE o.IsActive = 1");
+
+                        // Apply status filter if selected
+                        if (!string.IsNullOrEmpty(ddlStatus.SelectedValue))
+                        {
+                            query.Append(" AND o.Status = :status");
+                            cmd.Parameters.Add(new OracleParameter("status", ddlStatus.SelectedValue));
+                        }
+
+                        // Apply date range filter if both dates are provided
+                        if (!string.IsNullOrEmpty(txtStartDate.Text) && !string.IsNullOrEmpty(txtEndDate.Text))
+                        {
+                            query.Append(" AND o.OrderDate BETWEEN :startDate AND :endDate");
+
+                            DateTime startDate = DateTime.Parse(txtStartDate.Text);
+                            DateTime endDate = DateTime.Parse(txtEndDate.Text).AddDays(1).AddSeconds(-1); // Set to end of day
+
+                            cmd.Parameters.Add(new OracleParameter("startDate", OracleDbType.Date, startDate, ParameterDirection.Input));
+                            cmd.Parameters.Add(new OracleParameter("endDate", OracleDbType.Date, endDate, ParameterDirection.Input));
+                        }
+
+                        cmd.CommandText = query.ToString();
+
+                        conn.Open();
+                        count = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                LogError(ex);
+                return 0;
+            }
+            
+            return count;
+        }
+
+        /// <summary>
+        /// Handles the ItemCommand event of the pagination DataList
+        /// </summary>
+        protected void dlPaging_ItemCommand(object source, DataListCommandEventArgs e)
+        {
+            if (e.CommandName == "Page")
+            {
+                gvOrders.PageIndex = Convert.ToInt32(e.CommandArgument) - 1;
+                BindOrders();
+            }
+        }
+
+        /// <summary>
+        /// Handles the ItemDataBound event of the pagination DataList
+        /// </summary>
+        protected void dlPaging_ItemDataBound(object sender, DataListItemEventArgs e)
+        {
+            LinkButton lnkPage = (LinkButton)e.Item.FindControl("lnkPage");
+            if (lnkPage != null)
+            {
+                // Highlight the current page button
+                if (Convert.ToBoolean(DataBinder.Eval(e.Item.DataItem, "Selected")))
+                {
+                    lnkPage.CssClass = "relative inline-flex items-center px-4 py-2 border border-pink-600 bg-pink-600 text-sm font-medium text-white";
+                }
+                else
+                {
+                    lnkPage.CssClass = "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50";
+                }
             }
         }
     }
