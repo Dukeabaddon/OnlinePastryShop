@@ -692,17 +692,19 @@ namespace OnlinePastryShop.Pages
             switch (status)
             {
                 case "Pending":
-                    return "px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800";
+                    return "px-2 py-1 rounded-full text-xs inline-flex items-center justify-center bg-yellow-100 text-yellow-800 font-medium";
                 case "Processing":
-                    return "px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800";
+                    return "px-2 py-1 rounded-full text-xs inline-flex items-center justify-center bg-blue-100 text-blue-800 font-medium";
                 case "Shipped":
-                    return "px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800";
+                    return "px-2 py-1 rounded-full text-xs inline-flex items-center justify-center bg-indigo-100 text-indigo-800 font-medium";
                 case "Delivered":
-                    return "px-2 py-1 rounded-full text-xs bg-green-100 text-green-800";
+                    return "px-2 py-1 rounded-full text-xs inline-flex items-center justify-center bg-green-100 text-green-800 font-medium";
                 case "Cancelled":
-                    return "px-2 py-1 rounded-full text-xs bg-red-100 text-red-800";
+                    return "px-2 py-1 rounded-full text-xs inline-flex items-center justify-center bg-red-100 text-red-800 font-medium";
+                case "Approved":
+                    return "px-2 py-1 rounded-full text-xs inline-flex items-center justify-center bg-blue-100 text-blue-800 font-medium";
                 default:
-                    return "px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800";
+                    return "px-2 py-1 rounded-full text-xs inline-flex items-center justify-center bg-gray-100 text-gray-800 font-medium";
             }
         }
 
