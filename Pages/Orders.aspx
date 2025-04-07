@@ -152,9 +152,9 @@
                                     <div>
                                         <p class="text-sm text-gray-700">
                                             <span>Showing page </span>
-                                            <span id="currentPageDisplay" class="font-medium"><%# ((GridView)Container.Parent.Parent).PageIndex + 1 %></span>
+                                            <asp:Label ID="currentPageDisplay" runat="server" CssClass="font-medium" Text='<%# ((GridView)Container.Parent.Parent).PageIndex + 1 %>'></asp:Label>
                                             <span> of </span>
-                                            <span id="totalPagesDisplay" class="font-medium"><%# Math.Ceiling((double)GetTotalRowCount() / ((GridView)Container.Parent.Parent).PageSize) %></span>
+                                            <asp:Label ID="totalPagesDisplay" runat="server" CssClass="font-medium" Text='<%# Math.Ceiling((double)((OnlinePastryShop.Pages.Orders)Page).GetTotalRowCount() / ((GridView)Container.Parent.Parent).PageSize) %>'></asp:Label>
                                         </p>
                                     </div>
                                     <div>
@@ -175,8 +175,10 @@
                                                 </svg>
                                             </asp:LinkButton>
                                             
-                                            <!-- Page Numbers -->
-                                            <asp:DataList ID="dlPaging" runat="server" RepeatDirection="Horizontal" OnItemCommand="dlPaging_ItemCommand" OnItemDataBound="dlPaging_ItemDataBound">
+                                            <!-- Page Numbers Container -->
+                                            <asp:DataList ID="dlPaging" runat="server" RepeatDirection="Horizontal" 
+                                                          OnItemCommand="dlPaging_ItemCommand" 
+                                                          OnItemDataBound="dlPaging_ItemDataBound">
                                                 <ItemTemplate>
                                                     <asp:LinkButton ID="lnkPage" runat="server" Text='<%# Eval("Text") %>' CommandName="Page" CommandArgument='<%# Eval("Value") %>'
                                                         CssClass='<%# Convert.ToBoolean(Eval("Selected")) ? "relative inline-flex items-center px-4 py-2 border border-pink-600 bg-pink-600 text-sm font-medium text-white" : "relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" %>' />
@@ -315,58 +317,276 @@
     
     <!-- JavaScript for Modal -->
     <script type="text/javascript">
-        var prm = Sys.WebForms.PageRequestManager.getInstance();
+        // Global pagination variables
+        let currentPage = 1;
+        let totalPages = 1;
         
-        prm.add_endRequest(function() {
-            attachEvents();
-        });
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            attachEvents();
-        });
-        
+        // Initialize event handlers
         function attachEvents() {
-            // Handle Order Details buttons
-            document.querySelectorAll('[id*=btnViewDetails]').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    showOrderDetailsModal();
+            try {
+                // Attach details buttons
+                const detailButtons = document.querySelectorAll('[id*=btnViewDetails]');
+                detailButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        showOrderDetailsModal();
+                    });
                 });
-            });
-            
-            // Close modal button
-            document.getElementById('btnCloseModal').addEventListener('click', function() {
-                hideOrderDetailsModal();
-            });
-            
-            // Close modal when clicking outside
-            document.getElementById('orderDetailsModal').addEventListener('click', function(e) {
-                if (e.target === this) {
+
+                // Set up modals
+                document.getElementById('btnCloseModal').addEventListener('click', function() {
                     hideOrderDetailsModal();
-                }
-            });
-            
-            // "Select All" checkbox
-            var selectAllCheckbox = document.querySelector('[id*=chkSelectAll]');
-            if (selectAllCheckbox) {
-                selectAllCheckbox.addEventListener('change', function() {
-                    toggleAllCheckboxes(this);
                 });
+
+                // Close modal when clicking outside
+                document.getElementById('orderDetailsModal').addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        hideOrderDetailsModal();
+                    }
+                });
+
+                // "Select All" checkbox
+                var selectAllCheckbox = document.querySelector('[id*=chkSelectAll]');
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.addEventListener('change', function() {
+                        toggleAllCheckboxes(this);
+                    });
+                }
+
+                // Set up pagination
+                setupPagination();
+
+                console.log('Events attached successfully');
+            } catch (error) {
+                console.error('Error attaching events:', error);
+            }
+        }
+
+        // Run on initial load - both methods to ensure it fires
+        document.addEventListener('DOMContentLoaded', attachEvents);
+        window.onload = attachEvents;
+
+        // Run after partial postbacks (for UpdatePanel)
+        if (typeof Sys !== 'undefined' && Sys.WebForms) {
+            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function() {
+                console.log('Partial postback completed, reattaching events...');
+                attachEvents();
+            });
+        }
+        
+        // Update pagination controls similar to Products.aspx
+        function setupPagination() {
+            console.log("Setting up pagination...");
+            
+            try {
+                // Find the current page and total pages directly from the ASP.NET labels
+                const currentPageElement = document.querySelector('[id$="currentPageDisplay"]');
+                const totalPagesElement = document.querySelector('[id$="totalPagesDisplay"]');
+                
+                if (!currentPageElement || !totalPagesElement) {
+                    console.error("Pagination elements not found");
+                    return;
+                }
+                
+                // Extract current page and total pages
+                currentPage = parseInt(currentPageElement.innerText || currentPageElement.textContent);
+                totalPages = parseInt(totalPagesElement.innerText || totalPagesElement.textContent);
+                
+                console.log(`Current page: ${currentPage}, Total pages: ${totalPages}`);
+                
+                if (isNaN(currentPage) || isNaN(totalPages) || totalPages <= 1) {
+                    console.log("Pagination not needed - only one page exists");
+                    return;
+                }
+                
+                // Find the navigation container
+                const paginationNav = document.querySelector('nav[aria-label="Pagination"]');
+                if (!paginationNav) {
+                    console.error("Pagination navigation container not found");
+                    return;
+                }
+                
+                // Find the DataList element - if it's already populated by server, no need to create buttons
+                const dataList = paginationNav.querySelector('[id$="dlPaging"]');
+                if (dataList && dataList.children.length > 0) {
+                    console.log("Server-side pagination already set up - no need to create buttons");
+                    return;
+                }
+                
+                // Remove any existing page number buttons (created by client-side JavaScript)
+                const existingButtons = paginationNav.querySelectorAll('.pagination-number-btn');
+                existingButtons.forEach(btn => btn.remove());
+                
+                // Find the Next button as a reference point
+                const nextButton = paginationNav.querySelector('[id$="lnkNext"]');
+                if (!nextButton) {
+                    console.error("Next button not found as reference point");
+                    return;
+                }
+                
+                // Create page number buttons
+                const startPage = Math.max(1, currentPage - 2);
+                const endPage = Math.min(totalPages, startPage + 4);
+                
+                console.log(`Creating buttons for pages ${startPage} to ${endPage}`);
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const isActive = i === currentPage;
+                    
+                    // Create button styled like the ASP.NET LinkButtons
+                    const button = document.createElement('a');
+                    button.href = "javascript:void(0);";
+                    button.className = `pagination-number-btn relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                        isActive 
+                        ? 'z-10 bg-pink-600 border-pink-600 text-white' 
+                        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`;
+                    button.textContent = i.toString();
+                    button.setAttribute('data-page', i.toString());
+                    
+                    // Add click event handler
+                    button.onclick = function() {
+                        navigateToPage(i);
+                    };
+                    
+                    // Insert before the Next button
+                    nextButton.parentNode.insertBefore(button, nextButton);
+                }
+            } catch (error) {
+                console.error("Error in setupPagination:", error);
             }
         }
         
-        function toggleAllCheckboxes(source) {
-            var checkboxes = document.querySelectorAll('[id*=chkSelect]');
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = source.checked;
+        // Function to simulate a click on the ASP.NET LinkButton for the given page number
+        function clickPageLinkButton(pageNumber) {
+            // For ASP.NET, pages are often 0-based internally, but 1-based for display
+            // So we may need to adjust the page number when searching for the right button
+            try {
+                // Try to find the native ASP.NET LinkButton
+                const linkButtons = document.querySelectorAll('[id$="lnkPage"]');
+                for (let i = 0; i < linkButtons.length; i++) {
+                    const btn = linkButtons[i];
+                    if (btn.innerText.trim() === pageNumber.toString()) {
+                        console.log(`Found ASP.NET LinkButton for page ${pageNumber}`);
+                        btn.click();
+                        return true;
+                    }
+                }
+                
+                // If we didn't find the exact page button, try navigating using First/Last/Next/Previous
+                console.log("Couldn't find the exact ASP.NET LinkButton for the page");
+                return false;
+            } catch (error) {
+                console.error("Error finding ASP.NET LinkButton:", error);
+                return false;
             }
         }
         
+        // Function to navigate to a specific page
+        function navigateToPage(pageIndex) {
+            console.log(`Attempting to navigate to page ${pageIndex}`);
+            
+            // First, try using the ASP.NET LinkButtons directly
+            if (clickPageLinkButton(pageIndex)) {
+                return; // Successfully clicked an ASP.NET LinkButton
+            }
+            
+            try {
+                // Find the DataList that contains the pagination linkbuttons
+                const pagerRow = document.querySelector('.pager');
+                const navContainer = document.querySelector('nav[aria-label="Pagination"]');
+                
+                if (!navContainer) {
+                    throw new Error("Pagination container not found");
+                }
+                
+                // Try to find and click a LinkButton with the right text
+                const allLinkButtons = navContainer.querySelectorAll('a');
+                let linkButtonFound = false;
+                
+                for (let i = 0; i < allLinkButtons.length; i++) {
+                    const button = allLinkButtons[i];
+                    // Check if the button text equals the target page number
+                    if (button.innerText && button.innerText.trim() === pageIndex.toString()) {
+                        console.log(`Found matching page button for page ${pageIndex} - clicking directly`);
+                        button.click();
+                        linkButtonFound = true;
+                        break;
+                    }
+                }
+                
+                if (linkButtonFound) {
+                    return; // We found and clicked the button, so we're done
+                }
+                
+                // If we didn't find the exact button, use First/Last/Next/Prev to get there
+                console.log("Exact page button not found, using navigation buttons");
+                
+                const lnkFirst = navContainer.querySelector('[id$="lnkFirst"]');
+                const lnkLast = navContainer.querySelector('[id$="lnkLast"]');
+                const lnkNext = navContainer.querySelector('[id$="lnkNext"]');
+                const lnkPrev = navContainer.querySelector('[id$="lnkPrevious"]');
+                
+                if (currentPage > pageIndex) {
+                    if (pageIndex === 1 && lnkFirst) {
+                        console.log("Going to first page");
+                        lnkFirst.click();
+                    } else if (lnkPrev) {
+                        console.log(`Current page ${currentPage} > target ${pageIndex}, going back`);
+                        lnkPrev.click();
+                    }
+                } else if (currentPage < pageIndex) {
+                    if (pageIndex === totalPages && lnkLast) {
+                        console.log("Going to last page");
+                        lnkLast.click();
+                    } else if (lnkNext) {
+                        console.log(`Current page ${currentPage} < target ${pageIndex}, going forward`);
+                        lnkNext.click();
+                    }
+                }
+            } catch (error) {
+                console.error(`Error in navigateToPage:`, error);
+                
+                // Final fallback - try to use __doPostBack with the correct parameters
+                try {
+                    console.log("Attempting direct postback as final fallback");
+                    
+                    // Find the GridView
+                    const gridView = document.querySelector('[id$="gvOrders"]');
+                    if (!gridView || !gridView.id) {
+                        throw new Error("GridView not found");
+                    }
+                    
+                    // In ASP.NET, the page command uses a 0-based index
+                    const pageCommand = `Page$${pageIndex - 1}`;
+                    
+                    // Use __doPostBack with the EventTarget and EventArgument parameters
+                    __doPostBack(gridView.id, pageCommand);
+                } catch (fallbackError) {
+                    console.error("All navigation methods failed:", fallbackError);
+                    alert("Sorry, there was a problem navigating to the requested page. Please try using the built-in navigation buttons instead.");
+                }
+            }
+        }
+        
+        // Modal functions (keeping the original implementation)
         function showOrderDetailsModal() {
             document.getElementById('orderDetailsModal').classList.remove('hidden');
         }
         
         function hideOrderDetailsModal() {
             document.getElementById('orderDetailsModal').classList.add('hidden');
+        }
+        
+        // Toggle all checkboxes for batch operations
+        function toggleAllCheckboxes(source) {
+            const isChecked = source.checked;
+            const checkboxes = document.querySelectorAll('[id*=chkSelect]');
+            
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox !== source) {
+                    checkbox.checked = isChecked;
+                }
+            });
         }
     </script>
 </asp:Content>

@@ -133,11 +133,21 @@ namespace OnlinePastryShop.Pages
                                 DataList dlPaging = (DataList)pagerRow.FindControl("dlPaging");
                                 if (dlPaging != null)
                                 {
+                                    // Bind data to the DataList for server-side functionality
                                     dlPaging.DataSource = dtPaging;
                                     dlPaging.DataBind();
+                                    
+                                    // Ensure the DataList is visible
+                                    dlPaging.Visible = true;
                                 }
 
-                                // Set the total pages count for display
+                                // Set the page information for client-side JavaScript
+                                Label currentPageLabel = (Label)pagerRow.FindControl("currentPageDisplay");
+                                if (currentPageLabel != null)
+                                {
+                                    currentPageLabel.Text = currentPage.ToString();
+                                }
+                                
                                 Label totalPageLabel = (Label)pagerRow.FindControl("totalPagesDisplay");
                                 if (totalPageLabel != null)
                                 {
@@ -793,7 +803,7 @@ namespace OnlinePastryShop.Pages
         /// <summary>
         /// Gets the total count of rows for pagination
         /// </summary>
-        protected int GetTotalRowCount()
+        public int GetTotalRowCount()
         {
             int count = 0;
             
@@ -855,8 +865,14 @@ namespace OnlinePastryShop.Pages
         {
             if (e.CommandName == "Page")
             {
-                gvOrders.PageIndex = Convert.ToInt32(e.CommandArgument) - 1;
-                BindOrders();
+                // Convert the CommandArgument to integer
+                int pageNumber;
+                if (int.TryParse(e.CommandArgument.ToString(), out pageNumber))
+                {
+                    // GridView's PageIndex is 0-based, but our visible page numbers are 1-based
+                    gvOrders.PageIndex = pageNumber - 1;
+                    BindOrders();
+                }
             }
         }
 

@@ -5,43 +5,43 @@
          CodeBehind="Products.aspx.cs" 
          Inherits="OnlinePastryShop.Pages.Products" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="AdminContent" runat="server">
-    <!-- Add this right after your ScriptManager -->
-    <div id="debugInfo" class="bg-gray-100 p-4 mb-4 hidden">
-        <h3 class="font-bold">Debug Information</h3>
-        <div class="flex justify-between items-center mb-2">
-            <span class="text-sm text-gray-500">Debug logs will appear below:</span>
-            <button type="button" onclick="hideDebugInfo()" class="text-gray-500 hover:text-gray-700">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+        <!-- Add this right after your ScriptManager -->
+        <div id="debugInfo" class="bg-gray-100 p-4 mb-4 hidden">
+            <h3 class="font-bold">Debug Information</h3>
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-gray-500">Debug logs will appear below:</span>
+                <button type="button" onclick="hideDebugInfo()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <pre id="debugOutput" class="whitespace-pre-wrap"></pre>
         </div>
-        <pre id="debugOutput" class="whitespace-pre-wrap"></pre>
-    </div>
-    
-    <!-- Message Label -->
-    <asp:Label ID="lblMessage" runat="server" CssClass="text-red-500 mb-4" Visible="false"></asp:Label>
-    
-    <!-- Dashboard Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h3 class="text-gray-500 text-sm">Total Products</h3>
-            <p class="text-2xl font-bold text-[#D43B6A]" id="totalProducts">0</p>
+        
+        <!-- Message Label -->
+        <asp:Label ID="lblMessage" runat="server" CssClass="text-red-500 mb-4" Visible="false"></asp:Label>
+        
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-gray-500 text-sm">Total Products</h3>
+                <p class="text-2xl font-bold text-[#D43B6A]" id="totalProducts">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-gray-500 text-sm">Low Stock Items</h3>
+                <p class="text-2xl font-bold text-orange-500" id="lowStockCount">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-gray-500 text-sm">Out of Stock</h3>
+                <p class="text-2xl font-bold text-red-500" id="outOfStockCount">0</p>
+            </div>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h3 class="text-gray-500 text-sm">Low Stock Items</h3>
-            <p class="text-2xl font-bold text-orange-500" id="lowStockCount">0</p>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h3 class="text-gray-500 text-sm">Out of Stock</h3>
-            <p class="text-2xl font-bold text-red-500" id="outOfStockCount">0</p>
-        </div>
-    </div>
-    
-    <!-- Search and Filters -->
-    <div class="bg-white p-4 rounded-lg shadow mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="relative">
+        
+        <!-- Search and Filters -->
+        <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="relative">
                 <div id="searchWrapper" class="w-full">
                     <input type="text" id="searchInput" placeholder="Search products..." 
                         class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" 
@@ -52,182 +52,182 @@
                         </svg>
                     </span>
                 </div>
-            </div>
-            <select id="categoryFilter" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent">
-                <option value="">All Categories</option>
-            </select>
-            <div class="flex items-center gap-4">
-                <select id="sortOptions" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent flex-grow">
-                    <option value="newest">Newest First</option>
-                    <option value="name_asc">Name (A to Z)</option>
-                    <option value="name_desc">Name (Z to A)</option>
-                    <option value="price_asc">Price (Low to High)</option>
-                    <option value="price_desc">Price (High to Low)</option>
-                    <option value="stock_asc">Stock (Low to High)</option>
-                    <option value="stock_desc">Stock (High to Low)</option>
+                </div>
+                <select id="categoryFilter" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent">
+                    <option value="">All Categories</option>
                 </select>
-            </div>
-            <button type="button" onclick="openAddModal()" 
-                    class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                Add Product
-            </button>
-        </div>
-    </div>
-    
-    <!-- Products List -->
-    <div class="bg-white rounded-lg shadow">
-        <!-- Filter indicator for live search -->
-        <div id="liveSearchIndicator" class="px-4 py-2 text-sm text-blue-700 bg-blue-50 border-b border-blue-100 hidden">
-            <span class="flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                </svg>
-                <span id="filterMessage">Filtering products as you type...</span>
-            </span>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="productsList" class="bg-white divide-y divide-gray-200">
-                    <!-- Products will be dynamically inserted here -->
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination -->
-        <div class="bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between">
-            <div class="flex-1 flex justify-between sm:hidden">
-                <button type="button" id="prevPageMobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">&laquo; Previous</button>
-                <button type="button" id="nextPageMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next &raquo;</button>
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm text-gray-700">
-                        <span>Showing page </span>
-                        <span id="currentPageDisplay" class="font-medium">1</span>
-                        <span> of </span>
-                        <span id="totalPagesDisplay" class="font-medium">1</span>
-                    </p>
+                <div class="flex items-center gap-4">
+                    <select id="sortOptions" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent flex-grow">
+                        <option value="newest">Newest First</option>
+                        <option value="name_asc">Name (A to Z)</option>
+                        <option value="name_desc">Name (Z to A)</option>
+                        <option value="price_asc">Price (Low to High)</option>
+                        <option value="price_desc">Price (High to Low)</option>
+                        <option value="stock_asc">Stock (Low to High)</option>
+                        <option value="stock_desc">Stock (High to Low)</option>
+                    </select>
                 </div>
-                <div>
-                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" id="pagination" aria-label="Pagination">
-                        <!-- Pagination buttons will be dynamically inserted here -->
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Add/Edit Product Modal - Updated with better UI/UX and scrolling -->
-    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold text-gray-800" id="modalTitle">Add Product</h3>
-                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+                <button type="button" onclick="openAddModal()" 
+                        class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    Add Product
                 </button>
             </div>
-            <!-- Modal error message container -->
-            <div id="modalError" class="mb-4 px-4 py-3 rounded-lg text-red-700 bg-red-100 hidden">
-                <p id="modalErrorMessage" class="text-sm"></p>
+        </div>
+        
+        <!-- Products List -->
+        <div class="bg-white rounded-lg shadow">
+            <!-- Filter indicator for live search -->
+            <div id="liveSearchIndicator" class="px-4 py-2 text-sm text-blue-700 bg-blue-50 border-b border-blue-100 hidden">
+                <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    <span id="filterMessage">Filtering products as you type...</span>
+                </span>
             </div>
-            <div class="overflow-y-auto pr-2 flex-grow" style="max-height: calc(90vh - 130px);">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Product Name <span class="text-red-500 required-indicator">*</span></label>
-                        <input type="text" id="productName" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" minlength="3" maxlength="100" required>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-                        <textarea id="productDescription" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" rows="2" maxlength="500"></textarea>
-                        <p class="text-xs text-gray-500 mt-1">Maximum 50 words</p>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsList" class="bg-white divide-y divide-gray-200">
+                        <!-- Products will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    <button type="button" id="prevPageMobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">&laquo; Previous</button>
+                    <button type="button" id="nextPageMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next &raquo;</button>
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            <span>Showing page </span>
+                            <span id="currentPageDisplay" class="font-medium">1</span>
+                            <span> of </span>
+                            <span id="totalPagesDisplay" class="font-medium">1</span>
+                        </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Price (₱) <span class="text-red-500 required-indicator">*</span></label>
-                        <input type="number" id="productPrice" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0.01" max="10000" step="0.01" required>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" id="pagination" aria-label="Pagination">
+                            <!-- Pagination buttons will be dynamically inserted here -->
+                        </nav>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Cost Price (₱) <span class="text-red-500 required-indicator">*</span></label>
-                        <input type="number" id="productCostPrice" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0.01" max="10000" step="0.01" required>
-                        <p class="text-xs text-gray-500 mt-1">The purchase price (should be less than selling price)</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity <span class="text-red-500 required-indicator">*</span></label>
-                        <input type="number" id="productStock" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0" max="1000" required>
-                        <p class="text-xs text-gray-500 mt-1">Maximum 1000 items</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Category <span class="text-red-500 required-indicator">*</span></label>
-                        <select id="productCategory" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" required>
-                            <!-- Categories will be dynamically loaded -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Latest Product</label>
-                        <div class="flex items-center mt-1">
-                            <input type="checkbox" id="isLatest" class="form-checkbox h-5 w-5 text-[#D43B6A] rounded">
-                            <label for="isLatest" class="ml-2 text-sm text-gray-600">Mark as Latest Product</label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add/Edit Product Modal - Updated with better UI/UX and scrolling -->
+        <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800" id="modalTitle">Add Product</h3>
+                    <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Modal error message container -->
+                <div id="modalError" class="mb-4 px-4 py-3 rounded-lg text-red-700 bg-red-100 hidden">
+                    <p id="modalErrorMessage" class="text-sm"></p>
+                </div>
+                <div class="overflow-y-auto pr-2 flex-grow" style="max-height: calc(90vh - 130px);">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Product Name <span class="text-red-500 required-indicator">*</span></label>
+                            <input type="text" id="productName" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" minlength="3" maxlength="100" required>
                         </div>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Product Image</label>
-                        <div class="mt-1 flex justify-center px-4 pt-3 pb-4 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#D43B6A] transition-colors">
-                            <div class="space-y-1 text-center">
-                                <div class="relative mx-auto" style="width: 96px; height: 96px;">
-                                    <img id="imagePreview" class="h-24 w-24 object-cover hidden rounded-lg shadow-md cursor-pointer" 
-                                         onclick="document.getElementById('productImage').click();"
-                                         title="Click to change image">
-                                    <div id="imageOverlay" class="absolute inset-0 hidden flex items-center justify-center bg-black bg-opacity-40 rounded-lg cursor-pointer transition-opacity"
-                                         onclick="document.getElementById('productImage').click();">
-                                        <span class="text-white text-xs font-bold">Click to change</span>
-                                    </div>
-                                </div>
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="productImage" class="relative cursor-pointer bg-white rounded-md font-medium text-[#D43B6A] hover:text-[#bf3660] transition-colors">
-                                        <span>Upload a file</span>
-                                        <input id="productImage" type="file" class="sr-only" accept="image/jpeg,image/png,image/jpg">
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 5MB</p>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+                            <textarea id="productDescription" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" rows="2" maxlength="500"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Maximum 50 words</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Price (₱) <span class="text-red-500 required-indicator">*</span></label>
+                            <input type="number" id="productPrice" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0.01" max="10000" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Cost Price (₱) <span class="text-red-500 required-indicator">*</span></label>
+                            <input type="number" id="productCostPrice" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0.01" max="10000" step="0.01" required>
+                            <p class="text-xs text-gray-500 mt-1">The purchase price (should be less than selling price)</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Quantity <span class="text-red-500 required-indicator">*</span></label>
+                            <input type="number" id="productStock" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" min="0" max="1000" required>
+                            <p class="text-xs text-gray-500 mt-1">Maximum 1000 items</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Category <span class="text-red-500 required-indicator">*</span></label>
+                            <select id="productCategory" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#D43B6A] focus:border-transparent" required>
+                                <!-- Categories will be dynamically loaded -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Latest Product</label>
+                            <div class="flex items-center mt-1">
+                                <input type="checkbox" id="isLatest" class="form-checkbox h-5 w-5 text-[#D43B6A] rounded">
+                                <label for="isLatest" class="ml-2 text-sm text-gray-600">Mark as Latest Product</label>
                             </div>
                         </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Product Image</label>
+                            <div class="mt-1 flex justify-center px-4 pt-3 pb-4 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#D43B6A] transition-colors">
+                                <div class="space-y-1 text-center">
+                                    <div class="relative mx-auto" style="width: 96px; height: 96px;">
+                                        <img id="imagePreview" class="h-24 w-24 object-cover hidden rounded-lg shadow-md cursor-pointer" 
+                                             onclick="document.getElementById('productImage').click();"
+                                             title="Click to change image">
+                                        <div id="imageOverlay" class="absolute inset-0 hidden flex items-center justify-center bg-black bg-opacity-40 rounded-lg cursor-pointer transition-opacity"
+                                             onclick="document.getElementById('productImage').click();">
+                                            <span class="text-white text-xs font-bold">Click to change</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="productImage" class="relative cursor-pointer bg-white rounded-md font-medium text-[#D43B6A] hover:text-[#bf3660] transition-colors">
+                                            <span>Upload a file</span>
+                                            <input id="productImage" type="file" class="sr-only" accept="image/jpeg,image/png,image/jpg">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 5MB</p>
+                                </div>
+                            </div>
+                    </div>
                     </div>
                 </div>
-            </div>
-            <div class="mt-4 pt-3 flex justify-end gap-3 border-t">
-                <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                    Cancel
-                </button>
-                <button type="button" onclick="saveProduct()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-sm">
-                    Save Product
-                </button>
+                <div class="mt-4 pt-3 flex justify-end gap-3 border-t">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="saveProduct()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-sm">
+                        Save Product
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
     
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white z-50 shadow-lg hidden">
         <div class="flex items-center">
             <span id="toastMessage">Operation completed successfully</span>
+            </div>
         </div>
-    </div>
-    
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+        
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <div class="text-center">
                 <svg class="mx-auto mb-4 text-red-500 w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -243,14 +243,14 @@
                     </button>
                 </div>
             </div>
+            </div>
         </div>
-    </div>
-    
-    <!-- Developer Debug Tools (hidden in footer) -->
-    <div class="fixed bottom-0 left-0 p-2 opacity-30 hover:opacity-100 transition-opacity z-40">
-        <button type="button" id="devModeToggle" class="text-xs bg-gray-100 p-1 rounded mr-1" onclick="toggleDevMode()">Dev: OFF</button>
-        <button type="button" class="text-xs bg-gray-100 p-1 rounded" onclick="showDebugInfo()">Show Debug</button>
-    </div>
+        
+        <!-- Developer Debug Tools (hidden in footer) -->
+        <div class="fixed bottom-0 left-0 p-2 opacity-30 hover:opacity-100 transition-opacity z-40">
+            <button type="button" id="devModeToggle" class="text-xs bg-gray-100 p-1 rounded mr-1" onclick="toggleDevMode()">Dev: OFF</button>
+            <button type="button" class="text-xs bg-gray-100 p-1 rounded" onclick="showDebugInfo()">Show Debug</button>
+        </div>
     
     <!-- Add the missing JavaScript code -->
     <script type="text/javascript">
@@ -388,12 +388,12 @@
         // Render products in the table
         function renderProducts(products) {
             const tbody = document.getElementById('productsList');
-            
+
             if (!products || products.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center">No products found. Try a different search or filter.</td></tr>';
                 return;
             }
-            
+
             let html = '';
             
             products.forEach(function(product) {
@@ -418,30 +418,30 @@
                 
                 html += `
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10 rounded-md bg-gray-200 overflow-hidden">
                                 ${product.ImageUrl ? `<img src="${product.ImageUrl}" alt="${product.Name}" class="h-10 w-10 object-cover">` : ''}
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">${product.Name}</div>
+                                    <div class="text-sm font-medium text-gray-900">${product.Name}</div>
                                 ${product.IsLatest ? '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-pink-100 text-pink-800">Latest</span>' : ''}
+                                </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.CategoryName || 'Uncategorized'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₱${product.CostPrice.toFixed(2)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">₱${product.Price.toFixed(2)}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">₱${profit}</div>
                         <div class="text-xs text-gray-500">(${profitMargin}%)</div>
-                    </td>
+                        </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.StockQuantity}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${stockStatusClass}">
                             ${stockStatusText}
                         </span>
-                    </td>
+                        </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button onclick="editProduct(${product.ProductId})" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
                         <button onclick="confirmDelete(${product.ProductId})" class="text-red-600 hover:text-red-900">Delete</button>
@@ -469,7 +469,7 @@
             
             // Previous button
             paginationHtml += `
-                <button type="button" onclick="navigateToPage(${currentPage - 1})" class="relative inline-flex items-center px-2 py-2 rounded-l-md border ${currentPage <= 1 ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50'} border-gray-300 text-sm font-medium text-gray-500" ${currentPage <= 1 ? 'disabled' : ''}>
+                <button type="button" onclick="navigateToPage(${currentPage - 1})" class="relative inline-flex items-center px-2 py-2 rounded-l-md border ${currentPage <= 1 ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-pink-50 hover:text-pink-700 hover:border-pink-200'} border-gray-300 text-sm font-medium text-gray-500" ${currentPage <= 1 ? 'disabled' : ''}>
                     <span class="sr-only">Previous</span>
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -484,7 +484,7 @@
             for (let i = startPage; i <= endPage; i++) {
                 const isActive = i === currentPage;
                 paginationHtml += `
-                    <button type="button" onclick="navigateToPage(${i})" aria-current="${isActive ? 'page' : 'false'}" class="${isActive ? 'z-10 bg-[#D43B6A] border-[#D43B6A] text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'} relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                    <button type="button" onclick="navigateToPage(${i})" aria-current="${isActive ? 'page' : 'false'}" class="${isActive ? 'z-10 bg-pink-600 border-pink-600 text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:bg-pink-100 hover:text-pink-700 hover:border-pink-200'} relative inline-flex items-center px-4 py-2 border text-sm font-medium">
                         ${i}
                     </button>
                 `;
@@ -492,7 +492,7 @@
             
             // Next button
             paginationHtml += `
-                <button type="button" onclick="navigateToPage(${currentPage + 1})" class="relative inline-flex items-center px-2 py-2 rounded-r-md border ${currentPage >= totalPages ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50'} border-gray-300 text-sm font-medium text-gray-500" ${currentPage >= totalPages ? 'disabled' : ''}>
+                <button type="button" onclick="navigateToPage(${currentPage + 1})" class="relative inline-flex items-center px-2 py-2 rounded-r-md border ${currentPage >= totalPages ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-pink-50 hover:text-pink-700 hover:border-pink-200'} border-gray-300 text-sm font-medium text-gray-500" ${currentPage >= totalPages ? 'disabled' : ''}>
                     <span class="sr-only">Next</span>
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
@@ -525,7 +525,7 @@
             console.log('Searching for: ' + searchTerm);
             
             // Reset to first page on new search
-            currentPage = 1;
+                currentPage = 1;
             
             // Show loading indicator
             document.getElementById('productsList').innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center">Searching products...</td></tr>';
@@ -628,7 +628,7 @@
                             imagePreview.src = 'data:image/jpeg;base64,' + result.ImageBase64;
                             imagePreview.classList.remove('hidden');
                             document.getElementById('imageOverlay').classList.remove('hidden');
-                        } else {
+            } else {
                             productImage = null;
                             document.getElementById('imagePreview').classList.add('hidden');
                             document.getElementById('imageOverlay').classList.add('hidden');
@@ -666,31 +666,31 @@
                 nameField.focus();
                 return;
             }
-            
+
             if (!priceField.value || parseFloat(priceField.value) <= 0) {
                 showModalError('Please enter a valid price');
                 priceField.focus();
                 return;
             }
-            
+
             if (!costPriceField.value || parseFloat(costPriceField.value) <= 0) {
                 showModalError('Please enter a valid cost price');
                 costPriceField.focus();
                 return;
             }
-            
+
             if (stockField.value === '' || parseInt(stockField.value) < 0) {
                 showModalError('Please enter a valid stock quantity');
                 stockField.focus();
                 return;
             }
-            
+
             if (!categoryField.value) {
                 showModalError('Please select a category');
                 categoryField.focus();
                 return;
             }
-            
+
             // Get form values
             const name = nameField.value.trim();
             const description = document.getElementById('productDescription').value.trim();
@@ -705,7 +705,7 @@
             const originalButtonText = saveButton.textContent;
             saveButton.textContent = 'Saving...';
             saveButton.disabled = true;
-            
+
             if (isEditing) {
                 // Update existing product
                 PageMethods.UpdateProduct(
@@ -720,8 +720,8 @@
                         } else {
                             showModalError(result.Message || 'Failed to update product');
                         }
-                        saveButton.textContent = originalButtonText;
-                        saveButton.disabled = false;
+                    saveButton.textContent = originalButtonText;
+                    saveButton.disabled = false;
                     },
                     function(error) {
                         logDebug('Error updating product: ' + JSON.stringify(error));
@@ -737,15 +737,15 @@
                     productImage || '', categoryId.toString(), isLatest,
                     function(result) {
                         if (result && result.Success) {
-                            closeModal();
+                        closeModal();
                             showToast('Product added successfully', 'success');
                             loadProducts(); // Refresh product list
                             loadDashboardStats(); // Refresh stats
-                        } else {
+                    } else {
                             showModalError(result.Message || 'Failed to add product');
-                        }
-                        saveButton.textContent = originalButtonText;
-                        saveButton.disabled = false;
+                    }
+                    saveButton.textContent = originalButtonText;
+                    saveButton.disabled = false;
                     },
                     function(error) {
                         logDebug('Error adding product: ' + JSON.stringify(error));
@@ -762,25 +762,25 @@
             currentProductId = productId;
             document.getElementById('deleteModal').classList.remove('hidden');
         }
-        
+
         // Close delete confirmation modal
         function closeDeleteModal() {
             document.getElementById('deleteModal').classList.add('hidden');
         }
-        
+
         // Delete product
         function deleteProduct() {
             if (!currentProductId) return;
-            
+
             // Disable delete button to prevent double click
             const deleteButton = document.querySelector('button[onclick="deleteProduct()"]');
             const originalButtonText = deleteButton.textContent;
             deleteButton.textContent = 'Deleting...';
             deleteButton.disabled = true;
-            
+
             PageMethods.DeleteProduct(currentProductId,
                 function(result) {
-                    closeDeleteModal();
+                        closeDeleteModal();
                     
                     if (result && result.Success) {
                         showToast('Product deleted successfully', 'success');
@@ -815,7 +815,7 @@
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
-            
+
             // Set color based on type
             if (type === 'success') {
                 toast.classList.remove('bg-red-600');
@@ -830,13 +830,13 @@
             
             // Show toast
             toast.classList.remove('hidden');
-            
+
             // Hide after 3 seconds
             setTimeout(() => {
                 toast.classList.add('hidden');
             }, 3000);
         }
-        
+
         // Debug logging
         function logDebug(message) {
             const debugOutput = document.getElementById('debugOutput');
@@ -855,17 +855,17 @@
         function showDebugInfo() {
             document.getElementById('debugInfo').classList.remove('hidden');
         }
-        
+
         // Hide debug info panel
         function hideDebugInfo() {
             document.getElementById('debugInfo').classList.add('hidden');
         }
-        
+
         // Toggle dev mode
         function toggleDevMode() {
             devMode = !devMode;
             document.getElementById('devModeToggle').textContent = 'Dev: ' + (devMode ? 'ON' : 'OFF');
-            
+
             if (devMode) {
                 logDebug('Developer mode activated');
             }

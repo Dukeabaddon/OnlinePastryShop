@@ -271,7 +271,7 @@ namespace OnlinePastryShop.Pages
                     string currentPeriodQuery = @"
                         SELECT
                             NVL(SUM(O.TOTALAMOUNT), 0) AS TotalRevenue
-                        FROM 
+                        FROM
                             AARON_IPT.ORDERS O
                         WHERE
                             " + dateCriteria + @"
@@ -312,7 +312,7 @@ namespace OnlinePastryShop.Pages
                     string previousPeriodQuery = @"
                         SELECT
                             NVL(SUM(O.TOTALAMOUNT), 0) AS TotalRevenue
-                        FROM 
+                        FROM
                             AARON_IPT.ORDERS O
                         WHERE
                             " + prevDateCriteria + @"
@@ -752,7 +752,7 @@ namespace OnlinePastryShop.Pages
                 {
                     directCommand.Connection = connection;
                     directCommand.CommandText = @"
-                        SELECT 
+                        SELECT
                             P.PRODUCTID as ProductId,
                             P.NAME as Name,
                             P.STOCKQUANTITY as StockQuantity,
@@ -801,10 +801,10 @@ namespace OnlinePastryShop.Pages
 
                     // Data binding for Low Stock Items
                     LowStockRepeater.DataSource = lowStockTable;
-                    LowStockRepeater.DataBind();
+                            LowStockRepeater.DataBind();
 
                     // Handle empty data message visibility
-                    if (EmptyLowStockMessage != null)
+                                if (EmptyLowStockMessage != null)
                     {
                         EmptyLowStockMessage.Visible = (lowStockTable.Rows.Count == 0);
                     }
@@ -854,25 +854,25 @@ namespace OnlinePastryShop.Pages
                 string groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
                 
                 // Determine date range and format based on selected time range
-                switch (timeRange.ToLower())
-                {
-                    case "today":
+                    switch (timeRange.ToLower())
+                    {
+                        case "today":
                         // Hourly breakdown for today
                         labels = Enumerable.Range(0, 24).Select(i => i.ToString("00") + ":00").ToList();
                         data = Enumerable.Range(0, 24).Select(i => 0M).ToList();
                         labelFormat = "HH24";
                         groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
-                        break;
+                            break;
                         
-                    case "yesterday":
+                        case "yesterday":
                         // Hourly breakdown for yesterday
                         labels = Enumerable.Range(0, 24).Select(i => i.ToString("00") + ":00").ToList();
                         data = Enumerable.Range(0, 24).Select(i => 0M).ToList();
                         labelFormat = "HH24";
                         groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
-                        break;
+                            break;
                         
-                    case "week":
+                        case "week":
                         // Daily breakdown for past week
                         DateTime weekStart = DateTime.Now.AddDays(-6);
                         labels = Enumerable.Range(0, 7)
@@ -881,9 +881,9 @@ namespace OnlinePastryShop.Pages
                         data = Enumerable.Range(0, 7).Select(i => 0M).ToList();
                         labelFormat = "YYYY-MM-DD";
                         groupByClause = "TO_CHAR(O.ORDERDATE, 'YYYY-MM-DD')";
-                        break;
+                            break;
                         
-                    case "month":
+                        case "month":
                         // Weekly breakdown for past month
                         DateTime monthStart = DateTime.Now.AddDays(-30);
                         labels = Enumerable.Range(0, 5)
@@ -892,37 +892,37 @@ namespace OnlinePastryShop.Pages
                         data = Enumerable.Range(0, 5).Select(i => 0M).ToList();
                         labelFormat = "'Week '||TO_CHAR(TRUNC((SYSDATE - O.ORDERDATE)/7)+1)";
                         groupByClause = "TRUNC((SYSDATE - O.ORDERDATE)/7)+1";
-                        break;
+                            break;
                         
-                    default:
+                        default:
                         // Default to today's hourly breakdown
                         labels = Enumerable.Range(0, 24).Select(i => i.ToString("00") + ":00").ToList();
                         data = Enumerable.Range(0, 24).Select(i => 0M).ToList();
                         labelFormat = "HH24";
                         groupByClause = "TO_CHAR(O.ORDERDATE, 'HH24')";
-                        break;
-                }
-                
+                            break;
+                    }
+
                 // Prepare date filter based on time range
                 string dateFilter = "";
-                switch (timeRange.ToLower())
-                {
-                    case "today":
+                    switch (timeRange.ToLower())
+                    {
+                        case "today":
                         dateFilter = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
-                        break;
-                    case "yesterday":
+                            break;
+                        case "yesterday":
                         dateFilter = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE) - 1";
-                        break;
-                    case "week":
+                            break;
+                        case "week":
                         dateFilter = "O.ORDERDATE >= TRUNC(SYSDATE) - 7";
-                        break;
-                    case "month":
+                            break;
+                        case "month":
                         dateFilter = "O.ORDERDATE >= TRUNC(SYSDATE) - 30";
-                        break;
-                    default:
+                            break;
+                        default:
                         dateFilter = "TRUNC(O.ORDERDATE) = TRUNC(SYSDATE)";
-                        break;
-                }
+                            break;
+                    }
                 
                 // Get actual data from the database
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
@@ -943,17 +943,17 @@ namespace OnlinePastryShop.Pages
                                     " + groupByClause + @"
                                 ORDER BY 
                                     TimeLabel";
-                                    
+
                     System.Diagnostics.Debug.WriteLine($"Sales overview query: {query}");
-                    
+
                     using (OracleCommand cmd = new OracleCommand(query, conn))
                     {
                         using (OracleDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.HasRows)
-                            {
-                                System.Diagnostics.Debug.WriteLine("Sales overview data from database:");
-                                
+                        {
+                            System.Diagnostics.Debug.WriteLine("Sales overview data from database:");
+
                                 while (reader.Read())
                                 {
                                     string timeLabel = reader["TimeLabel"].ToString();
@@ -962,17 +962,17 @@ namespace OnlinePastryShop.Pages
                                     System.Diagnostics.Debug.WriteLine($"- {timeLabel}: {revenue}");
                                     
                                     // Map the database result to our prepared arrays
-                                    if (timeRange.ToLower() == "today" || timeRange.ToLower() == "yesterday")
-                                    {
+                            if (timeRange.ToLower() == "today" || timeRange.ToLower() == "yesterday")
+                            {
                                         // For hourly data
                                         int hour;
                                         if (int.TryParse(timeLabel, out hour) && hour >= 0 && hour < 24)
-                                        {
+                                {
                                             data[hour] = revenue;
-                                        }
-                                    }
-                                    else if (timeRange.ToLower() == "week")
-                                    {
+                                }
+                            }
+                            else if (timeRange.ToLower() == "week")
+                            {
                                         // For daily data (past week)
                                         try
                                         {
@@ -987,10 +987,10 @@ namespace OnlinePastryShop.Pages
                                         catch (Exception ex)
                                         {
                                             System.Diagnostics.Debug.WriteLine($"Error parsing date: {ex.Message}");
-                                        }
                                     }
-                                    else if (timeRange.ToLower() == "month")
-                                    {
+                                }
+                                else if (timeRange.ToLower() == "month")
+                                {
                                         // For weekly data (past month)
                                         try
                                         {
@@ -1014,7 +1014,7 @@ namespace OnlinePastryShop.Pages
                         }
                     }
                 }
-                
+
                 // Convert data to JSON for the chart
                 SalesOverviewLabels = JsonSerializer.Serialize(labels);
                 SalesOverviewData = JsonSerializer.Serialize(data);
@@ -1313,34 +1313,34 @@ namespace OnlinePastryShop.Pages
         protected void TimeRangeSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
-            {
-                DropDownList dropdown = (DropDownList)sender;
-                TimeRange = dropdown.SelectedValue;
+        {
+            DropDownList dropdown = (DropDownList)sender;
+            TimeRange = dropdown.SelectedValue;
 
-                System.Diagnostics.Debug.WriteLine($"========================================");
-                System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
+            System.Diagnostics.Debug.WriteLine($"========================================");
+            System.Diagnostics.Debug.WriteLine($"Time range changed to: {TimeRange}");
 
-                // Reinitialize time parameters
-                InitializeTimeParameters();
-                System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
-                System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
+            // Reinitialize time parameters
+            InitializeTimeParameters();
+            System.Diagnostics.Debug.WriteLine($"StartDate: {StartDate}, EndDate: {EndDate}");
+            System.Diagnostics.Debug.WriteLine($"PreviousStartDate: {PreviousStartDate}, PreviousEndDate: {PreviousEndDate}");
 
-                // Update card titles based on time range
-                UpdateCardTitles();
-                System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
+            // Update card titles based on time range
+            UpdateCardTitles();
+            System.Diagnostics.Debug.WriteLine($"Card titles updated: {RevenueCardTitle}, {OrderCardTitle}");
 
                 // Clear existing data
                 DailyRevenue = "0.00";
                 TodayOrderCount = "0";
                 PendingOrderCount = "0";
 
-                // Reload dashboard data with new time range
-                System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
-                LoadDashboardData();
+            // Reload dashboard data with new time range
+            System.Diagnostics.Debug.WriteLine("Reloading dashboard data...");
+            LoadDashboardData();
 
-                System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
-                System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
-                System.Diagnostics.Debug.WriteLine($"========================================");
+            System.Diagnostics.Debug.WriteLine("Dashboard data reloaded");
+            System.Diagnostics.Debug.WriteLine($"DailyRevenue: {DailyRevenue}, TodayOrderCount: {TodayOrderCount}");
+            System.Diagnostics.Debug.WriteLine($"========================================");
             }
             catch (Exception ex)
             {

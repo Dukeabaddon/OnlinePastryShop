@@ -96,8 +96,8 @@ namespace OnlinePastryShop.Pages
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
                     try
-                    {
-                        conn.Open();
+                {
+                    conn.Open();
                         System.Diagnostics.Debug.WriteLine("Database connection opened successfully");
 
                         // Build WHERE clause based on parameters
@@ -192,19 +192,19 @@ namespace OnlinePastryShop.Pages
                                 cmd.Parameters.Add("categoryId", OracleDbType.Int32).Value = Convert.ToInt32(categoryId);
                             }
 
-                            try
+                        try
+                        {
+                            using (OracleDataReader reader = cmd.ExecuteReader())
                             {
-                                using (OracleDataReader reader = cmd.ExecuteReader())
-                                {
                                     System.Diagnostics.Debug.WriteLine("Product reader opened successfully");
                                     int rowCount = 0;
 
-                                    while (reader.Read())
+                                while (reader.Read())
                                     {
                                         rowCount++;
                                         try
-                                        {
-                                            int productId = Convert.ToInt32(reader["PRODUCTID"]);
+                                {
+                                    int productId = Convert.ToInt32(reader["PRODUCTID"]);
                                             bool hasImage = reader["HAS_IMAGE"] != DBNull.Value && Convert.ToInt32(reader["HAS_IMAGE"]) == 1;
                                             decimal price = reader["PRICE"] != DBNull.Value ? Convert.ToDecimal(reader["PRICE"]) : 0m;
                                             decimal costPrice = reader["COSTPRICE"] != DBNull.Value ? Convert.ToDecimal(reader["COSTPRICE"]) : 0m;
@@ -220,18 +220,18 @@ namespace OnlinePastryShop.Pages
                                             decimal profitAmount = price - costPrice;
                                             decimal profitMargin = price > 0 ? Math.Round((profitAmount / price) * 100, 1) : 0;
 
-                                            var product = new
-                                            {
-                                                ProductId = productId,
-                                                Name = name,
-                                                Description = description,
-                                                Price = price,
-                                                CostPrice = costPrice,
-                                                StockQuantity = stockQuantity,
-                                                IsLatest = isLatest,
-                                                IsActive = isActive,
-                                                CategoryName = categoryName,
-                                                CategoryId = catId,
+                                    var product = new
+                                    {
+                                        ProductId = productId,
+                                        Name = name,
+                                        Description = description,
+                                        Price = price,
+                                        CostPrice = costPrice,
+                                        StockQuantity = stockQuantity,
+                                        IsLatest = isLatest,
+                                        IsActive = isActive,
+                                        CategoryName = categoryName,
+                                        CategoryId = catId,
                                                 HasImage = hasImage,
                                                 ProfitAmount = profitAmount,
                                                 ProfitMargin = profitMargin,
@@ -276,7 +276,7 @@ namespace OnlinePastryShop.Pages
                 };
 
                 System.Diagnostics.Debug.WriteLine($"Returning {products.Count} products (page {page} of {totalPages})");
-                System.Diagnostics.Debug.WriteLine("======================== END GetProducts ========================");
+                    System.Diagnostics.Debug.WriteLine("======================== END GetProducts ========================");
 
                 return result;
             }
@@ -807,7 +807,7 @@ namespace OnlinePastryShop.Pages
                 response["status"] = "error";
                 response["message"] = $"Unexpected error: {ex.Message}";
                 response["details"] = ex.ToString();
-                return response;
+            return response;
             }
         }
 
@@ -1204,7 +1204,7 @@ namespace OnlinePastryShop.Pages
         {
             return $"GetProductImage.ashx?id={productId}&t={DateTime.Now.Ticks}";
         }
-        }
+    }
 
     public class ProductData
     {
