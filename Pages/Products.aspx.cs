@@ -87,204 +87,141 @@ namespace OnlinePastryShop.Pages
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine("======================== BEGIN GetProducts ========================");
-                System.Diagnostics.Debug.WriteLine($"Params: search='{search}', categoryId='{categoryId}', sort='{sort}', page={page}, pageSize={pageSize}, includeDeleted={includeDeleted}");
-
-                List<object> products = new List<object>();
-                int totalCount = 0;
-
+                System.Diagnostics.Debug.WriteLine($"GetProducts called with search='{search}', categoryId='{categoryId}', sort='{sort}', page={page}, pageSize={pageSize}, includeDeleted={includeDeleted}");
+                
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
-                    try
-                {
                     conn.Open();
-                        System.Diagnostics.Debug.WriteLine("Database connection opened successfully");
-
-                        // Build WHERE clause based on parameters
-                        string whereClause = !includeDeleted ? " WHERE p.ISACTIVE = 1" : " WHERE 1=1";
-
+                    System.Diagnostics.Debug.WriteLine("Database connection opened");
+                    
+                    // Build WHERE clause based on parameters
+                    string whereClause = !includeDeleted ? " WHERE p.ISACTIVE = 1" : " WHERE 1=1";
+                    
+                    if (!string.IsNullOrEmpty(search))
+                    {
+                        whereClause += " AND UPPER(p.NAME) LIKE UPPER(:search)";
+                        System.Diagnostics.Debug.WriteLine($"Adding search condition: {whereClause}");
+                    }
+                    
+                    if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
+                    {
+                        whereClause += " AND pc.CATEGORYID = :categoryId";
+                        System.Diagnostics.Debug.WriteLine($"Adding category condition: {whereClause}");
+                    }
+                    
+                    // First get total count
+                    string countSql = $@"
+                        SELECT COUNT(DISTINCT p.PRODUCTID) 
+                        FROM ""AARON_IPT"".""PRODUCTS"" p
+                        LEFT JOIN ""AARON_IPT"".""PRODUCTCATEGORIES"" pc ON p.PRODUCTID = pc.PRODUCTID 
+                        LEFT JOIN ""AARON_IPT"".""CATEGORIES"" c ON pc.CATEGORYID = c.CATEGORYID
+                        {whereClause}";
+                    
+                    System.Diagnostics.Debug.WriteLine($"Count SQL: {countSql}");
+                    int totalCount = 0;
+                    
+                    using (OracleCommand countCmd = new OracleCommand(countSql, conn))
+                    {
                         if (!string.IsNullOrEmpty(search))
                         {
-                            whereClause += " AND UPPER(p.NAME) LIKE UPPER(:search)";
+                            string searchParam = "%" + search + "%";
+                            System.Diagnostics.Debug.WriteLine($"Adding search parameter: '{searchParam}'");
+                            countCmd.Parameters.Add("search", OracleDbType.Varchar2).Value = searchParam;
                         }
-
+                        
                         if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
                         {
-                            whereClause += " AND pc.CATEGORYID = :categoryId";
+                            System.Diagnostics.Debug.WriteLine($"Adding categoryId parameter: {categoryId}");
+                            countCmd.Parameters.Add("categoryId", OracleDbType.Int32).Value = Convert.ToInt32(categoryId);
                         }
-
-                        // First get total count
-                        string countSql = $@"
-                            SELECT COUNT(DISTINCT p.PRODUCTID) 
+                        
+                        object result = countCmd.ExecuteScalar();
+                        if (result != null && result != DBNull.Value)
+                        {
+                            totalCount = Convert.ToInt32(result);
+                        }
+                        
+                        System.Diagnostics.Debug.WriteLine($"Total count: {totalCount}");
+                    }
+                    
+                    // Calculate pagination
+                    int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+                    int offset = (page - 1) * pageSize;
+                    
+                    // Get the ordered products
+                    string orderBy = GetOrderByClause(sort);
+                    System.Diagnostics.Debug.WriteLine($"Order by: {orderBy}");
+                    
+                    string sql = $@"
+                        SELECT * FROM (
+                            SELECT p.PRODUCTID, p.NAME, p.DESCRIPTION, p.PRICE, p.COSTPRICE, p.STOCKQUANTITY, 
+                                   c.CATEGORYID, c.NAME AS CATEGORYNAME, p.ISLATEST,
+                                   ROW_NUMBER() OVER ({orderBy}) AS RN
                             FROM ""AARON_IPT"".""PRODUCTS"" p
                             LEFT JOIN ""AARON_IPT"".""PRODUCTCATEGORIES"" pc ON p.PRODUCTID = pc.PRODUCTID 
                             LEFT JOIN ""AARON_IPT"".""CATEGORIES"" c ON pc.CATEGORYID = c.CATEGORYID
-                            {whereClause}";
-
-                        using (OracleCommand countCmd = new OracleCommand(countSql, conn))
+                            {whereClause}
+                        ) WHERE RN BETWEEN :startRow AND :endRow";
+                    
+                    System.Diagnostics.Debug.WriteLine($"Products SQL: {sql}");
+                    List<object> products = new List<object>();
+                    
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        if (!string.IsNullOrEmpty(search))
                         {
-                            if (!string.IsNullOrEmpty(search))
-                            {
-                                countCmd.Parameters.Add("search", OracleDbType.Varchar2).Value = "%" + search + "%";
-                            }
-
-                            if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
-                            {
-                                countCmd.Parameters.Add("categoryId", OracleDbType.Int32).Value = Convert.ToInt32(categoryId);
-                            }
-
-                            try
-                            {
-                                totalCount = Convert.ToInt32(countCmd.ExecuteScalar());
-                                System.Diagnostics.Debug.WriteLine($"Total matching products count: {totalCount}");
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Error getting product count: {ex.Message}");
-                                totalCount = 0;
-                            }
+                            string searchParam = "%" + search + "%";
+                            System.Diagnostics.Debug.WriteLine($"Adding search parameter to main query: '{searchParam}'");
+                            cmd.Parameters.Add("search", OracleDbType.Varchar2).Value = searchParam;
                         }
-
-                        // Modified query with pagination
-                        string orderByClause = GetOrderByClause(sort);
-
-                        // Oracle-specific pagination
-                        string paginatedSql = $@"
-                            SELECT * FROM (
-                                SELECT a.*, ROWNUM rnum FROM (
-                                    SELECT DISTINCT
-                            p.PRODUCTID, 
-                            p.NAME, 
-                            p.DESCRIPTION, 
-                            p.PRICE, 
-                            p.COSTPRICE,
-                            p.STOCKQUANTITY, 
-                            p.ISLATEST,
-                            p.ISACTIVE,
-                            c.NAME as CATEGORYNAME, 
-                            c.CATEGORYID,
-                            CASE WHEN p.IMAGE IS NOT NULL THEN 1 ELSE 0 END as HAS_IMAGE
-                        FROM ""AARON_IPT"".""PRODUCTS"" p
-                                    LEFT JOIN ""AARON_IPT"".""PRODUCTCATEGORIES"" pc ON p.PRODUCTID = pc.PRODUCTID 
-                                    LEFT JOIN ""AARON_IPT"".""CATEGORIES"" c ON pc.CATEGORYID = c.CATEGORYID
-                                    {whereClause}
-                                    {orderByClause}
-                                ) a 
-                                WHERE ROWNUM <= :endRow
-                            ) 
-                            WHERE rnum > :startRow";
-
-                        int startRow = (page - 1) * pageSize;
-                        int endRow = page * pageSize;
-
-                        using (OracleCommand cmd = new OracleCommand(paginatedSql, conn))
+                        
+                        if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
                         {
-                            cmd.Parameters.Add("endRow", OracleDbType.Int32).Value = endRow;
-                            cmd.Parameters.Add("startRow", OracleDbType.Int32).Value = startRow;
-
-                            if (!string.IsNullOrEmpty(search))
-                            {
-                                cmd.Parameters.Add("search", OracleDbType.Varchar2).Value = "%" + search + "%";
-                            }
-
-                            if (!string.IsNullOrEmpty(categoryId) && categoryId != "0")
-                            {
-                                cmd.Parameters.Add("categoryId", OracleDbType.Int32).Value = Convert.ToInt32(categoryId);
-                            }
-
+                            System.Diagnostics.Debug.WriteLine($"Adding categoryId parameter to main query: {categoryId}");
+                            cmd.Parameters.Add("categoryId", OracleDbType.Int32).Value = Convert.ToInt32(categoryId);
+                        }
+                        
+                        cmd.Parameters.Add("startRow", OracleDbType.Int32).Value = offset + 1;
+                        cmd.Parameters.Add("endRow", OracleDbType.Int32).Value = offset + pageSize;
+                        
                         try
                         {
                             using (OracleDataReader reader = cmd.ExecuteReader())
                             {
-                                    System.Diagnostics.Debug.WriteLine("Product reader opened successfully");
-                                    int rowCount = 0;
-
                                 while (reader.Read())
-                                    {
-                                        rowCount++;
-                                        try
                                 {
-                                    int productId = Convert.ToInt32(reader["PRODUCTID"]);
-                                            bool hasImage = reader["HAS_IMAGE"] != DBNull.Value && Convert.ToInt32(reader["HAS_IMAGE"]) == 1;
-                                            decimal price = reader["PRICE"] != DBNull.Value ? Convert.ToDecimal(reader["PRICE"]) : 0m;
-                                            decimal costPrice = reader["COSTPRICE"] != DBNull.Value ? Convert.ToDecimal(reader["COSTPRICE"]) : 0m;
-                                            int stockQuantity = reader["STOCKQUANTITY"] != DBNull.Value ? Convert.ToInt32(reader["STOCKQUANTITY"]) : 0;
-                                            string name = reader["NAME"] != DBNull.Value ? reader["NAME"].ToString() : "Unknown";
-                                            string description = reader["DESCRIPTION"] != DBNull.Value ? reader["DESCRIPTION"].ToString() : "";
-                                            bool isLatest = reader["ISLATEST"] != DBNull.Value && Convert.ToInt32(reader["ISLATEST"]) == 1;
-                                            bool isActive = reader["ISACTIVE"] != DBNull.Value && Convert.ToInt32(reader["ISACTIVE"]) == 1;
-                                            string categoryName = reader["CATEGORYNAME"] != DBNull.Value ? reader["CATEGORYNAME"].ToString() : "Uncategorized";
-                                            int catId = reader["CATEGORYID"] != DBNull.Value ? Convert.ToInt32(reader["CATEGORYID"]) : 0;
-
-                                            // Calculate profit
-                                            decimal profitAmount = price - costPrice;
-                                            decimal profitMargin = price > 0 ? Math.Round((profitAmount / price) * 100, 1) : 0;
-
-                                    var product = new
+                                    products.Add(new
                                     {
-                                        ProductId = productId,
-                                        Name = name,
-                                        Description = description,
-                                        Price = price,
-                                        CostPrice = costPrice,
-                                        StockQuantity = stockQuantity,
-                                        IsLatest = isLatest,
-                                        IsActive = isActive,
-                                        CategoryName = categoryName,
-                                        CategoryId = catId,
-                                                HasImage = hasImage,
-                                                ProfitAmount = profitAmount,
-                                                ProfitMargin = profitMargin,
-                                                Status = GetStockStatus(stockQuantity, isActive),
-                                                ImageUrl = hasImage ? GetProductImageUrl(productId) : null
-                                            };
-
-                                            products.Add(product);
-                                        }
-                                        catch (Exception rowEx)
-                                        {
-                                            System.Diagnostics.Debug.WriteLine($"Error processing product row: {rowEx.Message}");
-                                            // Continue with next row instead of breaking
-                                        }
-                                    }
-                                    System.Diagnostics.Debug.WriteLine($"Read {rowCount} product rows");
+                                        ProductId = Convert.ToInt32(reader["PRODUCTID"]),
+                                        Name = reader["NAME"].ToString(),
+                                        Description = reader["DESCRIPTION"]?.ToString(),
+                                        Price = Convert.ToDecimal(reader["PRICE"]),
+                                        CostPrice = reader["COSTPRICE"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["COSTPRICE"]),
+                                        StockQuantity = Convert.ToInt32(reader["STOCKQUANTITY"]),
+                                        CategoryId = reader["CATEGORYID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CATEGORYID"]),
+                                        CategoryName = reader["CATEGORYNAME"]?.ToString(),
+                                        IsLatest = Convert.ToInt32(reader["ISLATEST"]) == 1,
+                                        ImageUrl = GetProductImageUrl(Convert.ToInt32(reader["PRODUCTID"]))
+                                    });
                                 }
                             }
-                            catch (Exception readEx)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Error reading products: {readEx.Message}");
-                                System.Diagnostics.Debug.WriteLine($"Stack trace: {readEx.StackTrace}");
-                            }
                         }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Error executing reader: {ex.Message}\nSQL: {sql}");
+                            throw;
+                        }
+                        
+                        System.Diagnostics.Debug.WriteLine($"Retrieved {products.Count} products");
                     }
-                    catch (Exception connEx)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Database connection error: {connEx.Message}");
-                        System.Diagnostics.Debug.WriteLine($"Connection string: {GetConnectionString()}");
-                    }
+                    
+                    return new { TotalCount = totalCount, TotalPages = totalPages, Page = page, Products = products };
                 }
-
-                // Calculate total pages
-                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
-                var result = new
-                {
-                    Products = products,
-                    TotalCount = totalCount,
-                    TotalPages = totalPages,
-                    CurrentPage = page
-                };
-
-                System.Diagnostics.Debug.WriteLine($"Returning {products.Count} products (page {page} of {totalPages})");
-                    System.Diagnostics.Debug.WriteLine("======================== END GetProducts ========================");
-
-                return result;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"EXCEPTION in GetProducts: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-                return new { Products = new List<object>(), TotalCount = 0, TotalPages = 0, CurrentPage = 1 };
+                System.Diagnostics.Debug.WriteLine($"Error in GetProducts: {ex.Message}\n{ex.StackTrace}");
+                throw new Exception($"Error getting products: {ex.Message}");
             }
         }
 
@@ -336,7 +273,7 @@ namespace OnlinePastryShop.Pages
                     System.Diagnostics.Debug.WriteLine("Database connection opened for GetCategories");
 
                     using (OracleCommand cmd = new OracleCommand(
-                        "SELECT CategoryId, Name FROM Categories WHERE IsActive = 1 ORDER BY Name", conn))
+                        @"SELECT CATEGORYID, NAME FROM ""AARON_IPT"".""CATEGORIES"" WHERE ISACTIVE = 1 ORDER BY NAME", conn))
                     {
                         using (OracleDataReader reader = cmd.ExecuteReader())
                         {
@@ -344,8 +281,8 @@ namespace OnlinePastryShop.Pages
                             {
                                 categories.Add(new
                                 {
-                                    CategoryId = reader["CategoryId"].ToString(),
-                                    Name = reader["Name"].ToString()
+                                    CategoryId = reader["CATEGORYID"].ToString(),
+                                    Name = reader["NAME"].ToString()
                                 });
                             }
                         }
@@ -376,11 +313,11 @@ namespace OnlinePastryShop.Pages
                     System.Diagnostics.Debug.WriteLine("Database connection opened for GetProductDetails");
 
                     string sql = @"
-                        SELECT p.*, c.CategoryId
+                        SELECT p.*, c.CATEGORYID
                         FROM ""AARON_IPT"".""PRODUCTS"" p
-                        LEFT JOIN ProductCategories pc ON p.ProductId = pc.ProductId
-                        LEFT JOIN Categories c ON pc.CategoryId = c.CategoryId
-                        WHERE p.ProductId = :ProductId AND p.IsActive = 1";
+                        LEFT JOIN ""AARON_IPT"".""PRODUCTCATEGORIES"" pc ON p.PRODUCTID = pc.PRODUCTID
+                        LEFT JOIN ""AARON_IPT"".""CATEGORIES"" c ON pc.CATEGORYID = c.CATEGORYID
+                        WHERE p.PRODUCTID = :ProductId AND p.ISACTIVE = 1";
 
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
@@ -392,17 +329,17 @@ namespace OnlinePastryShop.Pages
                             {
                                 var product = new
                                 {
-                                    ProductId = Convert.ToInt32(reader["ProductId"]),
-                                    Name = reader["Name"].ToString(),
-                                    Description = reader["Description"]?.ToString(),
-                                    Price = Convert.ToDecimal(reader["Price"]),
-                                    CostPrice = reader["CostPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["CostPrice"]),
-                                    StockQuantity = Convert.ToInt32(reader["StockQuantity"]),
-                                    ImageBase64 = reader["Image"] != DBNull.Value ?
-                                        Convert.ToBase64String((byte[])reader["Image"]) : null,
-                                    IsLatest = Convert.ToBoolean(reader["IsLatest"]),
-                                    CategoryId = reader["CategoryId"] != DBNull.Value ?
-                                        Convert.ToInt32(reader["CategoryId"]) : 0
+                                    ProductId = Convert.ToInt32(reader["PRODUCTID"]),
+                                    Name = reader["NAME"].ToString(),
+                                    Description = reader["DESCRIPTION"]?.ToString(),
+                                    Price = Convert.ToDecimal(reader["PRICE"]),
+                                    CostPrice = reader["COSTPRICE"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["COSTPRICE"]),
+                                    StockQuantity = Convert.ToInt32(reader["STOCKQUANTITY"]),
+                                    ImageBase64 = reader["IMAGE"] != DBNull.Value ?
+                                        Convert.ToBase64String((byte[])reader["IMAGE"]) : null,
+                                    IsLatest = Convert.ToBoolean(reader["ISLATEST"]),
+                                    CategoryId = reader["CATEGORYID"] != DBNull.Value ?
+                                        Convert.ToInt32(reader["CATEGORYID"]) : 0
                                 };
 
                                 System.Diagnostics.Debug.WriteLine($"Product details retrieved successfully for product {productId}");
@@ -634,13 +571,11 @@ namespace OnlinePastryShop.Pages
 
                             // Use named parameters with OracleDbType
                             string insertSql = @"
-                                INSERT INTO ""AARON_IPT"".""PRODUCTS"" (
-                                    Name, Description, Price, CostPrice, StockQuantity, 
-                                    Image, IsActive, IsLatest
-                                ) VALUES (
-                                    :Name, :Description, :Price, :CostPrice, :StockQuantity,
-                                    :Image, 1, :IsLatest
-                                ) RETURNING ProductId INTO :ProductId";
+                                INSERT INTO ""AARON_IPT"".""PRODUCTS"" 
+                                (NAME, DESCRIPTION, PRICE, COSTPRICE, STOCKQUANTITY, IMAGE, ISLATEST, ISACTIVE, CREATEDATE) 
+                                VALUES 
+                                (:Name, :Description, :Price, :CostPrice, :StockQuantity, :Image, :IsLatest, 1, SYSDATE) 
+                                RETURNING PRODUCTID INTO :ProductId";
 
                             using (OracleCommand cmd = new OracleCommand(insertSql, conn))
                             {
@@ -1055,57 +990,28 @@ namespace OnlinePastryShop.Pages
             try
             {
                 System.Diagnostics.Debug.WriteLine($"DeleteProduct called for product {productId}");
-
+                
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
                     conn.Open();
-
-                    using (OracleTransaction transaction = conn.BeginTransaction())
+                    
+                    // Soft delete (update IsActive flag)
+                    string sql = @"UPDATE ""AARON_IPT"".""PRODUCTS"" SET ISACTIVE = 0, UPDATEDATE = SYSDATE WHERE PRODUCTID = :ProductId";
+                    
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
-                        try
+                        cmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = productId;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        
+                        if (rowsAffected > 0)
                         {
-                            // First, delete any category associations
-                            using (OracleCommand deleteAssociations = new OracleCommand(
-                                "DELETE FROM ProductCategories WHERE ProductId = :ProductId", conn))
-                            {
-                                deleteAssociations.Transaction = transaction;
-                                deleteAssociations.Parameters.Add("ProductId", OracleDbType.Int32).Value = productId;
-                                int associationsDeleted = deleteAssociations.ExecuteNonQuery();
-                                System.Diagnostics.Debug.WriteLine($"Deleted {associationsDeleted} category associations for product {productId}");
-                            }
-
-                            // Then delete the product
-                            using (OracleCommand cmd = new OracleCommand(@"DELETE FROM ""AARON_IPT"".""PRODUCTS"" WHERE ProductId = :ProductId", conn))
-                            {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = productId;
-
-                                int rowsAffected = cmd.ExecuteNonQuery();
-
-                                if (rowsAffected == 0)
-                                {
-                                    System.Diagnostics.Debug.WriteLine($"Product {productId} not found for deletion");
-                                    return new { Success = false, Message = "Product not found." };
-                                }
-
-                                System.Diagnostics.Debug.WriteLine($"Product {productId} PERMANENTLY deleted successfully");
-
-                                // Commit the transaction
-                                transaction.Commit();
-
-                                return new
-                                {
-                                    Success = true,
-                                    Message = "Product permanently deleted from the database."
-                                };
-                            }
+                            System.Diagnostics.Debug.WriteLine($"Product {productId} deleted successfully");
+                            return new { success = true, message = "Product successfully deleted" };
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            // Rollback the transaction if any errors occur
-                            transaction.Rollback();
-                            System.Diagnostics.Debug.WriteLine($"Transaction rolled back due to error: {ex.Message}");
-                            throw;
+                            System.Diagnostics.Debug.WriteLine($"No product found with ID {productId}");
+                            return new { success = false, message = "Product not found" };
                         }
                     }
                 }
@@ -1113,7 +1019,7 @@ namespace OnlinePastryShop.Pages
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error deleting product: {ex.Message}");
-                return new { Success = false, Message = $"Error deleting product: {ex.Message}" };
+                return new { success = false, message = $"Error: {ex.Message}" };
             }
         }
 
@@ -1203,6 +1109,231 @@ namespace OnlinePastryShop.Pages
     private static string GetProductImageUrl(int productId)
         {
             return $"GetProductImage.ashx?id={productId}&t={DateTime.Now.Ticks}";
+        }
+
+        // Add or update product with named parameters
+        [WebMethod]
+        public static object AddOrUpdateProduct(int productId, string name, string description, decimal price, decimal costPrice, int stockQuantity, string imageBase64, bool isLatest, int categoryId)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"AddOrUpdateProduct called: ProductId={productId}, Name={name}, Price={price}, Category={categoryId}");
+                
+                int newProductId = productId;
+                string action = (productId == 0) ? "added" : "updated";
+                
+                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                {
+                    conn.Open();
+                    OracleTransaction transaction = conn.BeginTransaction();
+                    
+                    try
+                    {
+                        byte[] imageBytes = null;
+                        if (!string.IsNullOrEmpty(imageBase64))
+                        {
+                            // Remove the data URL prefix if present
+                            if (imageBase64.StartsWith("data:image"))
+                            {
+                                int commaIndex = imageBase64.IndexOf(',');
+                                if (commaIndex > 0)
+                                {
+                                    imageBase64 = imageBase64.Substring(commaIndex + 1);
+                                }
+                            }
+                            imageBytes = Convert.FromBase64String(imageBase64);
+                        }
+                        
+                        if (productId == 0) // Insert new product
+                        {
+                            string sql = @"
+                                INSERT INTO ""AARON_IPT"".""PRODUCTS"" 
+                                (NAME, DESCRIPTION, PRICE, COSTPRICE, STOCKQUANTITY, IMAGE, ISLATEST, ISACTIVE, CREATEDATE) 
+                                VALUES 
+                                (:Name, :Description, :Price, :CostPrice, :StockQuantity, :Image, :IsLatest, 1, SYSDATE) 
+                                RETURNING PRODUCTID INTO :ProductId";
+
+                            using (OracleCommand cmd = new OracleCommand(sql, conn))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.Add("Name", OracleDbType.Varchar2).Value = name;
+                                cmd.Parameters.Add("Description", OracleDbType.Varchar2).Value = string.IsNullOrEmpty(description) ? DBNull.Value : (object)description;
+                                cmd.Parameters.Add("Price", OracleDbType.Decimal).Value = price;
+                                cmd.Parameters.Add("CostPrice", OracleDbType.Decimal).Value = costPrice == 0 ? DBNull.Value : (object)costPrice;
+                                cmd.Parameters.Add("StockQuantity", OracleDbType.Int32).Value = stockQuantity;
+                                cmd.Parameters.Add("Image", OracleDbType.Blob).Value = imageBytes == null ? DBNull.Value : (object)imageBytes;
+                                cmd.Parameters.Add("IsLatest", OracleDbType.Int32).Value = isLatest ? 1 : 0;
+                                
+                                OracleParameter idParam = new OracleParameter("ProductId", OracleDbType.Int32);
+                                idParam.Direction = ParameterDirection.Output;
+                                cmd.Parameters.Add(idParam);
+                                
+                                cmd.ExecuteNonQuery();
+                                newProductId = Convert.ToInt32(idParam.Value.ToString());
+                            }
+                            
+                            System.Diagnostics.Debug.WriteLine($"New product inserted with ID: {newProductId}");
+                        }
+                        else // Update existing product
+                        {
+                            string sql;
+                            if (imageBytes != null)
+                            {
+                                sql = @"
+                                    UPDATE ""AARON_IPT"".""PRODUCTS"" 
+                                    SET NAME = :Name, 
+                                        DESCRIPTION = :Description, 
+                                        PRICE = :Price, 
+                                        COSTPRICE = :CostPrice, 
+                                        STOCKQUANTITY = :StockQuantity, 
+                                        IMAGE = :Image, 
+                                        ISLATEST = :IsLatest, 
+                                        UPDATEDATE = SYSDATE 
+                                    WHERE PRODUCTID = :ProductId";
+                            }
+                            else
+                            {
+                                sql = @"
+                                    UPDATE ""AARON_IPT"".""PRODUCTS"" 
+                                    SET NAME = :Name, 
+                                        DESCRIPTION = :Description, 
+                                        PRICE = :Price, 
+                                        COSTPRICE = :CostPrice, 
+                                        STOCKQUANTITY = :StockQuantity, 
+                                        ISLATEST = :IsLatest, 
+                                        UPDATEDATE = SYSDATE 
+                                    WHERE PRODUCTID = :ProductId";
+                            }
+
+                            using (OracleCommand cmd = new OracleCommand(sql, conn))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.Add("Name", OracleDbType.Varchar2).Value = name;
+                                cmd.Parameters.Add("Description", OracleDbType.Varchar2).Value = string.IsNullOrEmpty(description) ? DBNull.Value : (object)description;
+                                cmd.Parameters.Add("Price", OracleDbType.Decimal).Value = price;
+                                cmd.Parameters.Add("CostPrice", OracleDbType.Decimal).Value = costPrice == 0 ? DBNull.Value : (object)costPrice;
+                                cmd.Parameters.Add("StockQuantity", OracleDbType.Int32).Value = stockQuantity;
+                                cmd.Parameters.Add("IsLatest", OracleDbType.Int32).Value = isLatest ? 1 : 0;
+                                cmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = productId;
+                                
+                                if (imageBytes != null)
+                                {
+                                    cmd.Parameters.Add("Image", OracleDbType.Blob).Value = imageBytes;
+                                }
+                                
+                                cmd.ExecuteNonQuery();
+                            }
+                            
+                            System.Diagnostics.Debug.WriteLine($"Product updated with ID: {productId}");
+                        }
+                        
+                        // Handle category assignment
+                        if (categoryId > 0)
+                        {
+                            // First remove existing category assignments
+                            string deleteSql = @"DELETE FROM ""AARON_IPT"".""PRODUCTCATEGORIES"" WHERE PRODUCTID = :ProductId";
+                            using (OracleCommand deleteCmd = new OracleCommand(deleteSql, conn))
+                            {
+                                deleteCmd.Transaction = transaction;
+                                deleteCmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = newProductId;
+                                deleteCmd.ExecuteNonQuery();
+                            }
+                            
+                            // Then add the new category
+                            string insertSql = @"INSERT INTO ""AARON_IPT"".""PRODUCTCATEGORIES"" (PRODUCTID, CATEGORYID) VALUES (:ProductId, :CategoryId)";
+                            using (OracleCommand insertCmd = new OracleCommand(insertSql, conn))
+                            {
+                                insertCmd.Transaction = transaction;
+                                insertCmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = newProductId;
+                                insertCmd.Parameters.Add("CategoryId", OracleDbType.Int32).Value = categoryId;
+                                insertCmd.ExecuteNonQuery();
+                            }
+                            
+                            System.Diagnostics.Debug.WriteLine($"Category {categoryId} assigned to product {newProductId}");
+                        }
+                        
+                        transaction.Commit();
+                        return new { success = true, message = $"Product successfully {action}", productId = newProductId };
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error in transaction: {ex.Message}");
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error adding/updating product: {ex.Message}");
+                return new { success = false, message = $"Error: {ex.Message}" };
+            }
+        }
+
+        [WebMethod]
+        public static object TestDatabaseConnection()
+        {
+            try
+            {
+                string connectionString = GetConnectionString();
+                System.Diagnostics.Debug.WriteLine($"Testing connection with: {connectionString}");
+                
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+                    System.Diagnostics.Debug.WriteLine("Connection successful");
+                    
+                    // Check PRODUCTS table
+                    using (OracleCommand cmd = new OracleCommand("SELECT COUNT(*) FROM \"AARON_IPT\".\"PRODUCTS\"", conn))
+                    {
+                        object result = cmd.ExecuteScalar();
+                        int productCount = Convert.ToInt32(result);
+                        System.Diagnostics.Debug.WriteLine($"Product count: {productCount}");
+                        
+                        // Test sample query for search
+                        string testQuery = @"
+                            SELECT COUNT(*) 
+                            FROM ""AARON_IPT"".""PRODUCTS"" p
+                            LEFT JOIN ""AARON_IPT"".""PRODUCTCATEGORIES"" pc ON p.PRODUCTID = pc.PRODUCTID 
+                            LEFT JOIN ""AARON_IPT"".""CATEGORIES"" c ON pc.CATEGORYID = c.CATEGORYID
+                            WHERE p.ISACTIVE = 1 AND UPPER(p.NAME) LIKE UPPER('%test%')";
+                        
+                        using (OracleCommand testCmd = new OracleCommand(testQuery, conn))
+                        {
+                            int searchCount = Convert.ToInt32(testCmd.ExecuteScalar());
+                            System.Diagnostics.Debug.WriteLine($"Test search count: {searchCount}");
+                        }
+
+                        // Get list of tables in schema
+                        using (OracleCommand tablesCmd = new OracleCommand("SELECT table_name FROM all_tables WHERE owner = 'AARON_IPT'", conn))
+                        {
+                            System.Diagnostics.Debug.WriteLine("Tables in AARON_IPT schema:");
+                            using (OracleDataReader reader = tablesCmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"- {reader["TABLE_NAME"]}");
+                                }
+                            }
+                        }
+                        
+                        return new { 
+                            Success = true, 
+                            ProductCount = productCount, 
+                            Message = $"Connection successful. Found {productCount} products." 
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Connection test error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                return new { 
+                    Success = false, 
+                    Message = $"Connection failed: {ex.Message}" 
+                };
+            }
         }
     }
 

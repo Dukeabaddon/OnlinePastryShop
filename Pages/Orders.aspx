@@ -95,9 +95,9 @@
                             <asp:TemplateField HeaderText="Status" SortExpression="Status" HeaderStyle-CssClass="px-6 py-3">
                                 <ItemTemplate>
                                     <div class="px-6 py-4">
-                                        <span class='<%# GetStatusCssClass(Eval("Status").ToString()) %>'>
-                                            <%# Eval("Status") %>
-                                        </span>
+                                    <span class='<%# GetStatusCssClass(Eval("Status").ToString()) %>'>
+                                        <%# Eval("Status") %>
+                                    </span>
                                     </div>
                                 </ItemTemplate>
                             </asp:TemplateField>
@@ -105,9 +105,9 @@
                             <asp:TemplateField HeaderText="Address" SortExpression="ShippingAddress" HeaderStyle-CssClass="px-6 py-3">
                                 <ItemTemplate>
                                     <div class="px-6 py-4">
-                                        <span title='<%# Eval("ShippingAddress") %>'>
-                                            <%# TruncateAddress(Eval("ShippingAddress").ToString()) %>
-                                        </span>
+                                    <span title='<%# Eval("ShippingAddress") %>'>
+                                        <%# TruncateAddress(Eval("ShippingAddress").ToString()) %>
+                                    </span>
                                     </div>
                                 </ItemTemplate>
                             </asp:TemplateField>
@@ -118,25 +118,25 @@
                                 <ItemTemplate>
                                     <div class="px-6 py-4">
                                         <div class="flex space-x-3 justify-end">
-                                            <asp:LinkButton ID="btnViewDetails" runat="server" 
-                                                CssClass="text-blue-600 hover:text-blue-800"
-                                                CommandName="ViewDetails" 
-                                                CommandArgument='<%# Eval("OrderID") %>'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                                                </svg>
-                                            </asp:LinkButton>
-                                            
-                                            <asp:LinkButton ID="btnDelete" runat="server" 
-                                                CssClass="text-red-600 hover:text-red-800"
-                                                CommandName="DeleteOrder" 
-                                                CommandArgument='<%# Eval("OrderID") %>'
-                                                OnClientClick="return confirm('Are you sure you want to delete this order?');">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                                </svg>
-                                            </asp:LinkButton>
+                                        <asp:LinkButton ID="btnViewDetails" runat="server" 
+                                            CssClass="text-blue-600 hover:text-blue-800"
+                                            CommandName="ViewDetails" 
+                                            CommandArgument='<%# Eval("OrderID") %>'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </asp:LinkButton>
+                                        
+                                        <asp:LinkButton ID="btnDelete" runat="server" 
+                                            CssClass="text-red-600 hover:text-red-800"
+                                            CommandName="DeleteOrder" 
+                                            CommandArgument='<%# Eval("OrderID") %>'
+                                            OnClientClick="return confirm('Are you sure you want to delete this order?');">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                            </svg>
+                                        </asp:LinkButton>
                                         </div>
                                     </div>
                                 </ItemTemplate>

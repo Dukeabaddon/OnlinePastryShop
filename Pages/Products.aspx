@@ -390,7 +390,20 @@
             const tbody = document.getElementById('productsList');
 
             if (!products || products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center">No products found. Try a different search or filter.</td></tr>';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-6 py-4 text-center">
+                            <div class="space-y-3">
+                                <p>No products found. Try a different search or filter.</p>
+                                <p class="text-sm text-gray-500">If you believe this is an error, you can 
+                                    <button type="button" onclick="testDatabaseConnection()" 
+                                        class="text-pink-600 hover:text-pink-800 font-medium underline">
+                                        check database connection
+                                    </button>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>`;
                 return;
             }
 
@@ -891,6 +904,55 @@
                 searchProducts();
                 return false;
             }
+        }
+        
+        // Test database connection
+        function testDatabaseConnection() {
+            document.getElementById('productsList').innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center">Testing database connection...</td></tr>';
+            
+            PageMethods.TestDatabaseConnection(
+                function(result) {
+                    if (result && result.Success) {
+                        document.getElementById('productsList').innerHTML = `
+                            <tr>
+                                <td colspan="8" class="px-6 py-4 text-center">
+                                    <div class="space-y-3">
+                                        <p class="text-green-600 font-semibold">Database connection successful.</p>
+                                        <p>${result.Message}</p>
+                                        <p class="text-sm text-gray-500">Try adjusting your search terms or filters and try again.</p>
+                                        <button onclick="loadProducts()" class="mt-2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+                                            Reload Products
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    } else {
+                        document.getElementById('productsList').innerHTML = `
+                            <tr>
+                                <td colspan="8" class="px-6 py-4 text-center">
+                                    <div class="space-y-3">
+                                        <p class="text-red-600 font-semibold">Database connection failed.</p>
+                                        <p>${result.Message || 'Unknown error'}</p>
+                                        <p class="text-sm text-gray-500">Please contact your system administrator.</p>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    }
+                },
+                function(error) {
+                    logDebug('Error testing database connection: ' + JSON.stringify(error));
+                    document.getElementById('productsList').innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-6 py-4 text-center">
+                                <div class="space-y-3">
+                                    <p class="text-red-600 font-semibold">Error testing database connection.</p>
+                                    <p>A system error occurred while testing the database connection.</p>
+                                    <p class="text-sm text-gray-500">Please check the console for more details.</p>
+                                </div>
+                            </td>
+                        </tr>`;
+                }
+            );
         }
     </script>
 </asp:Content>
