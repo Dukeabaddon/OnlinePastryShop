@@ -1,0 +1,1 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="GetProductImage.aspx.cs" Inherits="OnlinePastryShop.Pages.GetProductImage" %> 

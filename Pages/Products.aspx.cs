@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Web.UI;
 using System.Web.Script.Services;
 using System.Linq;
+using System.Web;
 
 namespace OnlinePastryShop.Pages
 {
@@ -1073,7 +1074,7 @@ namespace OnlinePastryShop.Pages
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
                     conn.Open();
-                    using (OracleCommand cmd = new OracleCommand("SELECT IMAGE FROM PRODUCTS WHERE PRODUCTID = :ProductId", conn))
+                    using (OracleCommand cmd = new OracleCommand("SELECT IMAGE, NAME FROM PRODUCTS WHERE PRODUCTID = :ProductId", conn))
                     {
                         cmd.Parameters.Add("ProductId", OracleDbType.Int32).Value = productId;
 
@@ -1082,19 +1083,22 @@ namespace OnlinePastryShop.Pages
                             if (reader.Read() && reader["IMAGE"] != DBNull.Value)
                             {
                                 byte[] imageBytes = (byte[])reader["IMAGE"];
+                                string productName = reader["NAME"].ToString();
+                                string base64String = Convert.ToBase64String(imageBytes);
+                                string imageTag = $"<img src='data:image/jpeg;base64,{base64String}' alt='{HttpUtility.HtmlAttributeEncode(productName)}' class='w-full h-full object-cover' />";
                                 System.Diagnostics.Debug.WriteLine($"Image found for product {productId}, size: {imageBytes.Length} bytes");
-                                return new { ImageBase64 = Convert.ToBase64String(imageBytes) };
+                                return new { ImageHtml = imageTag };
                             }
                             System.Diagnostics.Debug.WriteLine($"No image found for product {productId}");
+                            return new { ImageHtml = "<img src='../Images/product-placeholder.svg' alt='Product image coming soon' class='w-full h-full object-cover' />" };
                         }
                     }
                 }
-                return new { ImageBase64 = "" };
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error getting product image: {ex.Message}");
-                return new { Error = ex.Message };
+                return new { ImageHtml = "<img src='../Images/product-placeholder.svg' alt='Error loading image' class='w-full h-full object-cover' />" };
             }
         }
 

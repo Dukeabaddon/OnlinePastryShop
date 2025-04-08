@@ -32,12 +32,27 @@ namespace OnlinePastryShop.Pages
             set { ViewState["SortDirection"] = value; }
         }
 
+        // Store total row count for pagination
+        private int TotalRowCount
+        {
+            get { return ViewState["TotalRowCount"] != null ? (int)ViewState["TotalRowCount"] : 0; }
+            set { ViewState["TotalRowCount"] = value; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 BindOrders();
             }
+        }
+
+        /// <summary>
+        /// Gets the total number of orders matching the current filters
+        /// </summary>
+        public int GetTotalRowCount()
+        {
+            return TotalRowCount;
         }
 
         /// <summary>
@@ -93,8 +108,8 @@ namespace OnlinePastryShop.Pages
                         adapter.Fill(dt);
 
                         // Store the total number of records for pagination
-                        int totalRecords = dt.Rows.Count;
-                        int totalPages = (int)Math.Ceiling((double)totalRecords / gvOrders.PageSize);
+                        TotalRowCount = dt.Rows.Count;
+                        int totalPages = (int)Math.Ceiling((double)TotalRowCount / gvOrders.PageSize);
 
                         // Set up page number buttons for DataList
                         if (dt.Rows.Count > 0)
@@ -821,7 +836,7 @@ namespace OnlinePastryShop.Pages
         protected void dlPaging_ItemDataBound(object sender, DataListItemEventArgs e)
         {
             LinkButton lnkPage = (LinkButton)e.Item.FindControl("lnkPage");
-            
+
             // Highlight the current page
             if (Convert.ToBoolean(DataBinder.Eval(e.Item.DataItem, "Selected")))
             {

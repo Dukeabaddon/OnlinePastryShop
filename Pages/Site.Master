@@ -5,9 +5,13 @@
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ocakes - Online Pastry Shop</title>
+    <title>Pastry Palace - Online Pastry Shop</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
@@ -16,87 +20,174 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        :root {
+            --brand-brown: #96744F;
+            --light-brown: #A27547;
+            --amber: #FFBF00;
+        }
+        
+        /* Link hover animation */
+        .nav-link {
+            position: relative;
+            color: var(--brand-brown);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--brand-brown);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Icon hover effect */
+        .icon-link {
+            transition: all 0.2s ease;
+        }
+        
+        .icon-link:hover {
+            transform: scale(1.15);
+        }
+        
+        .icon-link:hover svg {
+            stroke-width: 2;
+        }
+        
+        /* Footer styling */
+        .footer-heading {
+            font-family: 'Playfair Display', serif;
+            color: var(--amber);
+        }
+        
+        /* Newsletter input */
+        .newsletter-input {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 0.25rem;
+        }
     </style>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
         <!-- Placeholder for additional page-specific styles or scripts -->
     </asp:ContentPlaceHolder>
     <script src="../Scripts/scroll.js" defer></script>
 </head>
-<body class="flex flex-col min-h-screen">
-    <!-- Navbar -->
-    <nav class="w-full px-20 flex items-center justify-between bg-[#D43B6A]/70 h-24 shadow-[0px_1px_2px rgba(0,0,0,0.1)]">
-        <img src="../Images/logo.png" alt="logo" class="w-32">
-        <div class="flex items-center gap-20">
-            <ul class="flex items-center text-white gap-14">
-                <li>Home</li>
-                <li>About</li>
-                <li>Menu</li>
-                <li>Service</li>
-            </ul>
-            <div class="flex items-center gap-8">
-                <img src="../Images/cart.png" alt="cart" class="w-5">
-                <a href="SalesReport.aspx"><img src="../Images/profile.png" alt="profile" class="w-5"></a>
+<body class="flex flex-col min-h-screen bg-white">
+    <form id="form1" runat="server">
+        <!-- Navbar -->
+        <nav class="w-full px-4 md:px-10 lg:px-10 bg-white h-20 border-b border-gray-200">
+            <div class="h-full max-w-7xl mx-auto grid grid-cols-3 items-center">
+                <!-- Left: Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="text-[var(--brand-brown)] text-2xl font-semibold" style="font-family: 'Playfair Display', serif;">Pastry Palace</a>
+                </div>
+                
+                <!-- Center: Navigation Links -->
+                <div class="flex justify-center">
+                    <ul class="hidden md:flex items-center justify-center text-[var(--brand-brown)] gap-6 md:gap-10">
+                        <li><a href="Default.aspx" class="nav-link font-medium">Home</a></li>
+                        <li><a href="Menu.aspx" class="nav-link font-medium">Menu</a></li>
+                        <li><a href="/About" class="nav-link font-medium">About</a></li>
+                        <li><a href="/Contact" class="nav-link font-medium">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Right: Icons -->
+                <div class="flex items-center justify-end gap-4 md:gap-6">
+                    <a href="#" class="icon-link text-[var(--brand-brown)] hover:text-[var(--light-brown)] transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </a>
+                    <a href="/Cart" class="icon-link text-[var(--brand-brown)] hover:text-[var(--light-brown)] transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                        </svg>
+                    </a>
+                    <a href="Dashboard.aspx" class="icon-link text-[var(--brand-brown)] hover:text-[var(--light-brown)] transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </a>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <!-- Main Content -->
-    <asp:ContentPlaceHolder ID="MainContent" runat="server">
-        <!-- Placeholder for main content -->
-    </asp:ContentPlaceHolder>
+        <!-- Main Content -->
+        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            <!-- Placeholder for main content -->
+        </asp:ContentPlaceHolder>
+
+        <!-- Newsletter -->
+        <section class="w-full bg-[#96744F] py-14 text-center">
+            <div class="max-w-4xl mx-auto px-4">
+                <h2 class="text-3xl font-semibold text-white mb-4" style="font-family: 'Playfair Display', serif;">Join Our Pastry Community</h2>
+                <p class="text-white mb-8">Subscribe to our newsletter and be the first to know about new pastries, seasonal specials, and exclusive discounts.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
+                    <input type="email" placeholder="Enter your email" class="newsletter-input flex-grow py-3 px-4 outline-none" />
+                    <button class="bg-yellow-300 text-gray-800 py-3 px-6 rounded font-medium">Subscribe</button>
+                </div>
+                <p class="text-white text-sm mt-4">We respect your privacy. Unsubscribe at any time.</p>
+            </div>
+        </section>
+    </form>
 
     <!-- Footer -->
-    <footer class="w-full bg-[#F9E2EE] py-8">
-        <div class="max-w-[1280px] h-50 mx-auto grid grid-cols-1 md:grid-cols-4 gap-7 px-4 justify-items-center">
-            <!-- Section 1: Ocakes -->
-            <div class="flex flex-col">
-                <div class="text-[#D43B6A] text-[20px] font-quicksand font-normal leading-[20px]">Ocakes</div>
-                <div class="textblack text-[16px] font-quicksand font-normal leading-[16px] mt-2">Bringing sweetness to your life since 2020</div>
+    <footer class="w-full bg-[#96744F] py-12 text-white">
+        <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Section 1: Pastry Palace -->
+            <div>
+                <h3 class="text-xl font-semibold mb-4 footer-heading">Pastry Palace</h3>
+                <p class="text-white/80 mb-4">Delicious handcrafted pastries made with love and the finest ingredients. Visit us today for a sweet experience!</p>
             </div>
+            
             <!-- Section 2: Quick Links -->
-            <div class="flex flex-col">
-                <div class="text-black text-[18px] font-quicksand font-normal leading-[18px]">Quick Links</div>
-                <ul class="mt-3 space-y-4">
-                    <li class="textblack text-[16px] font-quicksand font-normal leading-[16px]">Home</li>
-                    <li class="textblack text-[16px] font-quicksand font-normal leading-[16px]">Menu</li>
-                    <li class="textblack text-[16px] font-quicksand font-normal leading-[16px]">About</li>
-                    <li class="textblack text-[16px] font-quicksand font-normal leading-[16px]">Services</li>
+            <div>
+                <h3 class="text-xl font-semibold mb-4 footer-heading">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="/" class="text-white/80 hover:text-white transition-colors duration-200">Home</a></li>
+                    <li><a href="/Menu" class="text-white/80 hover:text-white transition-colors duration-200">Menu</a></li>
+                    <li><a href="/About" class="text-white/80 hover:text-white transition-colors duration-200">About Us</a></li>
+                    <li><a href="/Contact" class="text-white/80 hover:text-white transition-colors duration-200">Contact</a></li>
                 </ul>
             </div>
-            <!-- Section 3: Contact -->
-            <div class="flex flex-col">
-                <h2 class="text-black text-[18px] font-quicksand font-normal leading-[18px]">Contact</h2>
-                <div class="mt-2">
-                    <div class="flex items-center">
-                        <img class="w-[16px] h-[16px] mr-3" src="../Images/phone.png" alt="phone">
-                        <p class="textblack text-[16px] font-quicksand font-normal leading-[16px]">(555) 123-4567</p>
-                    </div>
-                    <div class="flex items-center mt-1">
-                        <img class="w-[16px] h-[12px] mr-3" src="../Images/email.png" alt="email">
-                        <p class="textblack text-[16px] font-quicksand font-normal leading-[16px]">info@ohcakes.com</p>
-                    </div>
-                    <div class="flex items-center mt-1">
-                        <img class="w-[12px] h-[16px] mr-3" src="../Images/location.png" alt="location">
-                        <p class="textblack text-[16px] font-quicksand font-normal leading-[16px]">123 Baker Street</p>
-                    </div>
-                </div>
+            
+            <!-- Section 3: Services -->
+            <div>
+                <h3 class="text-xl font-semibold mb-4 footer-heading">Services</h3>
+                <ul class="space-y-2">
+                    <li><a href="/Ordering" class="text-white/80 hover:text-white transition-colors duration-200">Online Ordering</a></li>
+                    <li><a href="/Cakes" class="text-white/80 hover:text-white transition-colors duration-200">Custom Cakes</a></li>
+                    <li><a href="/Catering" class="text-white/80 hover:text-white transition-colors duration-200">Catering</a></li>
+                    <li><a href="/GiftCards" class="text-white/80 hover:text-white transition-colors duration-200">Gift Cards</a></li>
+                </ul>
             </div>
-            <!-- Section 4: Follow Us -->
-            <div class="flex flex-col">
-                <h2 class="text-black text-[18px] font-quicksand font-normal leading-[18px]">Follow Us</h2>
-                <div class="flex mt-2">
-                    <img class="w-[20px] h-[20px] mr-2" src="../Images/facebook.png" alt="facebook">
-                    <img class="w-[17.5px] h-[20px] mr-2" src="../Images/instagram.png" alt="instagram">
-                    <img class="w-[20px] h-[20px]" src="../Images/twitter.png" alt="twitter">
-                </div>
+            
+            <!-- Section 4: Contact Us -->
+            <div>
+                <h3 class="text-xl font-semibold mb-4 footer-heading">Contact Us</h3>
+                <address class="not-italic">
+                    <p class="mb-2">123 Bakery Street</p>
+                    <p class="mb-2">Sweetville, CA 90210</p>
+                    <p class="mb-2">Phone: (555) 123-4567</p>
+                    <p class="mb-4">Email: info@pastrypalace.com</p>
+                </address>
             </div>
         </div>
-        <br />
-        <br />
-        <hr class="border-[#1F2937] w-[1248px] text-center mx-40">
-        <div class="pt-4 text-center">
-            <p class="textblack text-[16px] font-quicksand font-normal leading-[16px]">© 2025 Ocakes. All rights reserved.</p>
+        
+        <div class="max-w-6xl mx-auto px-4 mt-8 pt-8 border-t border-white/20">
+            <p class="text-center text-white/80">© 2025 Pastry Palace. All rights reserved.</p>
         </div>
     </footer>
+
+    <asp:ContentPlaceHolder ID="ScriptsContent" runat="server">
+        <!-- Placeholder for page-specific scripts -->
+    </asp:ContentPlaceHolder>
 </body>
 </html>

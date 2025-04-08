@@ -562,20 +562,7 @@
                     updateImageCachePriority(productId);
 
                     // If in cache, use it immediately
-                    imgElement.src = `data:image/jpeg;base64,${cachedImage}`;
-                    imgElement.onerror = function () {
-                        // If JPEG format fails, try as PNG
-                        imgElement.src = `data:image/png;base64,${cachedImage}`;
-                        imgElement.onerror = function () {
-                            // If PNG fails too, try as a generic image
-                            imgElement.src = `data:image;base64,${cachedImage}`;
-                            imgElement.onerror = function () {
-                                // If all attempts fail, show placeholder
-                                imgElement.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0zIDh2MTFjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlY4TDMgOHpoLS41Yy0uMiAwLS4zLS4xLS4zLS4zVjRjMC0xLjEuOS0yIDItMmg0YzAgMCAxIDAgMSAuNS0uNC4zLS42LjgtLjYgMS4zVjZjMCAwIDAgLjUuNC44aDEuNGMuNCAwIC43LjQuOC45bC41IDEuM2g2LjN6IiBmaWxsPSIjZTllOWU5Ii8+PHBhdGggZD0iTTExIDE0bC03LTQgMTQgMC03IDR6IiBmaWxsPSIjZTllOWU5Ii8+PC9zdmc+";
-                                console.error(`Failed to render image for product ${productId}`);
-                            };
-                        };
-                    };
+                    imgElement.parentElement.innerHTML = cachedImage;
                     return;
                 }
             } catch (e) {
@@ -596,57 +583,29 @@
                     return response.json();
                 })
                 .then(data => {
-                    if (data.d && data.d.ImageBase64) {
-                        // Cache the image with quota management
+                    if (data.d && data.d.ImageHtml) {
+                        // Cache the image HTML with quota management
                         try {
                             // Handle storage quota by implementing LRU (Least Recently Used) cache
-                            manageImageCache(productId, data.d.ImageBase64);
+                            manageImageCache(productId, data.d.ImageHtml);
                         } catch (error) {
                             console.warn("Cache storage error:", error);
                             debugLog("Image caching failed", error.message);
                             // We'll still display the image even if caching fails
                         }
 
-                        // Determine if imgElement is provided
-                        const elementsToUpdate = imgElement ?
-                            [imgElement] :
-                            Array.from(document.querySelectorAll(`img[data-product-id="${productId}"]`));
-
-                        // Update all relevant images
-                        elementsToUpdate.forEach(img => {
-                            // Try as JPEG first
-                            img.src = `data:image/jpeg;base64,${data.d.ImageBase64}`;
-
-                            // Setup fallback chain
-                            img.onerror = function () {
-                                // If JPEG fails, try as PNG
-                                img.src = `data:image/png;base64,${data.d.ImageBase64}`;
-                                img.onerror = function () {
-                                    // If PNG fails too, try as a generic image
-                                    img.src = `data:image;base64,${data.d.ImageBase64}`;
-                                    img.onerror = function () {
-                                        // If all attempts fail, show placeholder
-                                        img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0zIDh2MTFjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlY4TDMgOHpoLS41Yy0uMiAwLS4zLS4xLS4zLS4zVjRjMC0xLjEuOS0yIDItMmg0YzAgMCAxIDAgMSAuNS0uNC4zLS42LjgtLjYgMS4zVjZjMCAwIDAgLjUuNC44aDEuNGMuNCAwIC43LjQuOC45bC41IDEuM2g2LjN6IiBmaWxsPSIjZTllOWU5Ii8+PHBhdGggZD0iTTExIDE0bC03LTQgMTQgMC03IDR6IiBmaWxsPSIjZTllOWU5Ii8+PC9zdmc+";
-                                        console.error(`Failed to render image for product ${productId}`);
-                                    };
-                                };
-                            };
-                        });
+                        // Replace the entire image container with the new HTML
+                        imgElement.parentElement.innerHTML = data.d.ImageHtml;
                     } else if (data.d && data.d.Error) {
                         console.error(`Error retrieving image for product ${productId}: ${data.d.Error}`);
                         debugLog(`Image load error for product ${productId}`, data.d.Error, true);
+                        imgElement.parentElement.innerHTML = `<span class="text-gray-500 text-xs">Error loading image</span>`;
                     }
                 })
                 .catch(error => {
                     console.error(`Error loading image for product ${productId}:`, error);
                     debugLog(`Failed to load image for product ${productId}`, error.message, true);
-
-                    // For user feedback, update the image placeholder
-                    if (imgElement) {
-                        imgElement.parentElement.innerHTML = `
-                        <span class="text-gray-500 text-xs">Error loading image</span>
-                    `;
-                    }
+                    imgElement.parentElement.innerHTML = `<span class="text-gray-500 text-xs">Error loading image</span>`;
                 });
         }
 

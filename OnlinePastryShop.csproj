@@ -49,6 +49,9 @@
       <HintPath>packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.3.6.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json.Bson, Version=1.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.Bson.1.0.3\lib\net45\Newtonsoft.Json.Bson.dll</HintPath>
+    </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.122.23.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>packages\Oracle.ManagedDataAccess.23.7.0\lib\net472\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
@@ -102,41 +105,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Images\bestseller-bg.png" />
-    <Content Include="Images\bestseller-cake.png" />
-    <Content Include="Images\bestseller-container.png" />
-    <Content Include="Images\bestseller.png" />
-    <Content Include="Images\breads.png" />
-    <Content Include="Images\cake.png" />
-    <Content Include="Images\capcakes.png" />
-    <Content Include="Images\cart.png" />
-    <Content Include="Images\croissant-placeholder.png" />
-    <Content Include="Images\croissant.png" />
-    <Content Include="Images\cupcake.png" />
-    <Content Include="Images\cupcakes-placeholder.png" />
-    <Content Include="Images\donut-placeholder.png" />
-    <Content Include="Images\donuts.png" />
-    <Content Include="Images\email.png" />
-    <Content Include="Images\facebook.png" />
-    <Content Include="Images\instagram.png" />
-    <Content Include="Images\landingpage-bg.png" />
-    <Content Include="Images\left arrow.png" />
-    <Content Include="Images\placeholder.png" />
-    <Content Include="Images\product.png" />
-    <Content Include="Images\location.png" />
-    <Content Include="Images\logo.png" />
-    <Content Include="Images\logout.png" />
-    <Content Include="Images\macaroons-placeholder.png" />
-    <Content Include="Images\macaroons.png" />
-    <Content Include="Images\new.png" />
-    <Content Include="Images\pastries.png" />
-    <Content Include="Images\phone.png" />
-    <Content Include="Images\profile.png" />
-    <Content Include="Images\report.png" />
-    <Content Include="Images\review.png" />
-    <Content Include="Images\right arrow.png" />
-    <Content Include="Images\twitter.png" />
-    <Content Include="Images\user.png" />
+    <Content Include="Images\bread.png" />
+    <Content Include="Images\cake.jpg" />
+    <Content Include="Images\crafting.jpg" />
+    <Content Include="Images\cupcakes.png" />
+    <Content Include="Images\donuts.jpg" />
+    <Content Include="Images\hero-section.jpg" />
+    <Content Include="Images\macaroons.jpg" />
+    <Content Include="Images\pastriess.png" />
+    <Content Include="Images\shortcake.png" />
     <Content Include="Pages\CheckDatabaseConnection.aspx" />
     <Content Include="Pages\Dashboard.aspx" />
     <Content Include="Pages\Default.aspx" />
