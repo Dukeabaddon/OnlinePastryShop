@@ -13,13 +13,36 @@
 - **JavaScript Libraries**: 
   - Chart.js for dashboard visualizations
   - jQuery for DOM manipulation (when needed)
-- **AJAX**: ASP.NET UpdatePanels and ScriptManager
+  - Vanilla JavaScript for modern UI components
+- **AJAX**: ASP.NET UpdatePanels, ScriptManager, and WebMethods
+- **CSS Techniques**:
+  - CSS Grid for responsive layouts
+  - Flexbox for component alignment
+  - CSS animations for interactive elements
+  - Media queries for device adaptations
 
 ### Development Environment
 - **IDE**: Visual Studio 2022
 - **Version Control**: Git
 - **Database Tools**: Oracle SQL Developer
 - **Testing**: Manual testing for UI/UX
+
+## UI Component System
+
+### Core Components
+- **Product Cards**: Consistent display of product information
+- **Category Tabs**: Filterable navigation system
+- **Toast Notifications**: User feedback system
+- **Loading States**: Visual indicators for data fetching
+- **Responsive Grid**: Adapts to various screen sizes
+- **Stock Indicators**: Visual representation of inventory status
+
+### Component Design Principles
+- **Consistency**: Common styling across all UI elements
+- **Responsiveness**: Adapts to all device sizes
+- **Accessibility**: Clear contrast and readable text
+- **Interaction Feedback**: Visual cues for user actions
+- **Error Handling**: Clear messaging for error states
 
 ## Database Design
 

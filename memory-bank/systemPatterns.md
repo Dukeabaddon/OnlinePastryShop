@@ -7,10 +7,12 @@ The Online Pastry Shop application follows a traditional ASP.NET Web Forms archi
    - ASP.NET Web Forms pages (.aspx files)
    - Master pages for layout consistency
    - Client-side scripting with JavaScript
+   - Responsive UI components with CSS Grid and Flexbox
 
 2. **Business Logic Layer**:
    - Code-behind files (.aspx.cs)
    - Utility classes for common operations
+   - WebMethods for AJAX data operations
 
 3. **Data Access Layer**:
    - Oracle database integration
@@ -28,7 +30,8 @@ Each web form (`.aspx`) has a corresponding code-behind file (`.aspx.cs`) that h
 
 ### Master Page Pattern
 - `AdminMaster.Master` provides consistent layout for admin pages
-- Customer-facing pages use a separate master page for storefront consistency
+- `Site.Master` provides consistent layout for customer-facing pages
+- Shared components like navigation and footer
 
 ### Repository Pattern (Modified)
 - Data access occurs through stored procedures 
@@ -43,6 +46,22 @@ Each web form (`.aspx`) has a corresponding code-behind file (`.aspx.cs`) that h
 - Modular dashboard widgets for different metrics
 - User-customizable components with persistence
 - Real-time data updates through AJAX
+
+### Card UI Pattern
+- Product information displayed in consistent card format
+- Cards include image, title, description, price, and actions
+- Responsive layout adapts to different screen sizes
+- Hover effects for enhanced user experience
+
+### Toast Notification Pattern
+- Non-intrusive feedback for user actions
+- Temporary display with automatic dismissal
+- Consistent styling and positioning
+
+### Category Filter Pattern
+- Tabbed interface for category selection
+- Clear visual feedback for active category
+- Dynamic content filtering without page reload
 
 ## Database Approach
 
@@ -86,7 +105,49 @@ flowchart TD
     
     Marketing --> Newsletter[Newsletter]
     Marketing --> Vouchers[Vouchers/Discounts]
+    
+    SiteMaster[Site.Master] --> HomePage[Default.aspx]
+    SiteMaster --> MenuPage[Menu.aspx]
+    SiteMaster --> AboutPage[About.aspx]
+    SiteMaster --> ContactPage[Contact.aspx]
+    
+    MenuPage --> CategoryFilters[Category Tabs]
+    MenuPage --> ProductGrid[Product Grid]
+    MenuPage --> AddToCart[Cart Functions]
+    
+    ProductGrid --> ProductCard[Product Card Component]
+    ProductCard --> ProductImage[Image Display]
+    ProductCard --> ProductInfo[Product Information]
+    ProductCard --> StockStatus[Stock Indicator]
+    ProductCard --> CartButton[Add to Cart Button]
 ```
+
+## UI Component Patterns
+
+### Product Card
+- Image container with fixed aspect ratio
+- Consistent information layout (name, description, price)
+- Stock status indicator (in-stock or out-of-stock)
+- Action button for cart interaction
+- Hover effects for visual feedback
+
+### Category Tabs
+- Horizontally scrollable on mobile
+- Active state highlighting
+- Consistent styling with brand colors
+- Click event handling for filtering
+
+### Toast Notifications
+- Fixed position at bottom right
+- Animated entry and exit
+- Automatically disappears after delay
+- Z-index handling for proper layering
+
+### Loading States
+- Centered spinner animation
+- Text indication of loading status
+- Appropriate hiding/showing based on data state
+- Clear error state presentation
 
 ## Customization Approach
 - User preferences stored in database tables

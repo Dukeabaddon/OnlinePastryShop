@@ -114,11 +114,15 @@
     <Content Include="Images\macaroons.jpg" />
     <Content Include="Images\pastriess.png" />
     <Content Include="Images\shortcake.png" />
+    <Content Include="Pages\About.aspx" />
     <Content Include="Pages\CheckDatabaseConnection.aspx" />
+    <Content Include="Pages\Contact.aspx" />
     <Content Include="Pages\Dashboard.aspx" />
     <Content Include="Pages\Default.aspx" />
+    <Content Include="Pages\Login.aspx" />
     <Content Include="Pages\Menu.aspx" />
     <Content Include="Pages\Orders.aspx" />
+    <Content Include="Pages\ProductDetails.aspx" />
     <Content Include="Pages\Products.aspx" />
     <Content Include="Pages\SalesReport.aspx" />
     <Content Include="Pages\Users.aspx" />
@@ -128,6 +132,13 @@
   <ItemGroup>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\About.aspx.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\About.aspx.designer.cs">
+      <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\AdminMaster.Master.cs">
       <DependentUpon>AdminMaster.Master</DependentUpon>
@@ -143,6 +154,13 @@
     <Compile Include="Pages\CheckDatabaseConnection.aspx.designer.cs">
       <DependentUpon>CheckDatabaseConnection.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Contact.aspx.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Contact.aspx.designer.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -157,6 +175,13 @@
     <Compile Include="Pages\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Menu.aspx.cs">
       <DependentUpon>Menu.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -170,6 +195,13 @@
     </Compile>
     <Compile Include="Pages\Orders.aspx.designer.cs">
       <DependentUpon>Orders.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ProductDetails.aspx.cs">
+      <DependentUpon>ProductDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\ProductDetails.aspx.designer.cs">
+      <DependentUpon>ProductDetails.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Products.aspx.cs">
       <DependentUpon>Products.aspx</DependentUpon>

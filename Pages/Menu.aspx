@@ -10,7 +10,7 @@
     </asp:ScriptManager>
 
     <!-- Hero Section -->
-    <section class="relative bg-cover bg-center h-[300px] flex items-center justify-center text-white text-center mb-8" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/Images/hero-section.jpg');">
+    <section class="relative bg-cover bg-center h-[300px] flex items-center justify-center text-white text-center mb-8" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Images/hero-section.jpg');">
         <div class="max-w-3xl px-5">
             <h1 class="text-4xl font-semibold mb-4">Our Delicious Pastries</h1>
             <p class="text-xl">Explore our wide selection of freshly baked pastries made with love and the finest ingredients</p>
@@ -19,7 +19,7 @@
 
     <!-- Category Tabs -->
     <section class="mb-8">
-        <div class="container mx-auto px-[160px]">
+        <div class="container mx-auto px-4 lg:px-[160px]">
             <div class="flex flex-wrap gap-3 justify-center">
                 <button type="button" class="px-6 py-2 bg-[#96744F] text-white border border-[#96744F] rounded-full cursor-pointer transition-all duration-300 font-medium active" data-category="all">All</button>
                 <button type="button" class="px-6 py-2 bg-white border border-gray-300 rounded-full cursor-pointer transition-all duration-300 font-medium hover:bg-gray-100" data-category="latest">Latest</button>
@@ -31,40 +31,17 @@
 
     <!-- Products Grid -->
     <section class="pb-12">
-        <div class="container mx-auto px-[160px]">
+        <div class="container mx-auto px-4 lg:px-[160px]">
             <div id="productsLoading" class="flex flex-col items-center justify-center py-12">
-                <div class="spinner mb-4"></div>
-                <p class="text-lg text-gray-600">Loading products...</p>
+                <div class="w-10 h-10 border-4 border-gray-200 border-t-[#96744F] rounded-full"></div>
+                <p class="text-lg text-gray-600 mt-4">Loading products...</p>
             </div>
-            <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+            <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 hidden"></div>
             <div id="noProductsMessage" class="text-center py-8 text-lg text-gray-600 hidden">
                 <p>No products found. Please try another category.</p>
             </div>
         </div>
     </section>
-
-    <style>
-        /* Essential custom styles */
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: #96744F;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        button.active {
-            background-color: #96744F !important;
-            color: white !important;
-            border-color: #96744F !important;
-        }
-    </style>
 
     <script type="text/javascript">
         // Main array to store all products
@@ -74,6 +51,12 @@
 
         // Wait for the DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function () {
+            // Create toast element
+            const toastContainer = document.createElement('div');
+            toastContainer.id = 'toastNotification';
+            toastContainer.className = 'fixed bottom-5 right-5 bg-[#96744F] text-white py-4 px-5 rounded shadow-lg z-50 transform translate-y-full opacity-0 transition-all duration-300 max-w-[300px] hidden';
+            document.body.appendChild(toastContainer);
+            
             // Load products
             loadProducts();
 
@@ -203,60 +186,62 @@
             }
 
             console.log(`Found ${filteredProducts.length} products for category ${category}`);
-            displayProducts(filteredProducts);
+            populateProductsGrid(filteredProducts);
         }
 
-        // Function to display products
-        function displayProducts(products) {
+        // Function to populate products grid
+        function populateProductsGrid(products) {
             const productsGrid = document.getElementById('productsGrid');
             productsGrid.innerHTML = '';
 
             if (products.length === 0) {
-                document.getElementById('noProductsMessage').style.display = 'block';
-                productsGrid.style.display = 'none';
+                productsGrid.innerHTML = '<div class="col-span-full text-center py-8 text-lg text-gray-600 bg-gray-100 rounded-lg">No products found</div>';
+                document.getElementById('productsLoading').style.display = 'none';
+                productsGrid.style.display = 'grid';
                 return;
             }
 
-            document.getElementById('noProductsMessage').style.display = 'none';
-            productsGrid.style.display = 'grid';
-
             products.forEach(product => {
                 const productCard = document.createElement('div');
-                productCard.className = 'border border-gray-200 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1';
-
-                let stockLabelHtml = '';
-                let actionBtnHtml = '';
-
-                if (product.StockQuantity <= 0) {
-                    stockLabelHtml = '<span class="inline-block px-2 py-1 text-xs rounded bg-red-100 text-red-800 mb-2">Out of Stock</span>';
-                    actionBtnHtml = '<button disabled class="px-4 py-1 bg-gray-300 text-white rounded cursor-not-allowed text-sm">Out of Stock</button>';
-                } else if (product.StockQuantity < 5) {
-                    stockLabelHtml = `<span class="inline-block px-2 py-1 text-xs rounded bg-amber-100 text-amber-800 mb-2">Low Stock: ${product.StockQuantity} left</span>`;
-                    actionBtnHtml = `<button onclick="viewProduct(${product.ProductId})" class="px-4 py-1 bg-[#96744F] text-white rounded hover:bg-[#A27547] transition-colors text-sm">View</button>`;
+                productCard.className = 'rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-white flex flex-col h-full';
+                
+                // Determine image source - use base64 if available, otherwise use default
+                let imgSrc = '';
+                if (product.ImageBase64) {
+                    console.log(`Product ${product.ProductId} has base64 image data`);
+                    imgSrc = `data:image/jpeg;base64,${product.ImageBase64}`;
                 } else {
-                    // No stock label for in-stock items
-                    stockLabelHtml = ''; 
-                    actionBtnHtml = `<button onclick="viewProduct(${product.ProductId})" class="px-4 py-1 bg-[#96744F] text-white rounded hover:bg-[#A27547] transition-colors text-sm">View</button>`;
+                    console.log(`Product ${product.ProductId} has no image data, using default`);
+                    // Use absolute path for default image
+                    imgSrc = '../Images/product-placeholder.svg';
                 }
-
-                // For image path, use direct URL with productId parameter
+                
+                const stockClass = product.StockQuantity > 0 ? 'text-green-600' : 'text-red-600';
+                const stockText = product.StockQuantity > 0 ? 'In Stock' : 'Out of Stock';
+                
                 productCard.innerHTML = `
-                    <div class="h-44 bg-gray-100 bg-cover bg-center">
-                        <img src="${product.HasImage ? `/GetProductImage.aspx?id=${product.ProductId}` : '/Images/product-placeholder.svg'}" alt="${product.Name}" class="w-full h-full object-cover">
+                    <div class="h-[200px] overflow-hidden relative">
+                        <img src="${imgSrc}" alt="${product.Name}" onerror="this.src='../Images/product-placeholder.svg'" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105 cursor-pointer" onclick="viewProduct(${product.ProductId})">
                     </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-lg mb-2">${product.Name}</h3>
-                        <p class="text-sm text-gray-600 mb-3 overflow-hidden line-clamp-2">${product.Description}</p>
-                        ${stockLabelHtml}
-                        <div class="flex justify-between items-center mt-3">
-                            <div class="font-semibold text-[#96744F]">$${parseFloat(product.Price).toFixed(2)}</div>
-                            ${actionBtnHtml}
-                        </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-lg text-gray-800 mb-2 cursor-pointer hover:text-[#96744F]" onclick="viewProduct(${product.ProductId})">${product.Name}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">${product.Description || 'No description available'}</p>
+                        <div class="text-[#96744F] font-bold text-lg mb-2">₱${parseFloat(product.Price).toFixed(2)}</div>
+                        <div class="${stockClass} text-sm mb-4">${stockText}</div>
+                        <button class="mt-auto bg-[#96744F] hover:bg-[#7a5f3e] text-white font-bold py-3 px-4 rounded transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed" 
+                                onclick="addToCart(${product.ProductId}, '${product.Name}', ${product.Price})" 
+                                ${product.StockQuantity <= 0 ? 'disabled' : ''}>
+                            Add to Cart
+                        </button>
                     </div>
                 `;
-
+                
                 productsGrid.appendChild(productCard);
             });
+            
+            // Make sure products grid is visible and loading spinner is hidden
+            productsGrid.style.display = 'grid';
+            document.getElementById('productsLoading').style.display = 'none';
         }
 
         // Function to view product details (will be implemented later)
@@ -264,7 +249,41 @@
             // Just log the action for now
             console.log(`View product: ${productId}`);
             // Redirect to product detail page
-            window.location.href = `/ProductDetail.aspx?id=${productId}`;
+            window.location.href = `/Pages/ProductDetails.aspx?id=${productId}`;
+        }
+        
+        // Function to add product to cart
+        function addToCart(productId, productName, price) {
+            console.log(`Adding product to cart: ${productId} - ${productName} - $${price}`);
+            
+            // TODO: Implement actual cart functionality with server-side storage
+            
+            // For now, just display a toast notification
+            showToast(`${productName} added to your cart!`);
+            
+            // You can add additional logic here when the cart functionality is implemented
+        }
+        
+        // Function to show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            
+            // Show the toast
+            setTimeout(() => {
+                toast.classList.remove('translate-y-full', 'opacity-0');
+            }, 10);
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('translate-y-full', 'opacity-0');
+                
+                // After animation completes, hide the element
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 300);
+            }, 3000);
         }
     </script>
 </asp:Content>

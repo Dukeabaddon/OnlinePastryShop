@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Web.Script.Services;
 using System.Web.Services;
 using Oracle.ManagedDataAccess.Client;
+using System.Web;
 
 namespace OnlinePastryShop.Pages
 {
@@ -47,7 +48,7 @@ namespace OnlinePastryShop.Pages
                             p.STOCKQUANTITY, 
                             p.ISLATEST,
                             p.ISACTIVE,
-                            CASE WHEN p.IMAGE IS NOT NULL THEN 1 ELSE 0 END AS HASIMAGE,
+                            p.IMAGE,
                             c.CATEGORYID,
                             c.NAME AS CATEGORYNAME
                         FROM 
@@ -74,6 +75,37 @@ namespace OnlinePastryShop.Pages
                                 // Check if this product is already in the dictionary
                                 if (!uniqueProducts.ContainsKey(productId))
                                 {
+                                    // Process image data
+                                    string imageBase64 = null;
+                                    bool hasImage = false;
+                                    
+                                    if (reader["IMAGE"] != DBNull.Value)
+                                    {
+                                        try
+                                        {
+                                            byte[] imageData = (byte[])reader["IMAGE"];
+                                            if (imageData != null && imageData.Length > 0)
+                                            {
+                                                System.Diagnostics.Debug.WriteLine($"Processing image for product {productId}. Image size: {imageData.Length} bytes");
+                                                imageBase64 = Convert.ToBase64String(imageData);
+                                                hasImage = true;
+                                                System.Diagnostics.Debug.WriteLine($"Successfully converted image to base64 for product {productId}");
+                                            }
+                                            else
+                                            {
+                                                System.Diagnostics.Debug.WriteLine($"Image data is empty for product {productId}");
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine($"Error converting image for product {productId}: {ex.Message}");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        System.Diagnostics.Debug.WriteLine($"No image found for product {productId}");
+                                    }
+
                                     // Create dictionary for the product
                                     var product = new Dictionary<string, object>
                                     {
@@ -84,7 +116,8 @@ namespace OnlinePastryShop.Pages
                                         { "StockQuantity", Convert.ToInt32(reader["STOCKQUANTITY"]) },
                                         { "IsLatest", Convert.ToInt32(reader["ISLATEST"]) == 1 },
                                         { "IsActive", Convert.ToInt32(reader["ISACTIVE"]) == 1 },
-                                        { "HasImage", Convert.ToInt32(reader["HASIMAGE"]) == 1 }
+                                        { "HasImage", hasImage },
+                                        { "ImageBase64", imageBase64 }
                                     };
 
                                     // Add category information if available
@@ -126,7 +159,8 @@ namespace OnlinePastryShop.Pages
             }
         }
 
-        // Get product image by product ID
+        // This method is no longer needed since we're using base64 encoding directly in the response
+        // But we'll keep it for now in case it's referenced elsewhere
         public void GetProductImage(int productId)
         {
             try
