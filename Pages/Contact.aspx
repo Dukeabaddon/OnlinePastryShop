@@ -311,7 +311,7 @@
                             <i class="fas fa-map-marker-alt text-2xl text-[#96744F] contact-icon"></i>
                         </div>
                         <h3 class="text-xl font-bold mb-2 text-center text-[#96744F]">Visit Us</h3>
-                        <p class="text-[#96744F] font-bold mb-1 text-center">456 Katipunan Avenue</p>
+                        <p class="text-[#96744F] font-bold mb-1 text-center">49 Quirino Hwy, Novaliches</p>
                         <p class="text-gray-500 text-sm text-center">Quezon City, Metro Manila</p>
                         <div class="mt-6 text-center">
                             <a href="#map-section" class="inline-flex items-center text-[#96744F] hover:underline">
@@ -419,21 +419,6 @@
                                 <span class="fancy-label">Your Message</span>
                             </div>
                             
-                            <!-- Newsletter Checkbox -->
-                            <div class="mb-8 flex items-center">
-                                <div class="relative">
-                                    <asp:CheckBox ID="chkNewsletter" runat="server" Checked="true" CssClass="hidden" />
-                                    <div class="checkbox-custom w-5 h-5 border-2 border-[#96744F] rounded flex items-center justify-center">
-                                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <label for="<%= chkNewsletter.ClientID %>" class="ml-3 text-gray-700 text-sm">
-                                    Subscribe to our newsletter for exclusive recipes and updates
-                                </label>
-                            </div>
-                            
                             <!-- Submit Button -->
                             <div class="text-center">
                                 <asp:Button ID="btnSendMessage" runat="server" Text="Send Message" CssClass="bg-[#96744F] hover:bg-[#7d6142] text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg" OnClick="btnSendMessage_Click" />
@@ -453,7 +438,7 @@
             </div>
             <div class="mt-8 lg:mt-0">
                 <h2 class="text-3xl font-semibold mb-4 text-[#96744F]">Our Bakery</h2>
-                <p class="text-gray-700">Welcome to Pastry Palace - your home for authentic Filipino pastries made with love and tradition. Our flagship store in Quezon City offers a warm, inviting space where you can enjoy freshly baked goods daily.</p>
+                <p class="text-gray-700">Welcome to Pastry Palace - your home for authentic Filipino pastries made with love and tradition. Our flagship store in Novaliches, Quezon City offers a warm, inviting space where you can enjoy freshly baked goods daily.</p>
                 
                 <div class="mt-6">
                     <h5 class="flex items-center text-lg font-bold text-[#96744F]"><i class="fas fa-clock mr-2 text-[#96744F]"></i> Opening Hours</h5>
@@ -478,15 +463,15 @@
     </div>
 
     <!-- Map Section -->
-    <div class="bg-[#FBF7F1] py-10">
+    <div id="map-section" class="bg-[#FBF7F1] py-10">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-semibold text-center mb-8">Find Us in Quezon City</h2>
-            <p class="text-center mb-6">We're conveniently located in Loyola Heights, just a few minutes from Ateneo de Manila University. Come visit us and experience our freshly-baked Filipino pastries!</p>
+            <p class="text-center mb-6">We're conveniently located in Novaliches, right in front of Quezon City University main gate. Come visit us and experience our freshly-baked Filipino pastries!</p>
             
             <div class="relative rounded-lg overflow-hidden shadow-md">
                 <div class="grid grid-cols-1 lg:grid-cols-4">
                     <div class="lg:col-span-3 h-[400px]">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.4057644051927!2d121.02843807468985!3d14.629600077478328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b7b8f1c1939f%3A0x7542c88c35940a4a!2sKamuning%2C%20Quezon%20City%2C%20Metro%20Manila!5e0!3m2!1sen!2sph!4v1688531245864!5m2!1sen!2sph" 
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1929.6162674121183!2d121.03340130904716!3d14.699437804363171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sph!4v1744242789632!5m2!1sen!2sph" 
                                 width="100%" 
                                 height="100%" 
                                 style="border:0;" 
@@ -498,9 +483,9 @@
                     <div class="lg:col-span-1 bg-white p-6">
                         <div class="mb-6">
                             <h3 class="text-xl font-semibold mb-2">Pastry Palace Quezon City</h3>
-                            <p class="text-gray-600 mb-1">456 Katipunan Avenue, Loyola Heights,</p>
-                            <p class="text-gray-600 mb-3">Quezon City, Metro Manila, Philippines 1108</p>
-                            <a href="https://maps.google.com" class="text-[#96744F] flex items-center hover:underline" target="_blank">
+                            <p class="text-gray-600 mb-1">49 Quirino Hwy, Novaliches,</p>
+                            <p class="text-gray-600 mb-3">Quezon City, Metro Manila, Philippines</p>
+                            <a href="https://maps.google.com/?q=49+Quirino+Hwy+Novaliches+Quezon+City+Metro+Manila" class="text-[#96744F] flex items-center hover:underline" target="_blank">
                                 <i class="fas fa-directions mr-1"></i> Get Directions
                             </a>
                         </div>

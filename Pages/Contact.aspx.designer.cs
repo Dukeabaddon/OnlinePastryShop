@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OnlinePastryShop.Pages {
-    
-    
-    public partial class Contact {
-        
+namespace OnlinePastryShop.Pages
+{
+
+
+    public partial class Contact
+    {
+
         /// <summary>
         /// txtName control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace OnlinePastryShop.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
-        
+
         /// <summary>
         /// txtEmail control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace OnlinePastryShop.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtEmail;
-        
+
         /// <summary>
         /// txtPhone control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace OnlinePastryShop.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtPhone;
-        
+
         /// <summary>
         /// txtSubject control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace OnlinePastryShop.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtSubject;
-        
+
         /// <summary>
         /// txtMessage control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace OnlinePastryShop.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtMessage;
-        
+
         /// <summary>
         /// chkNewsletter control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace OnlinePastryShop.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkNewsletter;
-        
+
         /// <summary>
         /// btnSendMessage control.
         /// </summary>
@@ -74,23 +76,5 @@ namespace OnlinePastryShop.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnSendMessage;
-        
-        /// <summary>
-        /// txtNewsletterEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNewsletterEmail;
-        
-        /// <summary>
-        /// btnSubscribe control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubscribe;
     }
 }

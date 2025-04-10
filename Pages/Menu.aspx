@@ -221,17 +221,17 @@
                 
                 productCard.innerHTML = `
                     <div class="h-[200px] overflow-hidden relative">
-                        <img src="${imgSrc}" alt="${product.Name}" onerror="this.src='../Images/product-placeholder.svg'" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105 cursor-pointer" onclick="viewProduct(${product.ProductId})">
+                        <img src="${imgSrc}" alt="${product.Name}" onerror="this.src='../Images/product-placeholder.svg'" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="text-lg text-gray-800 mb-2 cursor-pointer hover:text-[#96744F]" onclick="viewProduct(${product.ProductId})">${product.Name}</h3>
+                        <h3 class="text-lg text-gray-800 mb-2">${product.Name}</h3>
                         <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">${product.Description || 'No description available'}</p>
                         <div class="text-[#96744F] font-bold text-lg mb-2">₱${parseFloat(product.Price).toFixed(2)}</div>
                         <div class="${stockClass} text-sm mb-4">${stockText}</div>
                         <button class="mt-auto bg-[#96744F] hover:bg-[#7a5f3e] text-white font-bold py-3 px-4 rounded transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed" 
-                                onclick="addToCart(${product.ProductId}, '${product.Name}', ${product.Price})" 
+                                onclick="viewProduct(${product.ProductId})" 
                                 ${product.StockQuantity <= 0 ? 'disabled' : ''}>
-                            Add to Cart
+                            View Product
                         </button>
                     </div>
                 `;

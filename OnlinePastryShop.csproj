@@ -105,15 +105,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Images\baker.jpg" />
+    <Content Include="Images\bakery.jpg" />
+    <Content Include="Images\BOMBARDINO.png" />
     <Content Include="Images\bread.png" />
     <Content Include="Images\cake.jpg" />
     <Content Include="Images\crafting.jpg" />
+    <Content Include="Images\crim.png" />
     <Content Include="Images\cupcakes.png" />
     <Content Include="Images\donuts.jpg" />
     <Content Include="Images\hero-section.jpg" />
     <Content Include="Images\macaroons.jpg" />
     <Content Include="Images\pastriess.png" />
     <Content Include="Images\shortcake.png" />
+    <Content Include="Images\tralalero.png" />
     <Content Include="Pages\About.aspx" />
     <Content Include="Pages\CheckDatabaseConnection.aspx" />
     <Content Include="Pages\Contact.aspx" />

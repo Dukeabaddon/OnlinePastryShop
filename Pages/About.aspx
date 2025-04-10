@@ -112,7 +112,7 @@
     <!-- Hero Section -->
     <section class="relative overflow-hidden" style="height: 500px;">
         <!-- Background Image with Zoom Effect -->
-        <div class="hero-zoom-bg absolute inset-0 bg-cover bg-center" style="background-image: url('../Images/hero-section.jpg');"></div>
+        <div class="hero-zoom-bg absolute inset-0 bg-cover bg-center" style="background-image: url('../Images/bakery.jpg');"></div>
         
         <!-- Overlay -->
         <div class="absolute inset-0 bg-black opacity-60"></div>
@@ -150,8 +150,8 @@
             
             <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16">
                 <!-- Image -->
-                <div class="w-full md:w-5/12 rounded-lg overflow-hidden shadow-xl">
-                    <img src="../Images/hero-section.jpg" alt="Bakery interior with traditional Filipino pastries" class="w-full h-full object-cover" style="min-height: 400px;">
+                <div class="w-full md:w-[400px] rounded-lg overflow-hidden shadow-xl">
+                    <img src="../Images/baker.jpg" alt="Bakery interior with traditional Filipino pastries" class="w-full h-full object-cover" style="min-height: 200px;">
                 </div>
                 
                 <!-- Content -->
@@ -246,10 +246,10 @@
                 <!-- Team Member 1 -->
                 <div class="team-member">
                     <div class="team-photo-wrapper">
-                        <img src="https://images.unsplash.com/photo-1607631568561-e5b6ff274815?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Maria Santos" class="team-photo">
+                        <img src="../Images/tralalero.png" alt="Maria Santos" class="team-photo">
                         <div class="team-badge">Founder</div>
                     </div>
-                    <h3 class="team-name">Maria Santos</h3>
+                    <h3 class="team-name">Tralalero Tralala</h3>
                     <p class="team-title">Head Pastry Chef</p>
                     <p class="team-description">
                         A culinary arts graduate from the University of the Philippines who specialized in traditional Filipino desserts.
@@ -259,10 +259,10 @@
                 <!-- Team Member 2 -->
                 <div class="team-member">
                     <div class="team-photo-wrapper">
-                        <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="David Reyes" class="team-photo">
+                        <img src="../Images/BOMBARDINO.png" alt="David Reyes" class="team-photo">
                         <div class="team-badge">Executive Chef</div>
                     </div>
-                    <h3 class="team-name">David Reyes</h3>
+                    <h3 class="team-name">Bombardino Crocodilo</h3>
                     <p class="team-title">Executive Baker</p>
                     <p class="team-description">
                         Trained in France but specializes in incorporating local ingredients from Bicol and Pampanga regions.
@@ -272,10 +272,10 @@
                 <!-- Team Member 3 -->
                 <div class="team-member">
                     <div class="team-photo-wrapper">
-                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Sarah Mendoza" class="team-photo">
+                        <img src="../Images/crim.png" alt="Sarah Mendoza" class="team-photo">
                         <div class="team-badge">Creative Lead</div>
                     </div>
-                    <h3 class="team-name">Sarah Mendoza</h3>
+                    <h3 class="team-name">Criminology A.I</h3>
                     <p class="team-title">Head Decorator</p>
                     <p class="team-description">
                         Known for incorporating traditional Filipino art patterns into her cake decorations and pastry designs.

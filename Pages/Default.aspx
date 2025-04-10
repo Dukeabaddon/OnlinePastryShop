@@ -174,6 +174,11 @@
         }
     </style>
     <script type="text/javascript">
+        function viewProduct(productId) {
+            // Redirect to the product details page
+            window.location.href = "/Pages/ProductDetails.aspx?id=" + productId;
+        }
+        
         function addToCart(productId) {
             // You can replace this with the actual implementation
             // for now it will just show an alert
@@ -283,11 +288,8 @@
                         <span class="text-2xl font-bold text-[#96744F]">₱1,099</span>
                         <span class="ml-2 text-gray-500">(10-inch round)</span>
                     </div>
-                    <button onclick="addToCart(0); return false;" class="mt-4 px-6 py-3 bg-[#96744F] text-white rounded-lg hover:bg-[#7d6142] transition duration-300 ease-in-out flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        Add to Cart
+                    <button onclick="viewProduct(0); return false;" class="mt-4 px-6 py-3 bg-[#96744F] text-white rounded-lg hover:bg-[#7d6142] transition duration-300 ease-in-out">
+                        View Product
                     </button>
                 </div>
                 
@@ -312,7 +314,7 @@
                     <h2 class="text-4xl text-[#96744F]" style="font-family: 'Playfair Display', serif;">Featured Products</h2>
                     <p class="text-[#96744F]/80">Our best selling creations</p>
                 </div>
-                <a href="/Menu" class="text-[#96744F] border border-[#96744F] px-6 py-2 rounded hover:bg-[#96744F] hover:text-white transition-all duration-300">
+                <a href="Menu.aspx" class="text-[#96744F] border border-[#96744F] px-6 py-2 rounded hover:bg-[#96744F] hover:text-white transition-all duration-300">
                     View All
                 </a>
             </div>
@@ -330,10 +332,8 @@
                                 <p class="mt-2 text-gray-600 text-sm h-12 overflow-hidden"><%# Eval("DESCRIPTION") %></p>
                                 <div class="mt-4 flex justify-between items-center">
                                     <span class="text-xl font-semibold text-gray-900">₱<%# Eval("PRICE", "{0:N2}") %></span>
-                                    <button class="add-btn text-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm" onclick="addToCart(<%# Eval("PRODUCTID") %>); return false;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                        </svg>
+                                    <button class="add-btn text-white rounded-lg px-3 py-2 flex items-center justify-center shadow-sm" onclick="viewProduct(<%# Eval("PRODUCTID") %>); return false;">
+                                        View Product
                                     </button>
                                 </div>
                             </div>

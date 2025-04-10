@@ -219,7 +219,7 @@
                 </div>
                 <span class="breadcrumb-separator">/</span>
                 <div class="breadcrumb-item">
-                    <a href="/Pages/Menu.aspx">Our Pastries</a>
+                    <a href="/Pages/Menu.aspx">Menu</a>
                 </div>
                 <span class="breadcrumb-separator">/</span>
                 <div class="breadcrumb-item text-black">
