@@ -1,5 +1,70 @@
 # Technical Context
 
+## Technologies Used
+
+### Frontend
+- **ASP.NET Web Forms**: Core framework for web pages
+- **HTML5/CSS3**: Markup and styling
+- **Tailwind CSS**: Utility-first CSS framework for responsive design
+- **JavaScript**: Client-side interactivity
+- **SVG Icons**: For UI elements and visual components
+
+### Backend
+- **C#**: Primary programming language
+- **ASP.NET Framework**: Web application framework
+- **ADO.NET**: Data access technology
+- **SQL Server**: Database management system
+
+### Development Tools
+- **Visual Studio**: Primary IDE
+- **Git**: Version control
+- **Azure DevOps**: CI/CD and issue tracking
+- **SQL Server Management Studio**: Database management
+
+## Technical Constraints
+
+### Browser Compatibility
+- Support for modern browsers (Chrome, Firefox, Safari, Edge)
+- Graceful degradation for older browsers
+- Mobile browser optimization
+
+### Performance Requirements
+- Page load time under 3 seconds
+- Responsive to user interactions within 300ms
+- Database queries optimized for quick results
+
+### Security Considerations
+- HTTPS implementation
+- Secure handling of customer data
+- PCI compliance for payment processing
+- Protection against common web vulnerabilities (XSS, CSRF, SQL Injection)
+
+## Deployment Environment
+- **Web Server**: IIS on Windows Server
+- **Database**: SQL Server 2019
+- **Hosting**: Azure App Service (or similar cloud provider)
+- **Content Delivery**: Azure CDN for static assets
+
+## Dependencies
+
+### External Services
+- Payment gateway integration (to be determined)
+- Email service provider for notifications
+- Google Maps API for store location
+- Social media sharing integrations
+
+### Internal Dependencies
+- Authentication system
+- Product inventory management
+- Order processing workflow
+- Customer account management
+
+## Development Setup
+- Local development using Visual Studio
+- Local SQL Server instance for database
+- Source control with Git
+- Deployment using Azure DevOps pipelines
+
 ## Technology Stack
 
 ### Backend Technologies

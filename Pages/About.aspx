@@ -338,10 +338,9 @@
                             Manila Flagship
                         </h3>
                         <p class="text-gray-600 mt-2">
-                            123 Sampaloc Street, Intramuros<br>
-                            Manila, Metro Manila<br>
+                            49 Quirino Hwy, Novaliches<br>
+                            Quezon City, Metro Manila<br>
                             Philippines<br>
-                            <span class="text-sm text-gray-500 mt-1">San Lorenzo Shopping Center</span>
                         </p>
                     </div>
                     
@@ -355,8 +354,7 @@
                         <p class="text-gray-600 mt-2">
                             Monday - Friday: 7:00 AM - 8:00 PM<br>
                             Saturday: 8:00 AM - 5:00 PM<br>
-                            Sunday: 8:00 AM - 4:00 PM<br>
-                            Holiday Hours: <a href="#" class="text-[#96744F] underline">Special Schedule</a>
+                            Closed on Sundays to give time for rest, family, and faith.
                         </p>
                     </div>
                     

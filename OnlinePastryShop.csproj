@@ -130,6 +130,7 @@
     <Content Include="Pages\ProductDetails.aspx" />
     <Content Include="Pages\Products.aspx" />
     <Content Include="Pages\SalesReport.aspx" />
+    <Content Include="Pages\UserProfile.aspx" />
     <Content Include="Pages\Users.aspx" />
     <Content Include="Scripts\scroll.js" />
     <Content Include="Web.config" />
@@ -221,6 +222,13 @@
     </Compile>
     <Compile Include="Pages\SalesReport.aspx.designer.cs">
       <DependentUpon>SalesReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\UserProfile.aspx.cs">
+      <DependentUpon>UserProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\UserProfile.aspx.designer.cs">
+      <DependentUpon>UserProfile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Users.aspx.cs">
       <DependentUpon>Users.aspx</DependentUpon>

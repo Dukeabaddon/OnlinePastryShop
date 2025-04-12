@@ -1,41 +1,36 @@
-# Project Brief: Online Pastry Shop
+# Project Brief: Pastry Palace Online Shop
 
 ## Overview
-Online Pastry Shop is a complete e-commerce platform designed for pastry businesses to showcase and sell their products online. The system provides a comprehensive admin dashboard for business management and a user-friendly storefront for customers.
+Pastry Palace is an online pastry shop specializing in Filipino baked goods and desserts. The website allows customers to browse products, place orders, and learn about the company's Filipino heritage and traditions.
 
 ## Core Requirements
+- User-friendly website with responsive design
+- Product catalog with Filipino pastries and desserts
+- Online ordering system for Metro Manila area
+- Customer account management
+- Secure payment processing
+- Company information pages (About, Contact)
 
-### Admin Dashboard
-- Complete store management interface
-- Sales analytics and reporting
-- Customer management
-- Order processing and tracking
-- Product inventory management
-- Marketing tools (newsletter, blog, discount management)
-- Customizable dashboard components
+## Business Goals
+- Increase online visibility and sales
+- Showcase Filipino baking heritage and traditions
+- Expand customer base within Metro Manila
+- Build strong brand loyalty through quality products
+- Provide convenient online ordering for customers
 
-### Customer Experience
-- Product browsing and searching
-- Shopping cart functionality
-- User account management
-- Wishlist functionality
-- Product ratings and reviews
-- Checkout process
-- Newsletter subscription
+## Target Audience
+- Filipino residents in Metro Manila
+- Pastry enthusiasts and food lovers
+- People looking for authentic Filipino baked goods
+- Customers seeking convenient online food ordering
 
-## Technical Goals
-- Develop a robust, scalable e-commerce platform
-- Ensure security of user data and transactions
-- Implement responsive design for all device types
-- Optimize database queries for performance
-- Create intuitive UI/UX for both admin and customers
-- Enable customization options for store administrators
-- Integrate with email systems for notifications
+## Timeline
+- Phase 1: Website development and launch (Completed)
+- Phase 2: Marketing and customer acquisition (Current)
+- Phase 3: Expansion to additional areas (Future)
 
-## Success Criteria
-- Complete functioning e-commerce system
-- Administrator ability to manage all aspects of the online store
-- Customers able to browse, select, and purchase products
-- Secure user authentication and data protection
-- Comprehensive reporting and analytics tools
-- Mobile-responsive design 
+## Key Metrics
+- Website traffic and engagement
+- Online order volume and average order value
+- Customer retention and repeat orders
+- Website conversion rate 

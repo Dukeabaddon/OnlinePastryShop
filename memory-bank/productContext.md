@@ -1,7 +1,44 @@
 # Product Context
 
 ## Problem Statement
-Local pastry businesses often lack the technical resources to establish an online presence. They need an affordable, user-friendly e-commerce solution specifically tailored to the needs of bakeries and pastry shops, with features that highlight the unique characteristics of their products and streamline order management.
+Many Filipino pastry shops have limited geographic reach due to physical location constraints. Pastry Palace aims to solve this by providing an online platform that allows customers to easily browse, order, and enjoy authentic Filipino pastries without visiting a physical store.
+
+## Product Purpose
+Pastry Palace's online shop exists to:
+- Extend the bakery's reach throughout Metro Manila
+- Showcase traditional Filipino pastries and their cultural heritage
+- Provide a convenient ordering experience for customers
+- Build a digital community around Filipino baking traditions
+
+## User Experience Goals
+- Create a warm, inviting online presence that reflects Filipino hospitality
+- Design an intuitive interface that showcases product details and ingredients
+- Enable easy browsing of pastry categories and special offerings
+- Simplify the ordering and checkout process
+- Provide clear information about delivery areas and times
+- Showcase the bakery's Filipino heritage and story
+
+## User Journeys
+1. **New Customer**:
+   - Discovers website through search or social media
+   - Browses products and learns about Filipino pastry traditions
+   - Creates an account
+   - Places first order for delivery
+
+2. **Returning Customer**:
+   - Logs into existing account
+   - Quickly finds favorite products
+   - Checks for new/seasonal items
+   - Places repeat order with saved information
+
+3. **Gift Purchaser**:
+   - Searches for gift options
+   - Selects pastry gift boxes
+   - Adds personalized message
+   - Ships to recipient in Metro Manila
+
+## Value Proposition
+Pastry Palace offers authentic Filipino pastries made with traditional recipes and techniques, delivered conveniently to customers' doors in Metro Manila. Our online shop makes it easy to experience the rich flavors and cultural heritage of Filipino baking, whether for personal enjoyment or as gifts for loved ones.
 
 ## Target Users
 
@@ -15,24 +52,6 @@ Local pastry businesses often lack the technical resources to establish an onlin
 - Regular customers who prefer ordering online
 - Gift-givers seeking pastry products for special occasions
 - Corporate clients ordering for events
-
-## User Experience Goals
-
-### Admin Experience
-- Provide comprehensive sales data through a customizable dashboard
-- Simplify product management with batch operations
-- Streamline order processing workflow
-- Enable effective customer communication tools
-- Offer marketing capabilities through newsletters and promotions
-- Allow personalization of the admin interface for efficiency
-
-### Customer Experience
-- Create a delightful browsing experience showcasing pastry products
-- Enable quick product discovery through categories and search
-- Provide detailed product information with appealing imagery
-- Simplify the checkout process for faster conversions
-- Build trust through transparent order status and history
-- Allow product reviews and ratings to assist purchase decisions
 
 ## Business Value
 - Increase sales for pastry businesses by expanding their reach

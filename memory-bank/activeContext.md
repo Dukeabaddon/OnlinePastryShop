@@ -1,6 +1,41 @@
 # Active Context
 
 ## Current Focus
+We are currently updating the address and contact information across the website to reflect the new flagship store location. This includes:
+
+1. Updating the address in the footer of Site.Master
+2. Updating the address in the About.aspx page in the Flagship Store section
+3. Modifying the store hours to indicate closure on Sundays with the message "Closed on Sundays to give time for rest, family, and faith."
+4. Removing the "Special Schedule" link for holiday hours
+5. Updating all contact information to be consistent across the website
+
+## Recent Changes
+- Added responsive design improvements to mobile layout
+- Implemented new product categories on the Menu page
+- Updated images for team members on the About page
+- Fixed newsletter subscription form validation
+
+## Next Steps
+After completing the address and hours update:
+1. Update the contact phone number on the Contact page
+2. Add a notice about the new location on the homepage
+3. Create a map integration with the correct location pinpoint
+4. Update delivery area boundaries based on the new location
+
+## Active Decisions
+- The new store address is: "49 Quirino Hwy, Novaliches, Quezon City, Metro Manila, Philippines"
+- We will remove the "San Lorenzo Shopping Center" reference as it's no longer applicable
+- We will update the phone number to follow Philippines format but with random numbers
+- All delivery service area information will still be limited to Metro Manila
+- Sunday hours will be replaced with a closure notice emphasizing family and faith
+
+## Considerations
+- Ensure consistency of address format across all pages
+- Make sure all location references are updated (header, footer, about page, contact page)
+- Verify that the phone number format follows the Philippines standard (+63 format)
+- Consider updating the map imagery to show the new location
+
+## Current Focus
 
 We are currently focused on enhancing the user experience and completing core pages:
 

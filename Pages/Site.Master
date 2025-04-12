@@ -13,6 +13,11 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
+        /* Add smooth scrolling to the entire site */
+        html {
+            scroll-behavior: smooth;
+        }
+        
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
@@ -72,11 +77,60 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 0.25rem;
         }
+        
+        /* Scroll animation classes */
+        .animate-on-scroll {
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in {
+            opacity: 1;
+        }
+        
+        .slide-up {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-right {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide-left {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .zoom-in {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Initial states for animations */
+        .animate-on-scroll[data-animation="slide-up"] {
+            transform: translateY(50px);
+        }
+        
+        .animate-on-scroll[data-animation="slide-right"] {
+            transform: translateX(-50px);
+        }
+        
+        .animate-on-scroll[data-animation="slide-left"] {
+            transform: translateX(50px);
+        }
+        
+        .animate-on-scroll[data-animation="zoom-in"] {
+            transform: scale(0.95);
+        }
     </style>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
         <!-- Placeholder for additional page-specific styles or scripts -->
     </asp:ContentPlaceHolder>
     <script src="../Scripts/scroll.js" defer></script>
+    <script src="../Scripts/smoothScroll.js" defer></script>
+    <script src="../Scripts/smoothScrollPolyfill.js" defer></script>
 </head>
 <body class="flex flex-col min-h-screen bg-white">
     <form id="form1" runat="server">
@@ -151,7 +205,7 @@
             <div>
                 <h3 class="text-xl font-semibold mb-4 footer-heading">Quick Links</h3>
                 <ul class="space-y-2">
-                    <li><a href="/" class="text-white/80 hover:text-white transition-colors duration-200">Home</a></li>
+                    <li><a href="Default.aspx" class="text-white/80 hover:text-white transition-colors duration-200">Home</a></li>
                     <li><a href="/Menu" class="text-white/80 hover:text-white transition-colors duration-200">Menu</a></li>
                     <li><a href="/About" class="text-white/80 hover:text-white transition-colors duration-200">About Us</a></li>
                     <li><a href="/Contact" class="text-white/80 hover:text-white transition-colors duration-200">Contact</a></li>
@@ -173,9 +227,9 @@
             <div>
                 <h3 class="text-xl font-semibold mb-4 footer-heading">Contact Us</h3>
                 <address class="not-italic">
-                    <p class="mb-2">123 Bakery Street</p>
-                    <p class="mb-2">Sweetville, CA 90210</p>
-                    <p class="mb-2">Phone: (555) 123-4567</p>
+                    <p class="mb-2">49 Quirino Hwy, Novaliches</p>
+                    <p class="mb-2">Quezon City, Metro Manila, Philippines</p>
+                    <p class="mb-2">Phone: +63 917 123 4567</p>
                     <p class="mb-4">Email: info@pastrypalace.com</p>
                 </address>
             </div>
