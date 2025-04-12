@@ -203,7 +203,7 @@
 
             products.forEach(product => {
                 const productCard = document.createElement('div');
-                productCard.className = 'rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-white flex flex-col h-full';
+                productCard.className = 'rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg bg-white flex flex-col h-full';
                 
                 // Determine image source - use base64 if available, otherwise use default
                 let imgSrc = '';
@@ -228,15 +228,26 @@
                         <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">${product.Description || 'No description available'}</p>
                         <div class="text-[#96744F] font-bold text-lg mb-2">₱${parseFloat(product.Price).toFixed(2)}</div>
                         <div class="${stockClass} text-sm mb-4">${stockText}</div>
-                        <button class="mt-auto bg-[#96744F] hover:bg-[#7a5f3e] text-white font-bold py-3 px-4 rounded transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed" 
-                                onclick="viewProduct(${product.ProductId})" 
-                                ${product.StockQuantity <= 0 ? 'disabled' : ''}>
+                        <a href="/Pages/ProductDetails.aspx?id=${product.ProductId}" 
+                           class="mt-auto bg-[#96744F] hover:bg-[#7a5f3e] text-white font-bold py-3 px-4 rounded transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed text-center view-product-btn"
+                           data-product-id="${product.ProductId}" 
+                           ${product.StockQuantity <= 0 ? 'disabled' : ''}>
                             View Product
-                        </button>
+                        </a>
                     </div>
                 `;
                 
                 productsGrid.appendChild(productCard);
+            });
+            
+            // Add event listeners to all view product buttons
+            document.querySelectorAll('.view-product-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute('data-product-id');
+                    console.log(`View button clicked for product ID: ${productId}`);
+                    window.location.href = "/Pages/ProductDetails.aspx?id=" + productId;
+                });
             });
             
             // Make sure products grid is visible and loading spinner is hidden
@@ -246,10 +257,27 @@
 
         // Function to view product details (will be implemented later)
         function viewProduct(productId) {
-            // Just log the action for now
-            console.log(`View product: ${productId}`);
-            // Redirect to product detail page
-            window.location.href = `/Pages/ProductDetails.aspx?id=${productId}`;
+            // Add debugging to verify function is called
+            console.log(`View product function called with ID: ${productId}`);
+            
+            try {
+                // Use both methods - direct window location and timeout as fallback
+                console.log(`Redirecting to product details page`);
+                
+                // Method 1: Direct location assignment
+                window.location.href = "/Pages/ProductDetails.aspx?id=" + productId;
+                
+                // Method 2: Fallback with timeout
+                setTimeout(function() {
+                    console.log("Using fallback navigation");
+                    window.location = "/Pages/ProductDetails.aspx?id=" + productId;
+                }, 100);
+                
+                return false; // Prevent default action
+            } catch (e) {
+                console.error("Error in viewProduct function:", e);
+                alert("Error navigating to product. Please try again.");
+            }
         }
         
         // Function to add product to cart
