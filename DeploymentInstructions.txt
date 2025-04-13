@@ -1,0 +1,60 @@
+# Deployment Instructions for Online Pastry Shop
+
+## Prerequisites
+- .NET Framework 4.8
+- IIS 8.0 or later
+- Oracle Database
+
+## Build Configuration
+
+1. **App_Code Namespace Resolution**:
+   - Ensure the App_Code directory is properly compiled by maintaining the folder structure
+   - Keep all App_Code subdirectories (Models, Repositories, Utils) intact
+
+2. **Required Assembly References**:
+   - System.Web.Extensions
+   - Oracle.ManagedDataAccess
+   - Newtonsoft.Json
+
+3. **Web.config Configuration**:
+   - Verify connection strings are properly set for your environment
+   - Maintain the App_Code compilation settings:
+     ```xml
+     <compilation debug="true" targetFramework="4.8">
+       <buildProviders>
+         <add extension=".cs" type="System.Web.Compilation.CodeFileBuilder" />
+       </buildProviders>
+       <assemblies>
+         <add assembly="System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35"/>
+       </assemblies>
+       <codeSubDirectories>
+         <add directoryName="App_Code"/>
+       </codeSubDirectories>
+     </compilation>
+     ```
+
+4. **Session Management Pages**:
+   - Ensure ExtendSession.aspx and GetSessionTimeout.aspx are deployed
+   - These files are required for the session timeout functionality
+
+## Troubleshooting Common Issues
+
+1. **Namespace Resolution Issues**:
+   - If App_Code namespaces cannot be resolved, try rebuilding the application
+   - Verify the App_Code directory structure is intact
+   - Check that all .cs files in App_Code are set to "Compile" action in project properties
+
+2. **Oracle Connection Issues**:
+   - Test connection with CheckDatabaseConnection.aspx
+   - Verify Oracle client is installed on the server
+   - Confirm connection string points to the correct database instance
+
+3. **Session Timeout Configuration**:
+   - Session timeout settings are in web.config under <sessionState> tag
+   - Client-side timeout warning is configured in sessionTimeoutConfig in Site.Master
+
+## Publish Steps
+1. Build the application in Release mode
+2. Publish using Web Deploy or FTP to your server
+3. Verify all directories and files were deployed correctly
+4. Update connection strings in the deployed web.config if needed 

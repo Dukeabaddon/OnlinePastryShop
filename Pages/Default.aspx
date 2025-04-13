@@ -174,9 +174,21 @@
         }
     </style>
     <script type="text/javascript">
-        function viewProduct(productId) {
+        function viewProduct(productId, event) {
+            // Prevent the default action if event is provided
+            if (event) {
+                event.preventDefault();
+            }
+            
+            // Add debugging logs
+            console.log("viewProduct called with ID:", productId);
+            
+            // Use the correct relative path (without "Pages/" since we're already in the Pages directory)
+            var detailsUrl = "ProductDetails.aspx?id=" + productId;
+            console.log("Redirecting to:", detailsUrl);
+            
             // Redirect to the product details page
-            window.location.href = "/Pages/ProductDetails.aspx?id=" + productId;
+            window.location.href = detailsUrl;
         }
         
         function addToCart(productId) {
@@ -227,10 +239,10 @@
                 </p>
                 
                 <div class="flex flex-wrap gap-4">
-                    <a href="/Menu" class="hero-btn primary-btn bg-yellow-300 text-gray-800 px-8 py-3 rounded font-medium inline-block">
+                    <a href="Menu.aspx" class="hero-btn primary-btn bg-yellow-300 text-gray-800 px-8 py-3 rounded font-medium inline-block">
                         Explore Our Menu
                     </a>
-                    <a href="/About" class="hero-btn secondary-btn border-2 border-white text-white px-8 py-3 rounded font-medium inline-block">
+                    <a href="About.aspx" class="hero-btn secondary-btn border-2 border-white text-white px-8 py-3 rounded font-medium inline-block">
                         Our Story
                     </a>
                 </div>
@@ -288,7 +300,7 @@
                         <span class="text-2xl font-bold text-[#96744F]">₱1,099</span>
                         <span class="ml-2 text-gray-500">(10-inch round)</span>
                     </div>
-                    <button onclick="viewProduct(0); return false;" class="mt-4 px-6 py-3 bg-[#96744F] text-white rounded-lg hover:bg-[#7d6142] transition duration-300 ease-in-out">
+                    <button onclick="viewProduct(31, event)" class="mt-4 px-6 py-3 bg-[#96744F] text-white rounded-lg hover:bg-[#7d6142] transition duration-300 ease-in-out">
                         View Product
                     </button>
                 </div>
@@ -332,7 +344,7 @@
                                 <p class="mt-2 text-gray-600 text-sm h-12 overflow-hidden"><%# Eval("DESCRIPTION") %></p>
                                 <div class="mt-4 flex justify-between items-center">
                                     <span class="text-xl font-semibold text-gray-900">₱<%# Eval("PRICE", "{0:N2}") %></span>
-                                    <button class="add-btn text-white rounded-lg px-3 py-2 flex items-center justify-center shadow-sm" onclick="viewProduct(<%# Eval("PRODUCTID") %>); return false;">
+                                    <button class="add-btn text-white rounded-lg px-3 py-2 flex items-center justify-center shadow-sm" onclick="viewProduct(<%# Eval("PRODUCTID") %>, event)">
                                         View Product
                                     </button>
                                 </div>

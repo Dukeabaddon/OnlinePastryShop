@@ -228,8 +228,8 @@
                         <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">${product.Description || 'No description available'}</p>
                         <div class="text-[#96744F] font-bold text-lg mb-2">₱${parseFloat(product.Price).toFixed(2)}</div>
                         <div class="${stockClass} text-sm mb-4">${stockText}</div>
-                        <button class="mt-auto bg-[#96744F] hover:bg-[#7a5f3e] text-white font-bold py-3 px-4 rounded transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed" 
-                                onclick="viewProduct(${product.ProductId})" 
+                        <button class="view-product-btn mt-auto bg-[#96744F] hover:bg-[#7a5f3e] text-white font-bold py-3 px-4 rounded transition-colors duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed" 
+                                data-product-id="${product.ProductId}" 
                                 ${product.StockQuantity <= 0 ? 'disabled' : ''}>
                             View Product
                         </button>
@@ -237,6 +237,15 @@
                 `;
                 
                 productsGrid.appendChild(productCard);
+                
+                // Add click event listeners directly to the button
+                const viewButton = productCard.querySelector('.view-product-btn');
+                if (viewButton && !viewButton.disabled) {
+                    viewButton.addEventListener('click', function(e) {
+                        const productId = this.getAttribute('data-product-id');
+                        viewProduct(productId, e);
+                    });
+                }
             });
             
             // Make sure products grid is visible and loading spinner is hidden
@@ -245,11 +254,21 @@
         }
 
         // Function to view product details (will be implemented later)
-        function viewProduct(productId) {
+        function viewProduct(productId, event) {
+            // Prevent default action if event is provided
+            if (event) {
+                event.preventDefault();
+            }
+            
             // Just log the action for now
             console.log(`View product: ${productId}`);
+            
+            // Use relative path instead of absolute
+            var detailsUrl = "ProductDetails.aspx?id=" + productId;
+            console.log("Redirecting to:", detailsUrl);
+            
             // Redirect to product detail page
-            window.location.href = `/Pages/ProductDetails.aspx?id=${productId}`;
+            window.location.href = detailsUrl;
         }
         
         // Function to add product to cart
