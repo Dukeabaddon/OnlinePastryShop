@@ -124,8 +124,6 @@
     <Content Include="Pages\Contact.aspx" />
     <Content Include="Pages\Dashboard.aspx" />
     <Content Include="Pages\Default.aspx" />
-    <Content Include="Pages\ExtendSession.aspx" />
-    <Content Include="Pages\GetSessionTimeout.aspx" />
     <Content Include="Pages\Login.aspx" />
     <Content Include="Pages\Menu.aspx" />
     <Content Include="Pages\Orders.aspx" />
@@ -139,18 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\DatabaseUtility.cs" />
-    <Compile Include="App_Code\DatabaseHelper.cs" />
-    <Compile Include="App_Code\CookieManager.cs" />
-    <Compile Include="App_Code\Models\LoginResult.cs" />
-    <Compile Include="App_Code\Models\UserInfo.cs" />
     <Compile Include="App_Code\OracleDbContext.cs" />
-    <Compile Include="App_Code\Repositories\UserRepository.cs" />
-    <Compile Include="App_Code\ToastNotification.cs" />
-    <Compile Include="App_Code\UserRoles.cs" />
-    <Compile Include="App_Code\Utils\AuthManager.cs" />
-    <Compile Include="App_Code\Utils\DatabaseHelper.cs" />
-    <Compile Include="App_Code\Utils\SessionKeys.cs" />
-    <Compile Include="App_Code\Utils\PasswordValidator.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -195,12 +182,6 @@
     </Compile>
     <Compile Include="Pages\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\ExtendSession.aspx.cs">
-      <DependentUpon>ExtendSession.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\GetSessionTimeout.aspx.cs">
-      <DependentUpon>GetSessionTimeout.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
