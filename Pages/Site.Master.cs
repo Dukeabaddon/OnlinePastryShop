@@ -11,7 +11,17 @@ namespace OnlinePastryShop.Scripts
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Page load logic (if needed)
+        }
 
+        protected void lnkLogout_Click(object sender, EventArgs e)
+        {
+            // Clear session variables
+            Session.Clear();
+            Session.Abandon();
+
+            // Redirect to login page
+            Response.Redirect("~/Pages/Login.aspx");
         }
     }
 }

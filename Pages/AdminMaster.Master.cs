@@ -21,6 +21,30 @@ namespace OnlinePastryShop.Pages
             }
         }
 
+        // Admin logout handler - clear session and redirect to Default.aspx
+        protected void lnkAdminLogout_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Clear session variables
+                Session.Clear();
+                Session.Abandon();
+                
+                // Log for debugging
+                System.Diagnostics.Debug.WriteLine("Admin logout executed - session cleared");
+            }
+            catch (Exception ex)
+            {
+                // Log any errors but continue with redirect
+                System.Diagnostics.Debug.WriteLine($"Error during admin logout: {ex.Message}");
+            }
+            finally
+            {
+                // Always redirect to Default.aspx, even if an error occurs
+                Response.Redirect("~/Pages/Default.aspx");
+            }
+        }
+
         private void LoadBadgeCounts()
         {
             // Load pending orders count

@@ -124,6 +124,47 @@
         .animate-on-scroll[data-animation="zoom-in"] {
             transform: scale(0.95);
         }
+        
+        /* User profile dropdown */
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            width: 200px;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 50;
+            opacity: 0;
+            transform: translateY(-10px);
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+        
+        .user-dropdown.show {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+        
+        .user-initials {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--brand-brown);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .user-initials:hover {
+            transform: scale(1.1);
+            background-color: var(--light-brown);
+        }
     </style>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
         <!-- Placeholder for additional page-specific styles or scripts -->
@@ -164,11 +205,39 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                         </svg>
                     </a>
-                    <a href="Login.aspx" class="icon-link text-[var(--brand-brown)] hover:text-[var(--light-brown)] transition-all duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        </svg>
-                    </a>
+                    
+                    <!-- User Icon / Profile -->
+                    <div class="relative" id="userProfileContainer" runat="server">
+                        <% if (Session["UserID"] != null) { %>
+                            <!-- User Profile (Logged In) -->
+                            <div class="user-initials" id="userInitials" runat="server">
+                                <%= Session["UserInitials"] %>
+                            </div>
+                            
+                            <!-- Dropdown Menu -->
+                            <div class="user-dropdown" id="userDropdown">
+                                <div class="py-3 px-4 border-b border-gray-200">
+                                    <p class="font-medium text-gray-900"><%= Session["FirstName"] %> <%= Session["LastName"] %></p>
+                                    <p class="text-sm text-gray-500">Welcome back!</p>
+                                </div>
+                                <div class="py-2">
+                                    <a href="Profile.aspx" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
+                                    <a href="Orders.aspx" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
+                                    <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLogout_Click" 
+                                        CssClass="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Log out
+                                    </asp:LinkButton>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <!-- Login Link (Not Logged In) -->
+                            <a href="Login.aspx" class="icon-link text-[var(--brand-brown)] hover:text-[var(--light-brown)] transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                </svg>
+                            </a>
+                        <% } %>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -243,5 +312,29 @@
     <asp:ContentPlaceHolder ID="ScriptsContent" runat="server">
         <!-- Placeholder for page-specific scripts -->
     </asp:ContentPlaceHolder>
+    
+    <!-- User dropdown toggle script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInitials = document.getElementById('userInitials');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            // Check if elements exist (user is logged in)
+            if (userInitials && userDropdown) {
+                // Toggle dropdown on click
+                userInitials.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    userDropdown.classList.toggle('show');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userInitials.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

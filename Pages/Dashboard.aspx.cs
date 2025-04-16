@@ -57,6 +57,22 @@ namespace OnlinePastryShop.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Check if user is logged in and has admin role
+            if (Session["UserID"] == null)
+            {
+                // User is not logged in, redirect to login page
+                Response.Redirect("Login.aspx");
+                return;
+            }
+            
+            // Check if user has admin role
+            if (Session["UserRole"] == null || Session["UserRole"].ToString() != "Admin")
+            {
+                // User is not an admin, redirect to home page
+                Response.Redirect("Default.aspx");
+                return;
+            }
+
             // Initialize placeholder visibility to avoid null reference exceptions
             if (EmptyLowStockMessage != null)
                 EmptyLowStockMessage.Visible = false;
