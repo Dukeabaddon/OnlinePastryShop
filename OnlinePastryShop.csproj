@@ -110,6 +110,7 @@
     <Content Include="Images\BOMBARDINO.png" />
     <Content Include="Images\bread.png" />
     <Content Include="Images\cake.jpg" />
+    <Content Include="Images\wallpaper.png" />
     <Content Include="Images\crafting.jpg" />
     <Content Include="Images\crim.png" />
     <Content Include="Images\cupcakes.png" />

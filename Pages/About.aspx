@@ -157,7 +157,7 @@
                 <!-- Content -->
                 <div class="w-full md:w-7/12">
                     <p class="text-gray-700 mb-6">
-                        Pastry Palace began as a small family bakery in Manila back in 1997. Our founder Maria Santos inherited the art of pastry making from her grandmother who carried the flavors of Spanish-Filipino fusion baking techniques.
+                        At Royal Pastries, we believe that every pastry tells a story. Our journey began in 2015 when our founder, Maria Santos, decided to bring her family's treasured recipes from her hometown to the bustling streets of Metro Manila.
                     </p>
                     
                     <p class="text-gray-700 mb-6">
@@ -165,7 +165,7 @@
                     </p>
                     
                     <p class="text-gray-700">
-                        Through economic challenges and changing times, our commitment to quality and authenticity has remained unwavering. Today Pastry Palace continues to serve as a cornerstone of Filipino baking excellence.
+                        Through economic challenges and changing times, our commitment to quality and authenticity has remained unwavering. Today Royal Pastries continues to serve as a cornerstone of Filipino baking excellence.
                     </p>
                 </div>
             </div>

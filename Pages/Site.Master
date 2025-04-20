@@ -5,7 +5,7 @@
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pastry Palace - Online Pastry Shop</title>
+    <title>Royal Pastries - Online Pastry Shop</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -180,7 +180,7 @@
             <div class="h-full max-w-7xl mx-auto grid grid-cols-3 items-center">
                 <!-- Left: Logo -->
                 <div class="flex items-center">
-                    <a href="/" class="text-[var(--brand-brown)] text-2xl font-semibold" style="font-family: 'Playfair Display', serif;">Pastry Palace</a>
+                    <a href="/" class="font-playfair text-2xl font-semibold text-[#96744F] hover:text-[#7d603f] transition-all duration-200" style="font-family: 'Playfair Display', serif;">Royal Pastries</a>
                 </div>
                 
                 <!-- Center: Navigation Links -->
@@ -264,9 +264,9 @@
     <!-- Footer -->
     <footer class="w-full bg-[#96744F] py-12 text-white">
         <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Section 1: Pastry Palace -->
-            <div>
-                <h3 class="text-xl font-semibold mb-4 footer-heading">Pastry Palace</h3>
+            <!-- Section 1: Royal Pastries -->
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4 footer-heading">Royal Pastries</h3>
                 <p class="text-white/80 mb-4">Delicious handcrafted pastries made with love and the finest ingredients. Visit us today for a sweet experience!</p>
             </div>
             
@@ -305,7 +305,7 @@
         </div>
         
         <div class="max-w-6xl mx-auto px-4 mt-8 pt-8 border-t border-white/20">
-            <p class="text-center text-white/80">© 2025 Pastry Palace. All rights reserved.</p>
+            <p class="text-center text-white/80">© 2025 Royal Pastries. All rights reserved.</p>
         </div>
     </footer>
 

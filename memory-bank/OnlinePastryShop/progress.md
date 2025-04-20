@@ -6,6 +6,16 @@
   - Login form validation and error handling
   - Standardized SHA256 password hashing implementation
   - Session variable creation on successful login
+  - User registration with validation and database storage
+
+- ✅ User Registration
+  - Complete registration form with all necessary fields
+  - Server-side validation for all input fields
+  - Check for existing username, email, and phone number
+  - Secure password hashing using SHA256
+  - Success notification with automatic tab switching to login
+  - Clear error messaging for validation failures
+  - Proper database integration with parameterized queries
 
 - ✅ Role-Based Access Control
   - Role checking from database (Admin/Customer)
@@ -28,6 +38,7 @@
   - CSS styling for user UI elements
   - JavaScript for dropdown toggling
   - Conditional rendering based on session state
+  - Toast notifications for registration success
 
 - ✅ Logout Functionality
   - Session clearing in lnkLogout_Click handler (Site.Master.cs)
@@ -37,10 +48,9 @@
   - Exception handling in the logout process
 
 - ✅ Password Hashing
-  - Consistent SHA256 hashing for all passwords
-  - Removal of hardcoded special cases
+  - Consistent SHA256 hashing with hex encoding for all passwords
   - Well-documented code for maintainability
-  - Identified future security enhancements
+  - Fixed inconsistency between login and registration hashing methods
 
 ## In Progress
 - 🔄 Password Security Enhancement

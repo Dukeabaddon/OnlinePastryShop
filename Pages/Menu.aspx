@@ -10,7 +10,7 @@
     </asp:ScriptManager>
 
     <!-- Hero Section -->
-    <section class="relative bg-cover bg-center h-[300px] flex items-center justify-center text-white text-center mb-8" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Images/hero-section.jpg');">
+    <section class="relative bg-cover h-[300px] flex items-center justify-center text-white text-center mb-8" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/Images/wallpaper.png'); background-size: cover; background-position: center bottom; background-repeat: no-repeat;">
         <div class="max-w-3xl px-5">
             <h1 class="text-4xl font-semibold mb-4">Our Delicious Pastries</h1>
             <p class="text-xl">Explore our wide selection of freshly baked pastries made with love and the finest ingredients</p>

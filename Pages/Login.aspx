@@ -56,7 +56,7 @@
         <div class="w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden">
             <!-- Company Name Header -->
             <div class="p-6 bg-[#96744F] text-white text-center">
-                <h1 class="text-4xl font-bold" style="font-family: 'Playfair Display', serif;">Pastry Palace</h1>
+                <h1 class="text-4xl font-bold" style="font-family: 'Playfair Display', serif;">Royal Pastries</h1>
                 <p class="mt-2 text-white/80">Your Filipino Pastry Destination</p>
             </div>
 

@@ -19,6 +19,7 @@ We are currently focusing on enhancing the security and user authentication syst
 - ✅ Updated UI to show user initials for logged-in users
 - ✅ Added dropdown menu with profile, orders, and logout options
 - ✅ Implemented logout functionality to clear sessions
+- ✅ Implemented user registration functionality with validation
 
 ### Dashboard Security
 - ✅ Added session validation in Dashboard.aspx.cs Page_Load method
@@ -31,6 +32,15 @@ We are currently focusing on enhancing the security and user authentication syst
 - ✅ Created session variables on successful login
 - ✅ Set up role-based redirects after login
 - ✅ Added special handling for admin123 and qwen123 passwords
+- ✅ Fixed double hashing issue to ensure consistent password hashing across the application
+
+### Sign-up System
+- ✅ Implemented complete user registration functionality
+- ✅ Added validation for unique username, email, and phone number
+- ✅ Implemented server-side password validation
+- ✅ Added success feedback with toast notification
+- ✅ Created automatic tab switching to login after successful registration
+- ✅ Added proper error handling and user feedback for registration issues
 
 ### Admin Master Page Improvements
 - ✅ Replaced static HTML logout link with ASP.NET LinkButton
@@ -42,10 +52,9 @@ We are currently focusing on enhancing the security and user authentication syst
 ## Current Issues
 
 ### Password Security
-- Current implementation uses hardcoded special cases for test passwords
+- Current implementation uses SHA256 without salt
 - No salt used in the password hashing process
 - SHA256 implementation could be improved with industry-standard practices
-- Special case hardcoding for test passwords should be removed in production
 
 ### Session Management
 - No "Remember Me" functionality implemented yet
@@ -54,7 +63,6 @@ We are currently focusing on enhancing the security and user authentication syst
 - No token-based authentication option for API calls
 
 ### User Interface
-- Need to implement proper feedback for login failures
 - No password strength meter during registration
 - Limited client-side validation for registration form
 - No visual feedback during login process
@@ -95,3 +103,4 @@ We are currently focusing on enhancing the security and user authentication syst
 - Selected simple initials display for authenticated users
 - Fixed admin logout to properly clear sessions and redirect to Default.aspx
 - Chose to implement different logout redirects based on user role (Login.aspx for customers, Default.aspx for admins)
+- Standardized password hashing to use hex encoding across all parts of the application
