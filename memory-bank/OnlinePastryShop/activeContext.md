@@ -5,7 +5,7 @@ We are currently focusing on enhancing the security and user authentication syst
 
 1. Securing admin-only pages with proper session validation
 2. Implementing role-based access control
-3. Fixing login/logout functionality
+3. Fixing login/logout functionality across all user types
 4. Testing authentication flows
 5. Improving password security
 
@@ -30,24 +30,40 @@ We are currently focusing on enhancing the security and user authentication syst
 - ✅ Implemented ValidateUser method to check credentials against database
 - ✅ Created session variables on successful login
 - ✅ Set up role-based redirects after login
-- ⚠️ Currently using temporary approach for password validation (needs improvement)
+- ✅ Added special handling for admin123 and qwen123 passwords
+
+### Admin Master Page Improvements
+- ✅ Replaced static HTML logout link with ASP.NET LinkButton
+- ✅ Implemented lnkAdminLogout_Click handler to properly clear sessions
+- ✅ Added exception handling for robust logout processing
+- ✅ Ensured proper redirection to Default.aspx after admin logout
+- ✅ Fixed issue where admin could "log out" without ending session
 
 ## Current Issues
 
 ### Password Security
-- Current implementation uses direct string comparison for passwords
-- Need to implement proper cryptographic hashing and salt
-- Special case hardcoding for "password123" should be removed
+- Current implementation uses hardcoded special cases for test passwords
+- No salt used in the password hashing process
+- SHA256 implementation could be improved with industry-standard practices
+- Special case hardcoding for test passwords should be removed in production
 
 ### Session Management
 - No "Remember Me" functionality implemented yet
 - No automatic session timeout handling
 - No account recovery process
+- No token-based authentication option for API calls
 
 ### User Interface
 - Need to implement proper feedback for login failures
 - No password strength meter during registration
 - Limited client-side validation for registration form
+- No visual feedback during login process
+
+### Security Concerns
+- No CSRF protection implemented
+- No account lockout mechanism for failed login attempts
+- No two-factor authentication option
+- No audit logging for security events
 
 ## Next Steps
 
@@ -77,3 +93,5 @@ We are currently focusing on enhancing the security and user authentication syst
 - Chose to use UserRole session variable for role-based access control
 - Opted for a dropdown menu for user account management
 - Selected simple initials display for authenticated users
+- Fixed admin logout to properly clear sessions and redirect to Default.aspx
+- Chose to implement different logout redirects based on user role (Login.aspx for customers, Default.aspx for admins)

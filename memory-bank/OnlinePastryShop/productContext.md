@@ -25,6 +25,7 @@ The Online Pastry Shop is a web application designed to streamline the process o
 - **Responsive Design**: Accessible from any device
 - **Account Management**: Easy profile and order history access
 - **Product Discovery**: Featured items and search functionality
+- **Secure Authentication**: Safe login/logout process with clear user state
 
 ### Administrator Experience
 - **Comprehensive Dashboard**: Key metrics and pending orders at a glance
@@ -32,6 +33,7 @@ The Online Pastry Shop is a web application designed to streamline the process o
 - **Inventory Control**: Easy product addition, removal, and updates
 - **User Management**: Tools to manage customer accounts and admin access
 - **Sales Reporting**: Analytics on sales performance
+- **Secure Admin Controls**: Protected access to administrative functions
 
 ## Key Features
 - User authentication and role-based access
@@ -41,6 +43,16 @@ The Online Pastry Shop is a web application designed to streamline the process o
 - Admin dashboard with sales metrics
 - Order management system
 - Product inventory management
+- Secure session management
+
+## User Roles
+- **Customer**: Regular users who browse products and place orders
+  - Can access: Homepage, Product Catalog, Shopping Cart, Order History, Profile
+  - Cannot access: Admin Dashboard, Inventory Management
+  
+- **Administrator**: Shop staff with enhanced permissions
+  - Can access: All customer features plus Admin Dashboard, Order Management, Inventory Control
+  - Has special UI with AdminMaster.Master template
 
 ## Stakeholders
 - **Customers**: People looking to purchase pastries online

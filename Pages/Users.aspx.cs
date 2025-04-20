@@ -1991,7 +1991,12 @@ namespace OnlinePastryShop.Pages
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 byte[] hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < hashedBytes.Length; i++)
+                {
+                    builder.Append(hashedBytes[i].ToString("x2"));
+                }
+                return builder.ToString();
             }
         }
 

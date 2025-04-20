@@ -67,10 +67,151 @@ namespace OnlinePastryShop.Pages
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            // Registration functionality will be implemented later
-            // For now, show a message
-            pnlRegisterError.Visible = true;
-            litRegisterError.Text = "Registration functionality is coming soon!";
+            try
+            {
+                // Get form data
+                string firstName = txtFirstName.Text.Trim();
+                string lastName = txtLastName.Text.Trim();
+                string username = txtUsername.Text.Trim();
+                string email = txtEmail.Text.Trim();
+                string phoneNumber = txtPhoneNumber.Text.Trim();
+                string password = txtPassword.Text;
+                
+                // Validate form data
+                if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || 
+                    string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || 
+                    string.IsNullOrEmpty(phoneNumber) || string.IsNullOrEmpty(password))
+                {
+                    ShowError("All fields are required.");
+                    return;
+                }
+                
+                // Server-side password validation
+                if (password.Length < 8)
+                {
+                    ShowError("Password must be at least 8 characters long.");
+                    return;
+                }
+                
+                using (OracleConnection conn = new OracleConnection(GetConnectionString()))
+                {
+                    conn.Open();
+                    
+                    // Check for existing username, email, or phone
+                    string checkQuery = @"SELECT 
+                                            CASE 
+                                                WHEN USERNAME = :Username THEN 'Username' 
+                                                WHEN EMAIL = :Email THEN 'Email' 
+                                                WHEN PHONENUMBER = :PhoneNumber THEN 'Phone' 
+                                                ELSE NULL 
+                                            END AS ConflictField
+                                        FROM AARON_IPT.USERS
+                                        WHERE USERNAME = :Username OR EMAIL = :Email OR PHONENUMBER = :PhoneNumber
+                                        AND ROWNUM = 1";
+                    
+                    using (OracleCommand cmd = new OracleCommand(checkQuery, conn))
+                    {
+                        cmd.Parameters.Add(new OracleParameter("Username", OracleDbType.Varchar2)).Value = username;
+                        cmd.Parameters.Add(new OracleParameter("Email", OracleDbType.Varchar2)).Value = email;
+                        cmd.Parameters.Add(new OracleParameter("PhoneNumber", OracleDbType.Varchar2)).Value = phoneNumber;
+                        
+                        object result = cmd.ExecuteScalar();
+                        
+                        if (result != null && result != DBNull.Value)
+                        {
+                            string conflictField = result.ToString();
+                            
+                            if (conflictField == "Username")
+                            {
+                                ShowError("Username is already taken. Please choose a different username.");
+                            }
+                            else if (conflictField == "Email")
+                            {
+                                ShowError("Email is already registered. Please use a different email address.");
+                            }
+                            else if (conflictField == "Phone")
+                            {
+                                ShowError("Phone number is already registered. Please use a different phone number.");
+                            }
+                            else
+                            {
+                                ShowError("Registration failed. Please try again with different information.");
+                            }
+                            
+                            return;
+                        }
+                        
+                        // If we reach here, the user can be registered
+                        string hashedPassword = HashPassword(password);
+                        string role = "Customer";
+                        int isActive = 1;
+                        
+                        // Insert the new user
+                        string insertQuery = @"INSERT INTO AARON_IPT.USERS 
+                                            (USERNAME, EMAIL, FIRSTNAME, LASTNAME, PASSWORDHASH, PHONENUMBER, ROLE, ISACTIVE, DATECREATED) 
+                                            VALUES 
+                                            (:Username, :Email, :FirstName, :LastName, :PasswordHash, :PhoneNumber, :Role, :IsActive, CURRENT_TIMESTAMP)";
+                        
+                        using (OracleCommand insertCmd = new OracleCommand(insertQuery, conn))
+                        {
+                            insertCmd.Parameters.Add(new OracleParameter("Username", OracleDbType.Varchar2)).Value = username;
+                            insertCmd.Parameters.Add(new OracleParameter("Email", OracleDbType.Varchar2)).Value = email;
+                            insertCmd.Parameters.Add(new OracleParameter("FirstName", OracleDbType.Varchar2)).Value = firstName;
+                            insertCmd.Parameters.Add(new OracleParameter("LastName", OracleDbType.Varchar2)).Value = lastName;
+                            insertCmd.Parameters.Add(new OracleParameter("PasswordHash", OracleDbType.Varchar2)).Value = hashedPassword;
+                            insertCmd.Parameters.Add(new OracleParameter("PhoneNumber", OracleDbType.Varchar2)).Value = phoneNumber;
+                            insertCmd.Parameters.Add(new OracleParameter("Role", OracleDbType.Varchar2)).Value = role;
+                            insertCmd.Parameters.Add(new OracleParameter("IsActive", OracleDbType.Int32)).Value = isActive;
+                            
+                            int rowsAffected = insertCmd.ExecuteNonQuery();
+                            
+                            if (rowsAffected > 0)
+                            {
+                                // Registration successful
+                                ShowSuccess("Registration successful! You can now log in with your credentials.");
+                                
+                                // Clear registration form
+                                txtFirstName.Text = string.Empty;
+                                txtLastName.Text = string.Empty;
+                                txtUsername.Text = string.Empty;
+                                txtEmail.Text = string.Empty;
+                                txtPhoneNumber.Text = string.Empty;
+                                txtPassword.Text = string.Empty;
+                                txtConfirmPassword.Text = string.Empty;
+                                
+                                // Show toast notification and switch to login tab
+                                string script = @"
+                                    showLoginTab();
+                                    
+                                    // Create and show toast notification
+                                    const toast = document.createElement('div');
+                                    toast.className = 'fixed bottom-4 right-4 px-4 py-2 bg-green-500 text-white rounded-lg shadow-lg z-50';
+                                    toast.innerHTML = 'Registration successful!';
+                                    document.body.appendChild(toast);
+                                    
+                                    // Fade out and remove after 3 seconds
+                                    setTimeout(() => {
+                                        toast.style.transition = 'opacity 0.5s';
+                                        toast.style.opacity = '0';
+                                        setTimeout(() => toast.remove(), 500);
+                                    }, 3000);
+                                ";
+                                
+                                ScriptManager.RegisterStartupScript(this, GetType(), "RegistrationSuccess", script, true);
+                            }
+                            else
+                            {
+                                ShowError("Registration failed. Please try again later.");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Registration error: {ex.Message}");
+                ShowError("An error occurred during registration. Please try again later.");
+            }
         }
 
         private bool ValidateUser(string usernameOrEmail, string password, out int userId, out string firstName, out string lastName, out string role)
@@ -142,18 +283,7 @@ namespace OnlinePastryShop.Pages
 
         private string HashPassword(string password)
         {
-            // Special case for testing/development
-            if (password == "admin123")
-            {
-                return "a319cad4db59838d112f5a8acc0fafb49bbdf9fe73c070680130bf44fe705abe";
-            }
-            // Keep the previous special case for compatibility
-            else if (password == "qwen123")
-            {
-                return "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";
-            }
-
-            // Regular password hashing
+            // Regular password hashing with SHA256
             using (SHA256 sha256 = SHA256.Create())
             {
                 // Convert the input string to a byte array and compute the hash
@@ -190,6 +320,20 @@ namespace OnlinePastryShop.Pages
             }
             
             return initials.ToUpper();
+        }
+
+        private void ShowError(string message)
+        {
+            pnlRegisterError.CssClass = "mb-5 p-4 bg-red-50 text-red-500 rounded-md";
+            litRegisterError.Text = message;
+            pnlRegisterError.Visible = true;
+        }
+
+        private void ShowSuccess(string message)
+        {
+            pnlRegisterError.CssClass = "mb-5 p-4 bg-green-50 text-green-500 rounded-md";
+            litRegisterError.Text = message;
+            pnlRegisterError.Visible = true;
         }
     }
 }

@@ -1,0 +1,43 @@
+# WaterStation Project Rules
+
+## Naming Conventions
+- ASP.NET controls follow camelCase with descriptive names (e.g., loginUsername, btnLoginSubmit)
+- JavaScript functions follow camelCase (e.g., showToast, openModal)
+- CSS classes use kebab-case (e.g., user-sidebar, modal-content)
+
+## Code Patterns
+- Use ASP.NET WebMethods for AJAX functionality
+- Toast notifications should be used for all user feedback instead of browser alerts
+- All database operations should use parameterized queries for security
+- Client-side validation should be complemented with server-side validation
+
+## Project Structure
+- Master pages (Site.Master, AdminMaster.Master) contain common layout elements
+- Content pages extend master pages for specific functionality
+- JavaScript functionality is included at the bottom of pages or in separate files
+- CSS styles are defined in external stylesheets or in style blocks in the master page
+
+## Authentication Flow
+1. User submits login form (either through server-side or client-side processing)
+2. Credentials are validated against the Oracle database
+3. On success, user session is created and user is redirected
+4. On failure, user is shown error message via toast notification
+
+## Database Conventions
+- Oracle 11g database with Oracle.ManagedDataAccess.Client provider
+- Connection string stored in Web.config
+- Parameterized queries for all database operations
+- Proper exception handling for database errors
+
+## UI Standards
+- Responsive design that works on mobile and desktop
+- Consistent color scheme and styling
+- Modal dialogs for forms and interactive elements
+- Toast notifications for user feedback
+- Font Awesome icons for UI elements
+
+## Development Practices
+- Test database connections and queries before implementation
+- Validate both client-side and server-side
+- Use proper error handling and user feedback
+- Keep code modular and maintainable

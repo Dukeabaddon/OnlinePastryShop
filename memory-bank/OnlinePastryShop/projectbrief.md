@@ -12,14 +12,17 @@ The Online Pastry Shop is a web application that allows customers to browse, ord
 6. Responsive design for mobile and desktop
 
 ## Current Implementation Status
-- Basic UI with master page template
-- User authentication system (login/logout) implemented
-- Role-based access control for Admin/Customer users
-- Dashboard page for administrators
+- Basic UI with master page templates (Site.Master for customers, AdminMaster.Master for admins)
+- User authentication system (login/logout) fully implemented for both user types
+- Role-based access control for Admin/Customer users with proper session validation
+- Dashboard page for administrators with session validation
 - Database connection and basic queries in place
+- Proper session termination for both customer and admin logout
+- UI elements that change based on authentication state
 
 ## Current Focus
-1. Completing session validation for admin-only areas
-2. Ensuring proper redirection based on user roles
-3. Testing login/logout functionality
-4. Securing sensitive pages from unauthorized access
+1. Improving password security with salted hashing and removing hardcoded test cases
+2. Adding more user profile functionality and account management
+3. Implementing shopping cart and product catalog features
+4. Enhancing the admin dashboard with more functionality
+5. Adding "Remember Me" and account recovery options
