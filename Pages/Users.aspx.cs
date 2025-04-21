@@ -752,10 +752,11 @@ namespace OnlinePastryShop.Pages
                 string userId = e.CommandArgument.ToString();
                 Debug.WriteLine($"Command for User ID: {userId}");
 
-                if (string.IsNullOrEmpty(userId))
+                // Enhanced validation - silently ignore empty commands
+                if (string.IsNullOrEmpty(e.CommandName) || string.IsNullOrEmpty(userId))
                 {
-                    ShowError("Invalid user ID.");
-                    return;
+                    Debug.WriteLine("Ignoring ItemCommand with empty command name or user ID");
+                    return; // Exit without showing error message
                 }
 
                 // Store the user ID for subsequent operations - both in instance variable and ViewState for persistence
@@ -884,13 +885,43 @@ namespace OnlinePastryShop.Pages
 
         protected void tabBasicInfo_Click(object sender, EventArgs e)
         {
-            SetActiveTab("BasicInfo");
+            try
+            {
+                // No need to load additional data for basic info tab
+                SetActiveTab("BasicInfo");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR in tabBasicInfo_Click: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                // Non-critical error, don't show to user
+            }
         }
 
         protected void tabOrderHistory_Click(object sender, EventArgs e)
         {
-            SetActiveTab("OrderHistory");
-            LoadOrderHistory(selectedUserId);
+            try
+            {
+                // Get the user ID from ViewState
+                string userId = ViewState["SelectedUserId"] as string;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    selectedUserId = Convert.ToInt32(userId);
+                    SetActiveTab("OrderHistory");
+                    LoadOrderHistory(selectedUserId);
+                }
+                else
+                {
+                    // Handle the case where we don't have a user ID
+                    ShowError("Invalid user ID.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR in tabOrderHistory_Click: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                ShowError("Error loading order history.");
+            }
         }
 
         protected void btnClosePasswordReset_Click(object sender, EventArgs e)
@@ -1278,71 +1309,70 @@ namespace OnlinePastryShop.Pages
             {
                 System.Diagnostics.Debug.WriteLine($"Setting active tab to: {tabName}");
 
-                // Check if controls exist before trying to manipulate them
+                // Get the tab buttons - these are directly in the user details panel
                 LinkButton tabBasicInfo = FindControl("tabBasicInfo") as LinkButton;
-                LinkButton tabActivities = FindControl("tabActivities") as LinkButton;
-                LinkButton tabOrders = FindControl("tabOrders") as LinkButton;
+                LinkButton tabOrderHistory = FindControl("tabOrderHistory") as LinkButton;
 
-                Panel contentBasicInfo = FindControl("contentBasicInfo") as Panel;
-                Panel contentActivities = FindControl("contentActivities") as Panel;
-                Panel contentOrders = FindControl("contentOrders") as Panel;
+                // Get the content panels - these are directly in the user details panel
+                Panel pnlBasicInfo = null;
+                Panel pnlOrderHistory = null;
 
-                // Reset all tabs to inactive state - using proper type casting for CssClass
-                if (tabBasicInfo != null) tabBasicInfo.CssClass = tabBasicInfo.CssClass.Replace(" active", "");
-                if (tabActivities != null) tabActivities.CssClass = tabActivities.CssClass.Replace(" active", "");
-                if (tabOrders != null) tabOrders.CssClass = tabOrders.CssClass.Replace(" active", "");
+                // First find the user details panel
+                if (pnlUserDetails != null)
+                {
+                    // Find panels within the user details panel
+                    pnlBasicInfo = pnlUserDetails.FindControl("pnlBasicInfo") as Panel;
+                    pnlOrderHistory = pnlUserDetails.FindControl("pnlOrderHistory") as Panel;
+                    
+                    System.Diagnostics.Debug.WriteLine($"Found panels in user details: BasicInfo={pnlBasicInfo != null}, OrderHistory={pnlOrderHistory != null}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("User details panel (pnlUserDetails) not found!");
+                }
+
+                // Reset all tabs to default style
+                if (tabBasicInfo != null)
+                    tabBasicInfo.CssClass = "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300";
+                
+                if (tabOrderHistory != null)
+                    tabOrderHistory.CssClass = "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300";
 
                 // Hide all content panels
-                if (contentBasicInfo != null) contentBasicInfo.Visible = false;
-                if (contentActivities != null) contentActivities.Visible = false;
-                if (contentOrders != null) contentOrders.Visible = false;
+                if (pnlBasicInfo != null)
+                    pnlBasicInfo.Visible = false;
+                
+                if (pnlOrderHistory != null)
+                    pnlOrderHistory.Visible = false;
 
-                // Set the selected tab and content to active
+                // Set the selected tab and content
                 switch (tabName)
                 {
                     case "BasicInfo":
-                        if (tabBasicInfo != null) tabBasicInfo.CssClass += " active";
-                        if (contentBasicInfo != null) contentBasicInfo.Visible = true;
+                        if (tabBasicInfo != null)
+                            tabBasicInfo.CssClass = "inline-block p-4 text-[#D43B6A] border-b-2 border-[#D43B6A] rounded-t-lg";
+                        if (pnlBasicInfo != null)
+                            pnlBasicInfo.Visible = true;
+                        System.Diagnostics.Debug.WriteLine("Tab BasicInfo set to active.");
                         break;
-                    case "Activities":
-                        if (tabActivities != null) tabActivities.CssClass += " active";
-                        if (contentActivities != null) contentActivities.Visible = true;
-
-                        // Load activities data here if needed
-                        LoadUserActivities(selectedUserId);
+                    
+                    case "OrderHistory":
+                        if (tabOrderHistory != null)
+                            tabOrderHistory.CssClass = "inline-block p-4 text-[#D43B6A] border-b-2 border-[#D43B6A] rounded-t-lg";
+                        if (pnlOrderHistory != null)
+                            pnlOrderHistory.Visible = true;
+                        System.Diagnostics.Debug.WriteLine("Tab OrderHistory set to active.");
                         break;
-                    case "Orders":
-                        if (tabOrders != null) tabOrders.CssClass += " active";
-                        if (contentOrders != null) contentOrders.Visible = true;
-
-                        // Load orders data here if needed
-                        LoadUserOrders(selectedUserId);
-                        break;
+                    
                     default:
                         // Default to Basic Info
-                        if (tabBasicInfo != null) tabBasicInfo.CssClass += " active";
-                        if (contentBasicInfo != null) contentBasicInfo.Visible = true;
+                        if (tabBasicInfo != null)
+                            tabBasicInfo.CssClass = "inline-block p-4 text-[#D43B6A] border-b-2 border-[#D43B6A] rounded-t-lg";
+                        if (pnlBasicInfo != null)
+                            pnlBasicInfo.Visible = true;
+                        System.Diagnostics.Debug.WriteLine("Default tab BasicInfo set to active.");
                         break;
                 }
-
-                // As a fallback, use JavaScript to handle tab switching
-                string scriptKey = "SetActiveTab_" + tabName;
-                string script = $@"
-                    if (document.querySelector('.user-tabs .active')) {{
-                        document.querySelector('.user-tabs .active').classList.remove('active');
-                    }}
-                    if (document.querySelector('.tab-content .active')) {{
-                        document.querySelector('.tab-content .active').classList.remove('active');
-                    }}
-                    if (document.getElementById('tab{tabName}')) {{
-                        document.getElementById('tab{tabName}').classList.add('active');
-                    }}
-                    if (document.getElementById('content{tabName}')) {{
-                        document.getElementById('content{tabName}').classList.add('active');
-                    }}";
-
-                ScriptManager.RegisterStartupScript(this, GetType(), scriptKey, script, true);
-                System.Diagnostics.Debug.WriteLine($"Tab {tabName} set to active.");
             }
             catch (Exception ex)
             {
@@ -1665,6 +1695,11 @@ namespace OnlinePastryShop.Pages
             try
             {
                 System.Diagnostics.Debug.WriteLine($"Showing details for user ID: {userId}");
+                
+                // Store the user ID both in instance variable and ViewState for persistence
+                selectedUserId = Convert.ToInt32(userId);
+                ViewState["SelectedUserId"] = userId;
+                System.Diagnostics.Debug.WriteLine($"Set selectedUserId={selectedUserId} and stored in ViewState");
 
                 using (OracleConnection conn = new OracleConnection(GetConnectionString()))
                 {
@@ -1689,9 +1724,6 @@ namespace OnlinePastryShop.Pages
                         {
                             if (reader.Read())
                             {
-                                // Store userId for use in other operations
-                                selectedUserId = Convert.ToInt32(userId);
-
                                 // Load user details into the modal
                                 string username = reader["USERNAME"].ToString();
                                 string email = reader["EMAIL"].ToString();

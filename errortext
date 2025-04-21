@@ -6,444 +6,85 @@
 'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
 'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xml\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
 'iisexpress.exe' (CLR v4.0.30319: Domain 2): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\mscorlib\v4.0_4.0.0.0__b77a5c561934e089\mscorlib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.Web\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.ApplicationServices\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.ApplicationServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Configuration\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Configuration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xml\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.Build.Utilities.v4.0\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.Build.Utilities.v4.0.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Caching\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Runtime.Caching.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.Web\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.ApplicationServices\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.ApplicationServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Configuration\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Configuration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xml\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.Build.Utilities.v4.0\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.Build.Utilities.v4.0.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Caching\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Runtime.Caching.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
 'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Caching\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Runtime.Caching.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
 'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.Build.Utilities.v4.0\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.Build.Utilities.v4.0.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.JScript\v4.0_10.0.0.0__b03f5f7f11d50a3a\Microsoft.JScript.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\8e17a7a2\00997024_7255d601\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.VisualStudio.Web.PageInspector.Loader\v4.0_1.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.Web.PageInspector.Loader.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Web Tools\Browser Link\Microsoft.WebTools.BrowserLink.Runtime.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Code.qt-uvgph.dll'. 
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\a84c6bbb\004b28b6_7353db01\Oracle.ManagedDataAccess.dll'. Module was built without symbols.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_global.asax.xf0pfy4h.dll'. 
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\861c3cb5\7fd8f722_30a5db01\OnlinePastryShop.dll'. Symbols loaded.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Activation\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Activation.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Extensions\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Web Tools\Browser Link\Microsoft.WebTools.BrowserLink.Tracing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Internals\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Internals.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Numerics\v4.0_4.0.0.0__b77a5c561934e089\System.Numerics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Numerics\v4.0_4.0.0.0__b77a5c561934e089\System.Numerics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel\v4.0_4.0.0.0__b77a5c561934e089\System.ServiceModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\SMDiagnostics\v4.0_4.0.0.0__b77a5c561934e089\SMDiagnostics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xaml.Hosting\v4.0_4.0.0.0__31bf3856ad364e35\System.Xaml.Hosting.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.CSharp\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.CSharp.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Services\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.Services.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Drawing\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Drawing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.EnterpriseServices\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.EnterpriseServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.IdentityModel\v4.0_4.0.0.0__b77a5c561934e089\System.IdentityModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Serialization\v4.0_4.0.0.0__b77a5c561934e089\System.Runtime.Serialization.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Web\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Activities\v4.0_4.0.0.0__31bf3856ad364e35\System.Activities.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Activities\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Activities.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.WorkflowServices\v4.0_4.0.0.0__31bf3856ad364e35\System.WorkflowServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Data.DataSetExtensions\v4.0_4.0.0.0__b77a5c561934e089\System.Data.DataSetExtensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xml.Linq\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.Linq.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ComponentModel.DataAnnotations\v4.0_4.0.0.0__31bf3856ad364e35\System.ComponentModel.DataAnnotations.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.DynamicData\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.DynamicData.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\78677323\00ed29f6_0a0cda01\Microsoft.Bcl.AsyncInterfaces.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\0dbc9335\00c37916_0ce7d501\System.Buffers.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\3b38e202\00fc9f49_9e41d901\System.Diagnostics.DiagnosticSource.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\58a93d22\00bbc411_cabdda01\System.Formats.Asn1.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\c2c4ab21\005f960a_8c62d801\System.Memory.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\6a1fa501\001424c9_50ecd301\System.Numerics.Vectors.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\66635a18\00dd8a2b_9ec7d701\System.Runtime.CompilerServices.Unsafe.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\0e81cd37\00ce1ffc_0a0cda01\System.Text.Encodings.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\0009ddf4\009fce41_8e08db01\System.Text.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\b99f873e\00c37916_0ce7d501\System.Threading.Tasks.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ValueTuple\v4.0_4.0.0.0__cc7b13ffcd2ddd51\System.ValueTuple.dll'. Module was built without symbols.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Web_ppxwot3f.dll'. 
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.VisualBasic\v4.0_10.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualBasic.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.RegularExpressions\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.RegularExpressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.JScript\v4.0_10.0.0.0__b03f5f7f11d50a3a\Microsoft.JScript.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\8e17a7a2\00997024_7255d601\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.VisualStudio.Web.PageInspector.Loader\v4.0_1.0.0.0__b03f5f7f11d50a3a\Microsoft.VisualStudio.Web.PageInspector.Loader.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Web Tools\Browser Link\Microsoft.WebTools.BrowserLink.Runtime.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Code.swm4xxam.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\a84c6bbb\004b28b6_7353db01\Oracle.ManagedDataAccess.dll'. Module was built without symbols.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_global.asax.zvwis28y.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\861c3cb5\0ddeda83_55b2db01\OnlinePastryShop.dll'. Symbols loaded.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Activation\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Activation.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Extensions\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Web Tools\Browser Link\Microsoft.WebTools.BrowserLink.Tracing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Drawing\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Drawing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Internals\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Internals.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Mobile\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.Mobile.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.RegularExpressions\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.RegularExpressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
 'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.RegularExpressions\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.RegularExpressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.EnterpriseServices\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.EnterpriseServices.Wrapper.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'A_5de79124_0d21_48d6_a3b0_1a4d521402df'. 
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Entity\v4.0_4.0.0.0__b77a5c561934e089\System.Web.Entity.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Design\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Design.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Design\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Design.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Data.Services.Design\v4.0_4.0.0.0__b77a5c561934e089\System.Data.Services.Design.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.Build.Framework\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.Build.Framework.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Runtime.dll'. Module was built without symbols.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Web_rj110mqf.dll'. 
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Web_lxp01doi.dll'. 
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Mobile\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.Mobile.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xaml\v4.0_4.0.0.0__b77a5c561934e089\System.Xaml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.Transactions\v4.0_4.0.0.0__b77a5c561934e089\System.Transactions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-OracleConnection string not found in Web.config, using backup
-Database connection successful.
-------- Dashboard Page Load -------
-EmptyLowStockMessage control exists: True
-EmptyPendingOrdersMessage control exists: True
-LowStockRepeater control exists: True
-PendingOrdersRepeater control exists: True
-==== Loading Dashboard Data ====
-Set card titles for today: Today's Revenue, Today's Orders
-OracleConnection string not found in Web.config, using backup
-Low stock products query: 
-                        SELECT 
-                            P.PRODUCTID,
-                            P.NAME,
-                            P.STOCKQUANTITY,
-                            NVL(C.NAME, 'Uncategorized') AS CategoryName,
-                            P.PRICE
-                        FROM 
-                            PRODUCTS P
-                        LEFT JOIN 
-                            PRODUCTCATEGORIES PC ON P.PRODUCTID = PC.PRODUCTID
-                        LEFT JOIN 
-                            CATEGORIES C ON PC.CATEGORYID = C.CATEGORYID
-                        WHERE 
-                            P.STOCKQUANTITY <= 10
-                            AND P.ISACTIVE = 1
-                        ORDER BY 
-                            P.STOCKQUANTITY ASC
-Low stock products found: 3
-First low stock product details:
-  PRODUCTID: 14
-  NAME: Tiramisu Cake
-  STOCKQUANTITY: 5
-  CATEGORYNAME: Latest
-  PRICE: 150.75
-OracleConnection string not found in Web.config, using backup
-Case sensitivity test for 'Pending':
-- Exact 'Pending': 20
-- Upper 'PENDING': 0
-- Lower 'pending': 0
-- Using UPPER(): 20
-Pending order count query: 
-                        SELECT 
-                            COUNT(*) AS PendingCount
-                        FROM ORDERS
-                        WHERE STATUS IN ('Pending', 'PENDING', 'pending')
-Pending order count (from COUNT): 20
-Pending order IDs:
-- 2
-- 51
-- 53
-- 54
-- 55
-- 56
-- 57
-- 58
-- 59
-- 60
-- 61
-- 86
-- 90
-- 92
-- 94
-- 96
-- 98
-- 100
-- 102
-- 112
-Pending order count (manual count): 20
-LoadDailyRevenue called with TimeRange: today
-OracleConnection string not found in Web.config, using backup
-Using connection string: User Id=Aaron_IPT;Password=qwen123;Data Source=localhost:1521/xe;
-Database connection opened
-Executing stored procedure AARON_IPT.CALCULATE_REVENUE_STATS with TimeRange=today
-Exception thrown: 'System.InvalidCastException' in mscorlib.dll
-Error in LoadDailyRevenue: Unable to cast object of type 'Oracle.ManagedDataAccess.Types.OracleDecimal' to type 'System.IConvertible'.
-Error logged to C:\Users\aaron\OneDrive\Documents\Visual Studio Code\vb.net\OnlinePastryShop\App_Data\error.log
-Starting LoadOrderCount with corrected SQL...
-LoadOrderCount - Current Date Criteria: ORDERDATE >= TRUNC(SYSDATE) AND ORDERDATE < TRUNC(SYSDATE+1)
-LoadOrderCount - Prev Date Criteria: ORDERDATE >= TRUNC(SYSDATE-1) AND ORDERDATE < TRUNC(SYSDATE)
-OracleConnection string not found in Web.config, using backup
-Current period query: SELECT COUNT(*) FROM ORDERS WHERE ORDERDATE >= TRUNC(SYSDATE) AND ORDERDATE < TRUNC(SYSDATE+1)
-Orders in current period: 1
-- #124: 04/04/2025 2:16:43 pm (Approved)
-Total count from listing: 1
-Previous period query: SELECT COUNT(*) FROM ORDERS WHERE ORDERDATE >= TRUNC(SYSDATE-1) AND ORDERDATE < TRUNC(SYSDATE)
-Orders in previous period: 3
-- #108: 03/04/2025 12:03:12 am (Approved)
-- #112: 03/04/2025 12:03:12 am (Pending)
-- #110: 03/04/2025 12:03:12 am (Approved)
-Total count from listing: 3
-Final order count set to: 1
-Order count change: -66.7%
-OracleConnection string not found in Web.config, using backup
-Pending orders query: 
-                        SELECT 
-                            O.ORDERID,
-                            U.USERNAME AS CustomerName,
-                            U.EMAIL,
-                            O.ORDERDATE,
-                            O.TOTALAMOUNT,
-                            O.STATUS
-                        FROM 
-                            ORDERS O,
-                            USERS U
-                        WHERE 
-                            O.USERID = U.USERID
-                        AND O.STATUS IN ('Pending', 'PENDING', 'pending')
-                        ORDER BY 
-                            O.ORDERDATE DESC
-Pending orders found: 20
-Order #112, Customer: janesmith, Amount: 425.5
-Order #102, Customer: admin, Amount: 350.75
-Order #98, Customer: sarahlee, Amount: 199.99
-Loading sales overview chart with TimeRange: today
-Starting GenerateSalesOverviewData with corrected SQL...
-Sales overview query: 
-                        SELECT 
-                            'Hour ' || TO_CHAR(O.ORDERDATE, 'HH24') as LABEL,
-                            SUM(OD.PRICE * OD.QUANTITY) as TOTAL_REVENUE
-                        FROM 
-                            ORDERS O
-                        JOIN 
-                            ORDERDETAILS OD ON O.ORDERID = OD.ORDERID
-                        WHERE 
-                            O.STATUS = 'Approved'
-                            AND ORDERDATE >= TRUNC(SYSDATE) AND ORDERDATE < TRUNC(SYSDATE+1)
-                        GROUP BY 
-                            TO_CHAR(O.ORDERDATE, 'HH24'), 'Hour ' || TO_CHAR(O.ORDERDATE, 'HH24')
-                        ORDER BY 
-                            TO_CHAR(O.ORDERDATE
-OracleConnection string not found in Web.config, using backup
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error generating sales overview data: ORA-00907: missing right parenthesis
-https://docs.oracle.com/error-help/db/ora-00907/
-Oracle Error: 907 - ORA-00907: missing right parenthesis
-https://docs.oracle.com/error-help/db/ora-00907/
-Error logged to C:\Users\aaron\OneDrive\Documents\Visual Studio Code\vb.net\OnlinePastryShop\App_Data\error.log
-Using sample data for sales overview chart
-Sample SalesOverviewLabels: ["Hour 9","Hour 10","Hour 11","Hour 12","Hour 13","Hour 14","Hour 15","Hour 16","Hour 17","Hour 18"]
-Sample SalesOverviewData: [325.367588701363,325.367588701363,325.367588701363,325.367588701363,325.367588701363,325.367588701363,325.367588701363,325.367588701363,325.367588701363,325.367588701363]
-Starting LoadTopSellingProducts with corrected SQL...
-Top selling products query: 
-                    SELECT 
-                        P.PRODUCTID,
-                        P.NAME as ProductName,
-                        SUM(OD.QUANTITY) as QuantitySold,
-                        SUM(OD.PRICE * OD.QUANTITY) as Revenue,
-                        SUM((OD.PRICE * OD.QUANTITY) - (P.COSTPRICE * OD.QUANTITY)) as Profit,
-                        ROUND(SUM((OD.PRICE * OD.QUANTITY) - (P.COSTPRICE * OD.QUANTITY)) / 
-                               NULLIF(SUM(OD.PRICE * OD.QUANTITY), 0) * 100, 2) as ProfitMargin
-                    FROM 
-                        ORDERS O
-                    JOIN 
-                        ORDERDETAILS OD ON O.ORDERID = OD.ORDERID
-                    JOIN 
-                        PRODUCTS P ON OD.PRODUCTID = P.PRODUCTID
-                    WHERE 
-                        O.STATUS = 'Approved'
-                        AND ORDERDATE >= TRUNC(SYSDATE) AND ORDERDATE < TRUNC(SYSDATE+1)
-                    GROUP BY 
-                        P.PRODUCTID, P.NAME
-                    ORDER BY 
-                        SUM(OD.QUANTITY) DESC
-Using connection string from Web.config
-OracleConnection string not found in Web.config, using backup
-Found 2 top selling products
-Generated chart data for 2 top products
-==== Dashboard Data Loaded ====
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Drawing\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Drawing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
------ Page_Load called -----
-Initial page load - loading default data
-Attempting to retrieve connection string from Web.config...
-Trying connection string name: OracleConnection
-Trying connection string name: OraAspNetConString
-Trying connection string name: ConnectionString
-Found connection string with name: ConnectionString
-Connection string value (partial for security): User Id=Aaron_IPT;Pa...
-LoadStats: Connection opened successfully
-==== CHECKING ISACTIVE VALUES START ====
-User ID: 2, Username: admin
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 4, Username: johndoe
-ISACTIVE type: System.Int16, Value: '0'
-  - As bool: False
-  - As int: 0
-  - As string: '0'
-  - String equals 'true': False
-  - String equals '1': False
-User ID: 6, Username: janesmith
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 8, Username: mikebrown
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 10, Username: sarahlee
-ISACTIVE type: System.Int16, Value: '0'
-  - As bool: False
-  - As int: 0
-  - As string: '0'
-  - String equals 'true': False
-  - String equals '1': False
-User ID: 12, Username: olduser
-ISACTIVE type: System.Int16, Value: '0'
-  - As bool: False
-  - As int: 0
-  - As string: '0'
-  - String equals 'true': False
-  - String equals '1': False
-User ID: 14, Username: newuser
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 20, Username: Aaron
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 22, Username: testuser_old
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 23, Username: testuser_new
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 24, Username: testuser1_recent
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 25, Username: testuser2_recent
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 26, Username: testuser3_recent
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 27, Username: testuser4_old
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 28, Username: testuser5_old
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-User ID: 29, Username: testuser6_old
-ISACTIVE type: System.Int16, Value: '1'
-  - As bool: True
-  - As int: 1
-  - As string: '1'
-  - String equals 'true': False
-  - String equals '1': True
-==== CHECKING ISACTIVE VALUES END ====
-USERS table exists check for stats: True
-Total users count: 16
-New users count (last 30 days): 14
-LoadUsers called with page=1, activeStatus=true, searchText=
-Attempting to retrieve connection string from Web.config...
-Trying connection string name: OracleConnection
-Trying connection string name: OraAspNetConString
-Trying connection string name: ConnectionString
-Found connection string with name: ConnectionString
-Connection string value (partial for security): User Id=Aaron_IPT;Pa...
-Retrieved 16 total users from database
-Filtering for active users only
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'Anonymously Hosted DynamicMethods Assembly'. 
-After filtering: 13 users match criteria
-After paging: Showing 10 users for page 1
-Users in current page:
-  User 2: admin, IsActive=True
-  User 6: janesmith, IsActive=True
-  User 8: mikebrown, IsActive=True
-  User 14: newuser, IsActive=True
-  User 20: Aaron, IsActive=True
-  User 22: testuser_old, IsActive=True
-  User 23: testuser_new, IsActive=True
-  User 24: testuser1_recent, IsActive=True
-  User 25: testuser2_recent, IsActive=True
-  User 26: testuser3_recent, IsActive=True
-GeneratePaginationButtons: currentPage=1, totalPages=2
-Generating page buttons from 1 to 2
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133882335810432922): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Web_qjpj4pxn.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel\v4.0_4.0.0.0__b77a5c561934e089\System.ServiceModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\SMDiagnostics\v4.0_4.0.0.0__b77a5c561934e089\SMDiagnostics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xaml.Hosting\v4.0_4.0.0.0__31bf3856ad364e35\System.Xaml.Hosting.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Web_ese4gclh.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\App_Web_wozmmrs5.dll'. 
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\Microsoft.CSharp\v4.0_4.0.0.0__b03f5f7f11d50a3a\Microsoft.CSharp.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.Services\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.Services.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.EnterpriseServices\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.EnterpriseServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.IdentityModel\v4.0_4.0.0.0__b77a5c561934e089\System.IdentityModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Runtime.Serialization\v4.0_4.0.0.0__b77a5c561934e089\System.Runtime.Serialization.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Web\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Activities\v4.0_4.0.0.0__31bf3856ad364e35\System.Activities.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ServiceModel.Activities\v4.0_4.0.0.0__31bf3856ad364e35\System.ServiceModel.Activities.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.WorkflowServices\v4.0_4.0.0.0__31bf3856ad364e35\System.WorkflowServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Data.DataSetExtensions\v4.0_4.0.0.0__b77a5c561934e089\System.Data.DataSetExtensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xml.Linq\v4.0_4.0.0.0__b77a5c561934e089\System.Xml.Linq.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ComponentModel.DataAnnotations\v4.0_4.0.0.0__31bf3856ad364e35\System.ComponentModel.DataAnnotations.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Web.DynamicData\v4.0_4.0.0.0__31bf3856ad364e35\System.Web.DynamicData.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\78677323\00ed29f6_0a0cda01\Microsoft.Bcl.AsyncInterfaces.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\c8541130\0015bc81_142fdb01\Newtonsoft.Json.Bson.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\c1a9b985\009c248f_251bd701\Newtonsoft.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\0dbc9335\00c37916_0ce7d501\System.Buffers.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\3b38e202\00fc9f49_9e41d901\System.Diagnostics.DiagnosticSource.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\58a93d22\00bbc411_cabdda01\System.Formats.Asn1.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\c2c4ab21\005f960a_8c62d801\System.Memory.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\6a1fa501\001424c9_50ecd301\System.Numerics.Vectors.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\66635a18\00dd8a2b_9ec7d701\System.Runtime.CompilerServices.Unsafe.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\0e81cd37\00ce1ffc_0a0cda01\System.Text.Encodings.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\0009ddf4\009fce41_8e08db01\System.Text.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\Users\aaron\AppData\Local\Temp\Temporary ASP.NET Files\vs\c1736d1b\64c8264d\assembly\dl3\b99f873e\00c37916_0ce7d501\System.Threading.Tasks.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.ValueTuple\v4.0_4.0.0.0__cc7b13ffcd2ddd51\System.ValueTuple.dll'. Module was built without symbols.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Xaml\v4.0_4.0.0.0__b77a5c561934e089\System.Xaml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
 SalesReport Page_Load started
 First page load - initializing
 Calculating date range for TimeRange: Weekly
-Weekly: Last 7 days from 2025-03-29 to 2025-04-04
-Weekly Previous: Previous 7 days from 2025-03-22 to 2025-03-28
-Period text set to: Mar 29 - Apr 4, 2025
-Time range initialized: Weekly, Start: 2025-03-29, End: 2025-04-04
+Weekly: Last 7 days from 2025-04-15 to 2025-04-21
+Weekly Previous: Previous 7 days from 2025-04-08 to 2025-04-14
+Period text set to: Apr 15 - Apr 21, 2025
+Time range initialized: Weekly, Start: 2025-04-15, End: 2025-04-21
 Loading dashboard data
-Loading sales metrics for period: 2025-03-29 to 2025-04-04
-ERROR: OracleConnection string not found in Web.config
-Current period: 2025-03-29 to 2025-04-04
-Previous period: 2025-03-22 to 2025-03-28
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error loading sales metrics: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-Stack trace:    at OracleInternal.ServiceObjects.OracleFailoverMgrImpl.OnError(OracleConnection connection, CallHistoryRecord chr, Object mi, Exception ex, Boolean bTopLevelCall, Boolean& bCanRecordNewCall)
-   at Oracle.ManagedDataAccess.Client.OracleCommand.ExecuteReader()
-   at OnlinePastryShop.Pages.SalesReport.LoadSalesMetrics() in C:\Users\aaron\Source\Repos\OnlinePastryShop\Pages\SalesReport.aspx.cs:line 905
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.Transactions\v4.0_4.0.0.0__b77a5c561934e089\System.Transactions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+Loading sales metrics for period: 2025-04-15 to 2025-04-21
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\System.EnterpriseServices\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.EnterpriseServices.Wrapper.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'iisexpress.exe' (CLR v4.0.30319: /LM/W3SVC/4/ROOT-1-133897157664682677): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Numerics\v4.0_4.0.0.0__b77a5c561934e089\System.Numerics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+Current period: 2025-04-15 to 2025-04-21
+Previous period: 2025-04-08 to 2025-04-14
+Current metrics - Revenue: 19750, Orders: 37, Avg Order: 533.78378378378378378378378378, Items/Order: 0.1891891891891891891891891892
+Previous metrics - Revenue: 10330, Orders: 32, Avg Order: 322.8125, Items/Order: 0.09375
+Growth - Revenue: 91.19%, Orders: 15.62%, Avg Order: 65.35%, Items/Order: 101.80%
+Sales metrics loaded successfully
 Loading sales trend data
-ERROR: OracleConnection string not found in Web.config
-Date range for query: 2025-03-29 to 2025-04-04
+Date range for query: 2025-04-15 to 2025-04-21
 Database connection opened
 Executing query: 
                                 SELECT 
@@ -459,87 +100,83 @@ Executing query:
                                     TO_CHAR(o.ORDERDATE, 'YYYY-MM-DD')
                                 ORDER BY 
                                     time_period
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error loading sales trend data: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-Stack trace:    at OracleInternal.ServiceObjects.OracleFailoverMgrImpl.OnError(OracleConnection connection, CallHistoryRecord chr, Object mi, Exception ex, Boolean bTopLevelCall, Boolean& bCanRecordNewCall)
-   at Oracle.ManagedDataAccess.Client.OracleCommand.ExecuteReader()
-   at OnlinePastryShop.Pages.SalesReport.LoadSalesTrendData() in C:\Users\aaron\Source\Repos\OnlinePastryShop\Pages\SalesReport.aspx.cs:line 1285
+Data point: Time=2025-04-15, Revenue=3250
+Data point: Time=2025-04-16, Revenue=1725
+Data point: Time=2025-04-17, Revenue=3910
+Data point: Time=2025-04-18, Revenue=3460
+Data point: Time=2025-04-19, Revenue=2655
+Data point: Time=2025-04-20, Revenue=3250
+Data point: Time=2025-04-21, Revenue=1500
+Sales trend labels: ["Apr 15","Apr 16","Apr 17","Apr 18","Apr 19","Apr 20","Apr 21"]
+Sales trend data: [3250,1725,3910,3460,2655,3250,1500]
 Loading category revenue data
-ERROR: OracleConnection string not found in Web.config
-Date range for query: 2025-03-29 to 2025-04-04
+Date range for query: 2025-04-15 to 2025-04-21
 Database connection opened
 Executing query: 
-                        SELECT 
-                            c.NAME AS CategoryName,
-                            NVL(SUM(od.QUANTITY * od.PRICE), 0) AS Revenue
-                        FROM 
-                            CATEGORIES c
-                        LEFT JOIN 
-                            PRODUCTCATEGORIES pc ON c.CATEGORYID = pc.CATEGORYID
-                        LEFT JOIN 
-                            PRODUCTS p ON pc.PRODUCTID = p.PRODUCTID
-                        LEFT JOIN 
-                            ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
-                        LEFT JOIN 
-                            ORDERS o ON od.ORDERID = o.ORDERID AND
-                            o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD')
-                                AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
-                            AND o.ISACTIVE = 1
-                        WHERE 
-                            c.ISACTIVE = 1 AND
-                            c.PARENTCATEGORYID IS NULL  -- Only main categories
-                        GROUP BY 
-                            c.NAME
-                        ORDER BY 
-                            Revenue DESC
-                        FETCH FIRST 5 ROWS ONLY
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error loading category revenue data: ORA-00933: SQL command not properly ended
-https://docs.oracle.com/error-help/db/ora-00933/
-Stack trace:    at OracleInternal.ServiceObjects.OracleFailoverMgrImpl.OnError(OracleConnection connection, CallHistoryRecord chr, Object mi, Exception ex, Boolean bTopLevelCall, Boolean& bCanRecordNewCall)
-   at Oracle.ManagedDataAccess.Client.OracleCommand.ExecuteReader()
-   at OnlinePastryShop.Pages.SalesReport.LoadCategoryRevenueData() in C:\Users\aaron\Source\Repos\OnlinePastryShop\Pages\SalesReport.aspx.cs:line 1755
+                        SELECT * FROM (
+                            SELECT 
+                                c.NAME AS CategoryName,
+                                NVL(SUM(NVL(od.QUANTITY, 0) * NVL(od.PRICE, 0)), 0) AS Revenue
+                            FROM 
+                                CATEGORIES c
+                            LEFT JOIN 
+                                PRODUCTCATEGORIES pc ON c.CATEGORYID = pc.CATEGORYID
+                            LEFT JOIN 
+                                PRODUCTS p ON pc.PRODUCTID = p.PRODUCTID
+                            LEFT JOIN 
+                                ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
+                            LEFT JOIN 
+                                ORDERS o ON od.ORDERID = o.ORDERID AND
+                                o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD')
+                                    AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
+                                AND o.ISACTIVE = 1
+                            WHERE 
+                                c.ISACTIVE = 1 AND
+                                c.PARENTCATEGORYID IS NULL  -- Only main categories
+                            GROUP BY 
+                                c.NAME
+                            ORDER BY 
+                                Revenue DESC
+                        ) WHERE ROWNUM <= 5
+Category data: Cakes = 12233.83
+Category data: Cupcakes = 1830
+Category names: ["Cakes","Cupcakes"]
+Category revenue data: [12233.83,1830]
 Loading top products data
-ERROR: OracleConnection string not found in Web.config
-Date range for query: 2025-03-29 to 2025-04-04
+Date range for query: 2025-04-15 to 2025-04-21
 Database connection opened
 Executing query: 
-                        SELECT 
-                            p.NAME AS ProductName,
-                            NVL(SUM(od.QUANTITY), 0) AS TotalQuantity
-                        FROM 
-                            PRODUCTS p
-                        LEFT JOIN 
-                            ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
-                        LEFT JOIN 
-                            ORDERS o ON od.ORDERID = o.ORDERID AND
-                            o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') 
-                                AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
-                            AND o.ISACTIVE = 1
-                        WHERE 
-                            p.ISACTIVE = 1
-                        GROUP BY 
-                            p.NAME
-                        ORDER BY 
-                            TotalQuantity DESC
-                        FETCH FIRST 5 ROWS ONLY
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error loading top products data: ORA-00933: SQL command not properly ended
-https://docs.oracle.com/error-help/db/ora-00933/
-Stack trace:    at OracleInternal.ServiceObjects.OracleFailoverMgrImpl.OnError(OracleConnection connection, CallHistoryRecord chr, Object mi, Exception ex, Boolean bTopLevelCall, Boolean& bCanRecordNewCall)
-   at Oracle.ManagedDataAccess.Client.OracleCommand.ExecuteReader()
-   at OnlinePastryShop.Pages.SalesReport.LoadTopProductsData() in C:\Users\aaron\Source\Repos\OnlinePastryShop\Pages\SalesReport.aspx.cs:line 1889
+                        SELECT * FROM (
+                            SELECT 
+                                p.NAME AS ProductName,
+                                NVL(SUM(NVL(od.QUANTITY, 0)), 0) AS TotalQuantity
+                            FROM 
+                                PRODUCTS p
+                            LEFT JOIN 
+                                ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
+                            LEFT JOIN 
+                                ORDERS o ON od.ORDERID = o.ORDERID AND
+                                o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') 
+                                    AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
+                                AND o.ISACTIVE = 1
+                            WHERE 
+                                p.ISACTIVE = 1
+                            GROUP BY 
+                                p.NAME
+                            ORDER BY 
+                                TotalQuantity DESC
+                        ) WHERE ROWNUM <= 5
+Product data: Mango Bravo Cake = 16 units
+Product data: Ube Cake = 16 units
+Product data: Chocolate Mousse Cake = 10 units
+Product data: Ube Cupcake = 8 units
+Product data: Red Velvet Cake = 8 units
+Top product names: ["Mango Bravo Cake","Ube Cake","Chocolate Mousse Cake","Ube Cupcake","Red Velvet Cake"]
+Top product quantities: [16,16,10,8,8]
 Loading inventory status data
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error loading inventory status data: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-Stack trace:    at OracleInternal.ServiceObjects.OracleFailoverMgrImpl.OnError(OracleConnection connection, CallHistoryRecord chr, Object mi, Exception ex, Boolean bTopLevelCall, Boolean& bCanRecordNewCall)
-   at Oracle.ManagedDataAccess.Client.OracleCommand.ExecuteReader()
-   at OnlinePastryShop.Pages.SalesReport.LoadInventoryStatusData() in C:\Users\aaron\Source\Repos\OnlinePastryShop\Pages\SalesReport.aspx.cs:line 2013
-Loading product rating data for period: 2025-03-29 to 2025-04-04
-ERROR: OracleConnection string not found in Web.config
+Inventory status: In Stock=21, Low Stock=9, Out of Stock=1
+Inventory status data: [21,9,1]
+Loading product rating data for period: 2025-04-15 to 2025-04-21
 Executing query: 
                         SELECT 
                             p.NAME AS ProductName,
@@ -568,21 +205,8 @@ Error loading product rating data: ORA-00933: SQL command not properly ended
 https://docs.oracle.com/error-help/db/ora-00933/
 Stack trace:    at OracleInternal.ServiceObjects.OracleFailoverMgrImpl.OnError(OracleConnection connection, CallHistoryRecord chr, Object mi, Exception ex, Boolean bTopLevelCall, Boolean& bCanRecordNewCall)
    at Oracle.ManagedDataAccess.Client.OracleCommand.ExecuteReader()
-   at OnlinePastryShop.Pages.SalesReport.LoadProductRatingData() in C:\Users\aaron\Source\Repos\OnlinePastryShop\Pages\SalesReport.aspx.cs:line 2107
+   at OnlinePastryShop.Pages.SalesReport.LoadProductRatingData() in C:\Users\aaron\OneDrive\Documents\Visual Studio Code\vb.net\OnlinePastryShop\Pages\SalesReport.aspx.cs:line 1966
 Ensuring chart data is valid
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
-ERROR: OracleConnection string not found in Web.config
-Exception thrown: 'Oracle.ManagedDataAccess.Client.OracleException' in Oracle.ManagedDataAccess.dll
-Error executing query: ORA-00942: table or view does not exist
-https://docs.oracle.com/error-help/db/ora-00942/
 Registering chart scripts
 Ensuring chart data is valid
-System.Configuration.ConnectionStringSettingsCollection.this[string].**get** returned null.
-
+'iisexpress.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Drawing\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Drawing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.

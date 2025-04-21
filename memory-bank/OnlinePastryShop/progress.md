@@ -1,109 +1,58 @@
 # Progress
 
 ## What Works
-- ✅ User Authentication
-  - Database connection for credential verification
-  - Login form validation and error handling
-  - Standardized SHA256 password hashing implementation
-  - Session variable creation on successful login
-  - User registration with validation and database storage
+- Main website structure implemented with Site.Master
+- Responsive design using Tailwind CSS
+- Homepage with featured products and promotional sections
+- About page with company history and team information
+- Menu page with product categories and items
+- Contact page with form and store information
+- User authentication system fully implemented:
+  - Login with username/email and password
+  - Session management with user information
+  - Role-based access control (Admin vs Customer)
+  - Session verification to prevent unauthorized access
+  - User profile UI elements (initials circle, dropdown menu)
+  - Logout functionality with session clearing
+- Role-based redirects (Admin → Dashboard, Customer → Homepage)
+- Brand identity has been updated from "Pastry Palace" to "Royal Pastries"
+- Fixed background images and hero sections across pages for consistent presentation
 
-- ✅ User Registration
-  - Complete registration form with all necessary fields
-  - Server-side validation for all input fields
-  - Check for existing username, email, and phone number
-  - Secure password hashing using SHA256
-  - Success notification with automatic tab switching to login
-  - Clear error messaging for validation failures
-  - Proper database integration with parameterized queries
+## What's In Progress
+- Proper password hashing implementation (currently using direct comparison)
+- Enhanced security features for authentication
+- User profile page development
+- Updating contact information and address across the site
+- Finalizing the checkout process
+- Implementing payment gateway integration
+- Setting up email notifications for orders
+- Optimizing mobile experience for product pages
 
-- ✅ Role-Based Access Control
-  - Role checking from database (Admin/Customer)
-  - Role-based redirection after login
-  - Session verification on protected pages
-  - Prevention of direct access to Dashboard.aspx by non-admin users
-  - Different master pages for different user roles
+## Current Status
+The website is fully functional with all core pages implemented. User authentication is complete, including role-based access control. The branding has been updated to "Royal Pastries" across the site, and recent visual issues with background images have been fixed. The next focus is on enhancing security features and completing the user profile and checkout functionality.
 
-- ✅ Session Management
-  - Session variables for user information (UserID, FirstName, LastName, UserRole)
-  - User initials computation and storage in session
-  - Session state maintenance across page loads
-  - Session clearing on logout for both user types
-  - Admin logout functionality with proper session termination
-  - Different logout paths based on user role
-
-- ✅ UI Updates for Logged-in Users
-  - User initials circle display for authenticated users
-  - Dropdown menu with profile and logout options
-  - CSS styling for user UI elements
-  - JavaScript for dropdown toggling
-  - Conditional rendering based on session state
-  - Toast notifications for registration success
-
-- ✅ Logout Functionality
-  - Session clearing in lnkLogout_Click handler (Site.Master.cs)
-  - Session clearing in lnkAdminLogout_Click handler (AdminMaster.Master.cs)
-  - Session abandonment for complete cleanup
-  - Role-appropriate redirection after logout (Login.aspx for customer, Default.aspx for admin)
-  - Exception handling in the logout process
-
-- ✅ Password Hashing
-  - Consistent SHA256 hashing with hex encoding for all passwords
-  - Well-documented code for maintainability
-  - Fixed inconsistency between login and registration hashing methods
-
-## In Progress
-- 🔄 Password Security Enhancement
-  - Implementing salting mechanism
-  - Adding password complexity validation
-  - Exploring modern hashing algorithms (PBKDF2, bcrypt, Argon2)
-
-- 🔄 User Profile Management
-  - Creating profile page UI
-  - Implementing profile update functionality
-  - Adding order history display
-  - User preference management
-
-- 🔄 "Remember Me" Functionality
-  - Persistent login cookie implementation
-  - Extending session timeouts
-  - Secure token storage
-
-- 🔄 Account Recovery Process
-  - Password reset functionality
-  - Email verification system
-  - Security questions implementation
-
-## Not Yet Started
-- ❌ Shopping Cart Implementation
-- ❌ Checkout Process
-- ❌ Order Management
-- ❌ Product Management
-- ❌ Payment Processing Integration
-- ❌ Email Notifications
-- ❌ Advanced Security Features (CSRF protection, 2FA)
-- ❌ Admin User Management Interface
+## Recent Achievements
+- Successfully updated branding from "Pastry Palace" to "Royal Pastries"
+- Fixed the Contact page hero section with proper background and overlay
+- Corrected the Menu page wallpaper image positioning and display
+- Improved responsiveness across various device sizes
 
 ## Known Issues
-1. No salt used in password hashing (security improvement needed)
-2. No account recovery mechanism
-3. Limited client-side validation on forms
-4. No automated tests for authentication flows
-5. No CSRF protection implemented
-6. No account lockout mechanism for failed login attempts
-7. No automatic session timeout handling
+- Simple password comparison instead of proper hashing
+- No "Remember Me" functionality yet
+- No account recovery options
+- Contact form submission needs backend implementation
+- Some responsive layout issues on extra small screens
+- Map integration needs updating to show new location
+- Order tracking functionality not yet implemented
+- Product search functionality needs optimization
 
-## Next Steps
-1. Implement password hashing with salt
-2. Add password strength validation
-3. Create user profile page
-4. Add "Remember Me" functionality
-5. Implement account recovery system
-6. Add security audit logging
-
-## Success Metrics
-- Successfully pass security code review
-- Complete test cases for authentication flows
-- Ensure all admin pages have proper session validation
-- Validate that non-admin users cannot access restricted pages
-- Confirm proper session termination on logout for all user types
+## Priorities
+1. **High Priority**: Enhance password security with proper hashing
+2. **High Priority**: Complete user profile management
+3. **Medium Priority**: Implement "Remember Me" functionality
+4. **Medium Priority**: Add account recovery options
+5. **Medium Priority**: Update address and contact info throughout site
+6. **Medium Priority**: Implement payment processing
+7. **Low Priority**: Improve mobile responsiveness
+8. **Low Priority**: Add additional product filtering options

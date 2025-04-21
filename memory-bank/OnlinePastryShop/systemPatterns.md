@@ -1,112 +1,152 @@
 # System Patterns
 
 ## Architecture Overview
-The Online Pastry Shop application follows a standard ASP.NET Web Forms architecture with a code-behind pattern that separates the UI elements from business logic.
+The Pastry Palace website is built using ASP.NET Web Forms with a responsive front-end design. It follows a traditional web application architecture:
+
+- **Presentation Layer**: ASP.NET Web Forms (.aspx pages)
+- **Business Logic Layer**: C# code-behind files (.aspx.cs)
+- **Data Access Layer**: ADO.NET for database operations
+- **Database**: SQL Server database for product, user, and order data
+
+## Design Patterns
+
+### Master Page Pattern
+- Site.Master provides consistent layout and navigation
+- AdminMaster.Master for admin dashboard pages
+- Content placeholders for page-specific content
+- Shared components like header, footer, and navigation
+
+### Responsive Design Pattern
+- Mobile-first approach using Tailwind CSS
+- Flexbox and Grid layouts for responsive components
+- Media queries for different device sizes
+
+### Component-Based Structure
+- Reusable UI components (navigation, product cards, etc.)
+- Consistent styling across components
+- Modular JavaScript for interactive elements
+
+### Form Handling Pattern
+- Server-side validation for form submissions
+- Client-side validation for immediate feedback
+- Error handling and user notifications
+
+## Key Technical Decisions
+
+### Front-End Framework
+- Tailwind CSS for styling
+- Minimal custom CSS for specific components
+- Custom animations for enhanced user experience
+
+### State Management
+- ASP.NET session state for shopping cart
+- Authentication cookies for user sessions
+- Local storage for user preferences
+
+### Performance Optimizations
+- Lazy loading images
+- CSS/JS minification
+- Database query optimization
+- Caching for frequent database operations
+
+### Security Measures
+- Input validation and sanitization
+- SQL injection prevention
+- Cross-Site Scripting (XSS) protection
+- Secure authentication workflow
+
+## Component Relationships
+- Master page provides the shell for all content pages
+- Navigation links connect different sections of the website
+- Product catalog connects to individual product details
+- Shopping cart integrates with checkout process
+- User authentication connects to account management
 
 ## Key Design Patterns
 
-### Presentation Layer
-- **Code-Behind Pattern**: Each ASPX page has a corresponding .aspx.cs file containing the server-side logic
-- **Master Page Pattern**: Using Site.Master for customer pages and AdminMaster.Master for admin pages
-- **Repeater Pattern**: Using ASP.NET Repeaters to display product catalogs and order lists
-- **Conditional Rendering**: UI elements shown or hidden based on session state
-- **Client-Side Interaction**: JavaScript for dynamic UI components like dropdowns
+### Page Controller Pattern
+Each web form (`.aspx`) has a corresponding code-behind file (`.aspx.cs`) that handles:
+- User interactions
+- Business logic execution
+- Data binding to UI elements
+- Response generation
 
-### Business Logic Layer
-- **Service Classes**: Separate classes handling specific business functions
-- **Data Transfer Objects (DTOs)**: Objects used to pass data between layers
-- **Validation Logic**: Form validation and user credential checking
+### Repository Pattern (Modified)
+- Data access occurs through stored procedures 
+- Oracle parameters are used for parameterized queries
+- Database connections are managed through connection strings
 
-### Data Access Layer
-- **Connection String Abstraction**: Centralized retrieval from Web.config
-- **Command Pattern**: Using OracleCommand objects to execute queries
-- **Data Reader Pattern**: Using OracleDataReader to retrieve data from the database
-- **Parameter Binding**: Using OracleParameter to prevent SQL injection
+### Badge Counter Pattern
+- Notification counters for pending actions (orders, messages, etc.)
+- Dynamically updated counts on the admin sidebar
 
-## Security Implementation
-- **Password Hashing**: SHA256 implementation for password security
-- **Role-based Authorization**: Admin and Customer roles with different access levels
-- **Session Validation**: Checking session variables to enforce authenticated access
-- **Session Termination**: Proper session clearing and abandonment on logout
-- **Exception Handling**: Try-catch blocks around security-critical operations
-- **Conditional Access**: Different master pages and access patterns based on role
+### Dashboard Component Pattern
+- Modular dashboard widgets for different metrics
+- User-customizable components with persistence
+- Real-time data updates through AJAX
 
-## Authentication Flow
-```
-Login.aspx
-├── User enters credentials
-├── ValidateUser() retrieves user from database
-├── HashPassword() creates SHA256 hash
-├── Compare hashed password with database
-├── On success: Create session variables
-│   ├── Session["UserID"] = userId
-│   ├── Session["FirstName"] = firstName
-│   ├── Session["LastName"] = lastName
-│   ├── Session["UserRole"] = role
-│   └── Session["UserInitials"] = initials
-└── Redirect based on role
-    ├── Admin → Dashboard.aspx
-    └── Customer → Default.aspx
-```
+### Card UI Pattern
+- Product information displayed in consistent card format
+- Cards include image, title, description, price, and actions
+- Responsive layout adapts to different screen sizes
+- Hover effects for enhanced user experience
 
-## Session Validation Flow
-```
-Protected Page (e.g., Dashboard.aspx)
-├── Page_Load checks Session["UserID"]
-│   ├── If null: Redirect to Login.aspx
-│   └── If exists: Continue
-├── Page_Load checks Session["UserRole"]
-│   ├── If not "Admin": Redirect to Default.aspx
-│   └── If "Admin": Allow access
-└── Load page content for authenticated user
-```
+### Toast Notification Pattern
+- Non-intrusive feedback for user actions
+- Temporary display with automatic dismissal
+- Consistent styling and positioning
 
-## Logout Flow
-```
-Site.Master (Customer)
-├── User clicks logout
-├── lnkLogout_Click handler
-│   ├── Session.Clear()
-│   ├── Session.Abandon()
-│   └── Redirect to Login.aspx
-    
-AdminMaster.Master (Admin)
-├── User clicks logout
-├── lnkAdminLogout_Click handler
-│   ├── Try: Clear session
-│   │   ├── Session.Clear()
-│   │   └── Session.Abandon()
-│   ├── Catch: Log error
-│   └── Finally: Redirect to Default.aspx
-```
+### Category Filter Pattern
+- Tabbed interface for category selection
+- Clear visual feedback for active category
+- Dynamic content filtering without page reload
 
-## UI State Management
-- **Session Variables**: Store user authentication state
-- **Client-Side State**: JavaScript for UI interactions
-- **ViewState**: ASP.NET's built-in state management
-- **Conditional Rendering**:
-  ```
-  <% if (Session["UserID"] != null) { %>
-      <!-- Logged in UI elements -->
-  <% } else { %>
-      <!-- Not logged in UI elements -->
-  <% } %>
-  ```
+## Database Approach
 
-## Error Handling
-- Try-catch blocks for database operations
-- Exception logging with System.Diagnostics.Debug
-- User-friendly error messages displayed in UI
-- Exception handling around session management
-- Finally blocks to ensure critical operations complete
+### Table Design
+- Core business entities (USERS, PRODUCTS, ORDERS, etc.)
+- Relationship tables for many-to-many relationships
+- Support tables for features like wishlists, ratings, etc.
 
-## State Management
-- **Session State**: Storing user authentication information
-- **View State**: Maintaining page state between postbacks
-- **Application State**: Storing application-wide settings
-- **Query String**: Passing simple parameters between pages
+### Stored Procedures
+- Parameterized procedures for all CRUD operations
+- Complex queries encapsulated in procedures
+- Return values and output parameters for complex operations
 
-## Responsive Design
-- Bootstrap-based responsive grid system
-- Mobile-first approach for UI components
-- Tailwind CSS for styling components
+### Triggers and Sequences
+- Automated ID generation using sequences
+- Timestamp maintenance with triggers
+- Consistency maintained through constraints
+
+## UI Component Patterns
+
+### Product Card
+- Image container with fixed aspect ratio
+- Consistent information layout (name, description, price)
+- Stock status indicator (in-stock or out-of-stock)
+- Action button for cart interaction
+- Hover effects for visual feedback
+
+### Category Tabs
+- Horizontally scrollable on mobile
+- Active state highlighting
+- Consistent styling with brand colors
+- Click event handling for filtering
+
+### Toast Notifications
+- Fixed position at bottom right
+- Animated entry and exit
+- Automatically disappears after delay
+- Z-index handling for proper layering
+
+### Loading States
+- Centered spinner animation
+- Text indication of loading status
+- Appropriate hiding/showing based on data state
+- Clear error state presentation
+
+## Customization Approach
+- User preferences stored in database tables
+- Client-side state managed with ViewState and Session
+- Server-side user settings loaded on page initialization
+- AJAX for dynamic updates without full page reloads

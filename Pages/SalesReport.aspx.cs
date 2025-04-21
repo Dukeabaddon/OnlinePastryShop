@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using Oracle.ManagedDataAccess.Client;
 using System.Configuration;
@@ -626,84 +626,61 @@ namespace OnlinePastryShop.Pages
                 // Initialize SalesTrendLabels and SalesTrendData if needed
                 if (string.IsNullOrEmpty(SalesTrendLabels) || SalesTrendLabels == "null")
                 {
-                    List<string> defaultLabels = new List<string>();
-
-                    if (TimeRange == "Daily")
-                    {
-                        // For daily view, show hourly labels
-                        for (int hour = 0; hour < 24; hour++)
-                        {
-                            defaultLabels.Add($"{hour:00}:00");
-                        }
-                    }
-                    else
-                    {
-                        // Default to recent dates
-                        for (int i = 0; i < 7; i++)
-                        {
-                            defaultLabels.Add(DateTime.Now.AddDays(-6 + i).ToString("MMM dd"));
-                        }
-                    }
-
-                    SalesTrendLabels = serializer.Serialize(defaultLabels);
-                    System.Diagnostics.Debug.WriteLine($"Initialized SalesTrendLabels: {SalesTrendLabels}");
+                    // Use empty arrays if no data is available
+                    List<string> labels = new List<string>();
+                    SalesTrendLabels = serializer.Serialize(labels);
+                    System.Diagnostics.Debug.WriteLine($"Initialized SalesTrendLabels as empty array: {SalesTrendLabels}");
                 }
 
                 if (string.IsNullOrEmpty(SalesTrendData) || SalesTrendData == "null")
                 {
-                    List<decimal> defaultData = new List<decimal>();
-
-                    // Generate some random sample data
-                    Random random = new Random();
-                    int dataPoints = TimeRange == "Daily" ? 24 : 7;
-
-                    for (int i = 0; i < dataPoints; i++)
-                    {
-                        defaultData.Add(0);
-                    }
-
-                    SalesTrendData = serializer.Serialize(defaultData);
-                    System.Diagnostics.Debug.WriteLine($"Initialized SalesTrendData: {SalesTrendData}");
+                    // Use empty arrays if no data is available
+                    List<decimal> data = new List<decimal>();
+                    SalesTrendData = serializer.Serialize(data);
+                    System.Diagnostics.Debug.WriteLine($"Initialized SalesTrendData as empty array: {SalesTrendData}");
                 }
 
                 // Initialize CategoryNames and CategoryRevenueData if needed
                 if (string.IsNullOrEmpty(CategoryNames) || CategoryNames == "null")
                 {
-                    List<string> defaultCategories = new List<string>() { "Cakes", "Pastries", "Cookies", "Breads", "Desserts" };
-                    CategoryNames = serializer.Serialize(defaultCategories);
-                    System.Diagnostics.Debug.WriteLine($"Initialized CategoryNames: {CategoryNames}");
+                    // Use empty arrays if no data is available
+                    List<string> categories = new List<string>();
+                    CategoryNames = serializer.Serialize(categories);
+                    System.Diagnostics.Debug.WriteLine($"Initialized CategoryNames as empty array: {CategoryNames}");
                 }
 
                 if (string.IsNullOrEmpty(CategoryRevenueData) || CategoryRevenueData == "null")
                 {
-                    List<decimal> defaultRevenues = new List<decimal>() { 0, 0, 0, 0, 0 };
-                    CategoryRevenueData = serializer.Serialize(defaultRevenues);
-                    System.Diagnostics.Debug.WriteLine($"Initialized CategoryRevenueData: {CategoryRevenueData}");
+                    // Use empty arrays if no data is available
+                    List<decimal> revenues = new List<decimal>();
+                    CategoryRevenueData = serializer.Serialize(revenues);
+                    System.Diagnostics.Debug.WriteLine($"Initialized CategoryRevenueData as empty array: {CategoryRevenueData}");
                 }
 
                 // Initialize TopProductNames and TopProductQuantities if needed
                 if (string.IsNullOrEmpty(TopProductNames) || TopProductNames == "null")
                 {
-                    List<string> defaultProducts = new List<string>() {
-                        "Chocolate Cake", "Croissant", "Cinnamon Roll", "Cheesecake", "Apple Pie"
-                    };
-                    TopProductNames = serializer.Serialize(defaultProducts);
-                    System.Diagnostics.Debug.WriteLine($"Initialized TopProductNames: {TopProductNames}");
+                    // Use empty arrays if no data is available
+                    List<string> products = new List<string>();
+                    TopProductNames = serializer.Serialize(products);
+                    System.Diagnostics.Debug.WriteLine($"Initialized TopProductNames as empty array: {TopProductNames}");
                 }
 
                 if (string.IsNullOrEmpty(TopProductQuantities) || TopProductQuantities == "null")
                 {
-                    List<int> defaultQuantities = new List<int>() { 0, 0, 0, 0, 0 };
-                    TopProductQuantities = serializer.Serialize(defaultQuantities);
-                    System.Diagnostics.Debug.WriteLine($"Initialized TopProductQuantities: {TopProductQuantities}");
+                    // Use empty arrays if no data is available
+                    List<int> quantities = new List<int>();
+                    TopProductQuantities = serializer.Serialize(quantities);
+                    System.Diagnostics.Debug.WriteLine($"Initialized TopProductQuantities as empty array: {TopProductQuantities}");
                 }
 
                 // Initialize InventoryStatusData if needed
                 if (string.IsNullOrEmpty(InventoryStatusData) || InventoryStatusData == "null")
                 {
-                    List<int> defaultStatus = new List<int>() { 0, 0, 0 };
-                    InventoryStatusData = serializer.Serialize(defaultStatus);
-                    System.Diagnostics.Debug.WriteLine($"Initialized InventoryStatusData: {InventoryStatusData}");
+                    // Use empty arrays if no data is available
+                    List<int> status = new List<int>();
+                    InventoryStatusData = serializer.Serialize(status);
+                    System.Diagnostics.Debug.WriteLine($"Initialized InventoryStatusData as empty array: {InventoryStatusData}");
                 }
             }
             catch (Exception ex)
@@ -711,14 +688,14 @@ namespace OnlinePastryShop.Pages
                 System.Diagnostics.Debug.WriteLine($"Error ensuring valid chart data: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
-                // Set absolute fallback values as raw JSON strings
+                // Set absolute fallback values as raw JSON strings representing empty arrays
                 SalesTrendLabels = "[]";
                 SalesTrendData = "[]";
                 CategoryNames = "[]";
                 CategoryRevenueData = "[]";
                 TopProductNames = "[]";
                 TopProductQuantities = "[]";
-                InventoryStatusData = "[0,0,0]";
+                InventoryStatusData = "[]";
 
                 // Ensure ProductRatings is at least an empty list
                 if (ProductRatings == null)
@@ -735,9 +712,9 @@ namespace OnlinePastryShop.Pages
                 System.Diagnostics.Debug.WriteLine("Initializing chart data with default values");
 
                 // Initialize KPI values with defaults
-                TotalRevenue = "₱0.00";
+                TotalRevenue = "?0.00";
                 TotalSales = "0";
-                AverageOrderValue = "₱0.00";
+                AverageOrderValue = "?0.00";
                 ItemsPerOrder = "0.0";
 
                 // Initialize growth metrics with neutral values
@@ -818,9 +795,9 @@ namespace OnlinePastryShop.Pages
                 TopProductQuantities = "[]";
                 InventoryStatusData = "[0,0,0]";
 
-                TotalRevenue = "₱0.00";
+                TotalRevenue = "?0.00";
                 TotalSales = "0";
-                AverageOrderValue = "₱0.00";
+                AverageOrderValue = "?0.00";
                 ItemsPerOrder = "0.0";
 
                 // Initialize growth metrics with neutral values
@@ -1012,7 +989,7 @@ namespace OnlinePastryShop.Pages
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
                 // Set default values in case of error
-                TotalRevenue = "₱0.00";
+                TotalRevenue = "?0.00";
                 RevenueGrowth = "0%";
                 RevenueGrowthClass = "text-gray-500";
                 RevenueGrowthIcon = "M9 5l7 7-7 7";
@@ -1022,7 +999,7 @@ namespace OnlinePastryShop.Pages
                 SalesGrowthClass = "text-gray-500";
                 SalesGrowthIcon = "M9 5l7 7-7 7";
 
-                AverageOrderValue = "₱0.00";
+                AverageOrderValue = "?0.00";
                 AvgOrderValueChange = "0%";
                 AvgOrderValueChangeClass = "text-gray-500";
                 AvgOrderValueIcon = "M9 5l7 7-7 7";
@@ -1069,7 +1046,7 @@ namespace OnlinePastryShop.Pages
 
         private string FormatCurrency(decimal amount)
         {
-            return $"₱{amount:N2}";
+            return $"?{amount:N2}";
         }
 
         private string GetConnectionString()
@@ -1101,15 +1078,18 @@ namespace OnlinePastryShop.Pages
                 // Get connection string
                 string connectionString = GetConnectionString();
 
-                // Define start and end dates for query
+                // Format dates for Oracle query
                 string startDateParam = StartDate.ToString("yyyy-MM-dd");
                 string endDateParam = EndDate.ToString("yyyy-MM-dd");
 
                 System.Diagnostics.Debug.WriteLine($"Date range for query: {startDateParam} to {endDateParam}");
 
-                // Lists to hold the data
+                // Lists to store chart data
                 List<string> dateLabels = new List<string>();
                 List<decimal> revenueData = new List<decimal>();
+
+                // Track if any data was found
+                bool hasData = false;
 
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
@@ -1284,8 +1264,6 @@ namespace OnlinePastryShop.Pages
 
                         using (OracleDataReader reader = command.ExecuteReader())
                         {
-                            bool hasData = false;
-
                             // Read all data from the query
                             while (reader.Read())
                             {
@@ -1293,11 +1271,19 @@ namespace OnlinePastryShop.Pages
                                 string timePeriod = reader["time_period"].ToString();
                                 decimal revenue = Convert.ToDecimal(reader["revenue"]);
 
-                                revenueByTimePeriod[timePeriod] = revenue;
-                                System.Diagnostics.Debug.WriteLine($"Data point: Time={timePeriod}, Revenue={revenue}");
+                                // Only add if revenue > 0
+                                if (revenue > 0)
+                                {
+                                    revenueByTimePeriod[timePeriod] = revenue;
+                                    System.Diagnostics.Debug.WriteLine($"Data point: Time={timePeriod}, Revenue={revenue}");
+                                }
                             }
+                        }
 
-                            // Generate complete ranges based on time period
+                        // If data was found, build the chart series
+                        if (hasData)
+                        {
+                            // Generate labels and data based on time period
                             if (TimeRange == "Daily")
                             {
                                 // For daily view, generate all 24 hours
@@ -1319,10 +1305,10 @@ namespace OnlinePastryShop.Pages
                             }
                             else if (TimeRange == "Weekly")
                             {
-                                // For weekly view, generate all 7 days
-                                for (int day = 0; day < 7; day++)
+                                // For weekly view, generate each day in range
+                                for (int i = 0; i < 7; i++)
                                 {
-                                    DateTime date = StartDate.AddDays(day);
+                                    DateTime date = StartDate.AddDays(i);
                                     string dateString = date.ToString("yyyy-MM-dd");
                                     string label = date.ToString("MMM dd");
                                     dateLabels.Add(label);
@@ -1339,11 +1325,11 @@ namespace OnlinePastryShop.Pages
                             }
                             else if (TimeRange == "Monthly")
                             {
-                                // For monthly view, generate all days in the month
-                                int days = (EndDate - StartDate).Days + 1;
-                                for (int day = 0; day < days; day++)
+                                // For monthly view, generate each day
+                                int days = (int)(EndDate - StartDate).TotalDays + 1;
+                                for (int i = 0; i < days; i++)
                                 {
-                                    DateTime date = StartDate.AddDays(day);
+                                    DateTime date = StartDate.AddDays(i);
                                     string dateString = date.ToString("yyyy-MM-dd");
                                     string label = date.ToString("MMM dd");
                                     dateLabels.Add(label);
@@ -1360,7 +1346,7 @@ namespace OnlinePastryShop.Pages
                             }
                             else if (TimeRange == "Yearly")
                             {
-                                // For yearly view, generate all 12 months
+                                // For yearly view, generate each month
                                 for (int month = 1; month <= 12; month++)
                                 {
                                     DateTime date = new DateTime(StartDate.Year, month, 1);
@@ -1380,44 +1366,26 @@ namespace OnlinePastryShop.Pages
                             }
                             else if (TimeRange == "Custom")
                             {
-                                // For custom ranges, handle based on the query type from earlier
+                                // For custom range, determine appropriate grouping
                                 TimeSpan range = EndDate - StartDate;
 
                                 if (range.TotalDays <= 3)
                                 {
-                                    // For short ranges, show hours
-                                    for (int day = 0; day <= range.TotalDays; day++)
+                                    // By hour for short ranges
+                                    foreach (var entry in revenueByTimePeriod.OrderBy(e => e.Key))
                                     {
-                                        DateTime date = StartDate.AddDays(day);
-
-                                        for (int hour = 0; hour < 24; hour++)
-                                        {
-                                            // Skip hours outside our range
-                                            DateTime currentDateTime = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
-                                            if (currentDateTime < StartDate || currentDateTime > EndDate)
-                                                continue;
-
-                                            string timePeriod = $"{date.ToString("yyyy-MM-dd")} {hour:00}";
-                                            string label = $"{date.ToString("MM/dd")} {hour:00}:00";
-                                            dateLabels.Add(label);
-
-                                            if (revenueByTimePeriod.ContainsKey(timePeriod))
-                                            {
-                                                revenueData.Add(revenueByTimePeriod[timePeriod]);
-                                            }
-                                            else
-                                            {
-                                                revenueData.Add(0);
-                                            }
-                                        }
+                                        DateTime dt = DateTime.ParseExact(entry.Key, "yyyy-MM-dd HH", 
+                                                                         System.Globalization.CultureInfo.InvariantCulture);
+                                        dateLabels.Add(dt.ToString("MMM dd HH:00"));
+                                        revenueData.Add(entry.Value);
                                     }
                                 }
                                 else if (range.TotalDays <= 31)
                                 {
-                                    // For medium ranges, show days
-                                    for (int day = 0; day <= range.TotalDays; day++)
+                                    // By day for medium ranges
+                                    for (int i = 0; i <= range.TotalDays; i++)
                                     {
-                                        DateTime date = StartDate.AddDays(day);
+                                        DateTime date = StartDate.AddDays(i);
                                         string dateString = date.ToString("yyyy-MM-dd");
                                         string label = date.ToString("MMM dd");
                                         dateLabels.Add(label);
@@ -1434,14 +1402,12 @@ namespace OnlinePastryShop.Pages
                                 }
                                 else
                                 {
-                                    // For longer ranges, show months
-                                    int months = ((EndDate.Year - StartDate.Year) * 12) + EndDate.Month - StartDate.Month + 1;
-
-                                    for (int month = 0; month < months; month++)
+                                    // By month for longer ranges
+                                    DateTime current = new DateTime(StartDate.Year, StartDate.Month, 1);
+                                    while (current <= EndDate)
                                     {
-                                        DateTime date = StartDate.AddMonths(month);
-                                        string monthString = date.ToString("yyyy-MM");
-                                        string label = date.ToString("MMM yyyy");
+                                        string monthString = current.ToString("yyyy-MM");
+                                        string label = current.ToString("MMM yyyy");
                                         dateLabels.Add(label);
 
                                         if (revenueByTimePeriod.ContainsKey(monthString))
@@ -1452,50 +1418,8 @@ namespace OnlinePastryShop.Pages
                                         {
                                             revenueData.Add(0);
                                         }
-                                    }
-                                }
-                            }
 
-                            // If we didn't find any data, leave the empty arrays as is
-                            if (!hasData)
-                            {
-                                System.Diagnostics.Debug.WriteLine("No sales trend data found for the selected period");
-
-                                // Create empty arrays based on the time range
-                                if (TimeRange == "Daily")
-                                {
-                                    for (int hour = 0; hour < 24; hour++)
-                                    {
-                                        dateLabels.Add($"{hour:00}:00");
-                                        revenueData.Add(0);
-                                    }
-                                }
-                                else if (TimeRange == "Weekly")
-                                {
-                                    for (int day = 0; day < 7; day++)
-                                    {
-                                        DateTime date = StartDate.AddDays(day);
-                                        dateLabels.Add(date.ToString("MMM dd"));
-                                        revenueData.Add(0);
-                                    }
-                                }
-                                else if (TimeRange == "Monthly")
-                                {
-                                    int daysInMonth = DateTime.DaysInMonth(StartDate.Year, StartDate.Month);
-                                    for (int day = 1; day <= daysInMonth; day++)
-                                    {
-                                        DateTime date = new DateTime(StartDate.Year, StartDate.Month, day);
-                                        dateLabels.Add(date.ToString("MMM dd"));
-                                        revenueData.Add(0);
-                                    }
-                                }
-                                else if (TimeRange == "Yearly")
-                                {
-                                    for (int month = 1; month <= 12; month++)
-                                    {
-                                        DateTime date = new DateTime(StartDate.Year, month, 1);
-                                        dateLabels.Add(date.ToString("MMM"));
-                                        revenueData.Add(0);
+                                        current = current.AddMonths(1);
                                     }
                                 }
                             }
@@ -1503,66 +1427,45 @@ namespace OnlinePastryShop.Pages
                     }
                 }
 
-                System.Diagnostics.Debug.WriteLine($"Generated {dateLabels.Count} labels and {revenueData.Count} data points");
+                // If no data was found, use empty arrays
+                if (!hasData)
+                {
+                    System.Diagnostics.Debug.WriteLine("No sales trend data found for the selected time period");
+                    
+                    // Empty arrays indicate no data - will display appropriately in the UI
+                    dateLabels = new List<string>();
+                    revenueData = new List<decimal>();
+                }
 
-                // Serialize the data for JavaScript
+                // Serialize the data
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
                 SalesTrendLabels = serializer.Serialize(dateLabels);
                 SalesTrendData = serializer.Serialize(revenueData);
 
-                System.Diagnostics.Debug.WriteLine("Sales trend data loaded successfully");
+                // Update message visibility
+                if (lblMessage != null)
+                {
+                    lblMessage.Visible = !hasData && !lblMessage.Visible; // Only show if not already visible
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Sales trend labels: {SalesTrendLabels}");
+                System.Diagnostics.Debug.WriteLine($"Sales trend data: {SalesTrendData}");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error loading sales trend data: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
-                // Initialize with empty arrays
-                List<string> dateLabels = new List<string>();
-                List<decimal> revenueData = new List<decimal>();
-
-                // Create empty arrays based on the time range
-                if (TimeRange == "Daily")
-                {
-                    for (int hour = 0; hour < 24; hour++)
-                    {
-                        dateLabels.Add($"{hour:00}:00");
-                        revenueData.Add(0);
-                    }
-                }
-                else if (TimeRange == "Weekly")
-                {
-                    for (int day = 0; day < 7; day++)
-                    {
-                        DateTime date = StartDate.AddDays(day);
-                        dateLabels.Add(date.ToString("MMM dd"));
-                        revenueData.Add(0);
-                    }
-                }
-                else if (TimeRange == "Monthly")
-                {
-                    int daysInMonth = DateTime.DaysInMonth(StartDate.Year, StartDate.Month);
-                    for (int day = 1; day <= daysInMonth; day++)
-                    {
-                        DateTime date = new DateTime(StartDate.Year, StartDate.Month, day);
-                        dateLabels.Add(date.ToString("MMM dd"));
-                        revenueData.Add(0);
-                    }
-                }
-                else if (TimeRange == "Yearly")
-                {
-                    for (int month = 1; month <= 12; month++)
-                    {
-                        DateTime date = new DateTime(StartDate.Year, month, 1);
-                        dateLabels.Add(date.ToString("MMM"));
-                        revenueData.Add(0);
-                    }
-                }
-
-                // Serialize the sample data
+                // Use empty arrays for error states - no fallback data
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
-                SalesTrendLabels = serializer.Serialize(dateLabels);
-                SalesTrendData = serializer.Serialize(revenueData);
+                SalesTrendLabels = serializer.Serialize(new List<string>());
+                SalesTrendData = serializer.Serialize(new List<decimal>());
+
+                // Show error message
+                if (lblMessage != null)
+                {
+                    lblMessage.Visible = true;
+                }
             }
         }
 
@@ -1713,107 +1616,159 @@ namespace OnlinePastryShop.Pages
                 List<string> categoryNames = new List<string>();
                 List<decimal> categoryRevenues = new List<decimal>();
 
+                // Track if any data was found
+                bool hasData = false;
+
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
                     connection.Open();
                     System.Diagnostics.Debug.WriteLine("Database connection opened");
 
-                    // Query to get revenue by category
-                    string query = @"
+                    // First, get all active parent categories (regardless of sales)
+                    string categoryQuery = @"
                         SELECT 
-                            c.NAME AS CategoryName,
-                            NVL(SUM(od.QUANTITY * od.PRICE), 0) AS Revenue
+                            CATEGORYID, NAME 
                         FROM 
-                            CATEGORIES c
-                        LEFT JOIN 
-                            PRODUCTCATEGORIES pc ON c.CATEGORYID = pc.CATEGORYID
-                        LEFT JOIN 
-                            PRODUCTS p ON pc.PRODUCTID = p.PRODUCTID
-                        LEFT JOIN 
-                            ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
-                        LEFT JOIN 
-                            ORDERS o ON od.ORDERID = o.ORDERID AND
-                            o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD')
-                                AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
-                            AND o.ISACTIVE = 1
+                            CATEGORIES 
                         WHERE 
-                            c.ISACTIVE = 1 AND
-                            c.PARENTCATEGORYID IS NULL  -- Only main categories
-                        GROUP BY 
-                            c.NAME
+                            ISACTIVE = 1 AND
+                            PARENTCATEGORYID IS NULL
                         ORDER BY 
-                            Revenue DESC
-                        FETCH FIRST 5 ROWS ONLY";
+                            NAME";
 
-                    System.Diagnostics.Debug.WriteLine($"Executing query: {query}");
+                    Dictionary<int, string> allCategories = new Dictionary<int, string>();
+                    Dictionary<int, decimal> categoryRevenueMap = new Dictionary<int, decimal>();
 
-                    using (OracleCommand command = new OracleCommand(query, connection))
+                    using (OracleCommand catCommand = new OracleCommand(categoryQuery, connection))
                     {
-                        command.Parameters.Add(new OracleParameter("startDate", OracleDbType.Varchar2)).Value = startDateParam;
-                        command.Parameters.Add(new OracleParameter("endDate", OracleDbType.Varchar2)).Value = endDateParam;
-
-                        using (OracleDataReader reader = command.ExecuteReader())
+                        using (OracleDataReader catReader = catCommand.ExecuteReader())
                         {
-                            bool hasData = false;
-
-                            while (reader.Read())
+                            while (catReader.Read())
                             {
-                                hasData = true;
-                                string categoryName = reader.GetString(0);
-                                decimal revenue = reader.GetDecimal(1);
-
-                                categoryNames.Add(categoryName);
-                                categoryRevenues.Add(revenue);
-
-                                System.Diagnostics.Debug.WriteLine($"Category data: {categoryName} = {revenue}");
-                            }
-
-                            // If no data was found, try to get at least the category names
-                            if (!hasData)
-                            {
-                                System.Diagnostics.Debug.WriteLine("No category revenue data found, getting category names only");
-
-                                string fallbackQuery = @"
-                                    SELECT 
-                                        NAME
-                                    FROM 
-                                        CATEGORIES
-                                    WHERE 
-                                        ISACTIVE = 1
-                                    ORDER BY 
-                                        NAME
-                                    FETCH FIRST 5 ROWS ONLY";
-
-                                using (OracleCommand fallbackCmd = new OracleCommand(fallbackQuery, connection))
-                                {
-                                    using (OracleDataReader fallbackReader = fallbackCmd.ExecuteReader())
-                                    {
-                                        while (fallbackReader.Read())
-                                        {
-                                            string categoryName = fallbackReader.GetString(0);
-                                            categoryNames.Add(categoryName);
-                                            categoryRevenues.Add(0); // No revenue
-
-                                            System.Diagnostics.Debug.WriteLine($"Fallback category: {categoryName}");
-                                        }
-                                    }
-                                }
-
-                                // If we still have no categories, use placeholder
-                                if (categoryNames.Count == 0)
-                                {
-                                    categoryNames.Add("No Categories");
-                                    categoryRevenues.Add(0);
-                                }
+                                int categoryId = catReader.GetInt32(0);
+                                string categoryName = catReader.GetString(1);
+                                allCategories.Add(categoryId, categoryName);
+                                categoryRevenueMap.Add(categoryId, 0); // Initialize revenue to 0
                             }
                         }
                     }
+
+                    // If we have categories, get their revenue for the selected time period
+                    if (allCategories.Count > 0)
+                    {
+                        // Query to get revenue by category
+                        string revenueQuery = @"
+                            SELECT * FROM (
+                                SELECT 
+                                    c.CATEGORYID,
+                                    c.NAME AS CategoryName,
+                                    NVL(SUM(NVL(od.QUANTITY, 0) * NVL(od.PRICE, 0)), 0) AS Revenue
+                                FROM 
+                                    CATEGORIES c
+                                LEFT JOIN 
+                                    PRODUCTCATEGORIES pc ON c.CATEGORYID = pc.CATEGORYID
+                                LEFT JOIN 
+                                    PRODUCTS p ON pc.PRODUCTID = p.PRODUCTID AND p.ISACTIVE = 1
+                                LEFT JOIN 
+                                    ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
+                                LEFT JOIN 
+                                    ORDERS o ON od.ORDERID = o.ORDERID AND
+                                    o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD')
+                                        AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
+                                    AND o.ISACTIVE = 1
+                                WHERE 
+                                    c.ISACTIVE = 1 AND
+                                    c.PARENTCATEGORYID IS NULL
+                                GROUP BY 
+                                    c.CATEGORYID, c.NAME
+                                ORDER BY 
+                                    Revenue DESC
+                            ) WHERE ROWNUM <= 8";
+
+                        using (OracleCommand revenueCommand = new OracleCommand(revenueQuery, connection))
+                        {
+                            revenueCommand.Parameters.Add(new OracleParameter("startDate", OracleDbType.Varchar2)).Value = startDateParam;
+                            revenueCommand.Parameters.Add(new OracleParameter("endDate", OracleDbType.Varchar2)).Value = endDateParam;
+
+                            using (OracleDataReader revenueReader = revenueCommand.ExecuteReader())
+                            {
+                                while (revenueReader.Read())
+                                {
+                                    int categoryId = revenueReader.GetInt32(0);
+                                    decimal revenue = revenueReader.IsDBNull(2) ? 0 : revenueReader.GetDecimal(2);
+
+                                    // Update the revenue map
+                                    if (categoryRevenueMap.ContainsKey(categoryId))
+                                    {
+                                        categoryRevenueMap[categoryId] = revenue;
+                                    }
+
+                                    // Check if we have any revenue
+                                    if (revenue > 0)
+                                    {
+                                        hasData = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Convert the category data to sorted lists for the chart
+                        // Include all categories from our dictionary - this will include even those with zero revenue
+                        var sortedCategories = categoryRevenueMap
+                            .OrderByDescending(c => c.Value)
+                            .Take(8); // Show top 8 categories
+
+                        foreach (var category in sortedCategories)
+                        {
+                            int categoryId = category.Key;
+                            decimal revenue = category.Value;
+                            string categoryName = allCategories[categoryId];
+
+                            categoryNames.Add(categoryName);
+                            categoryRevenues.Add(revenue);
+
+                            System.Diagnostics.Debug.WriteLine($"Category data: {categoryName} = {revenue}");
+                        }
+
+                        // If we have categories but no data, add at least some categories with zero revenue
+                        if (categoryNames.Count == 0 && allCategories.Count > 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("No revenue data found, adding categories with zero revenue");
+                            
+                            // Add up to 8 categories with zero revenue
+                            foreach (var category in allCategories.Take(8))
+                            {
+                                categoryNames.Add(category.Value);
+                                categoryRevenues.Add(0);
+                                System.Diagnostics.Debug.WriteLine($"Added zero-revenue category: {category.Value}");
+                            }
+                            
+                            // We have data (categories) even if no revenue
+                            hasData = true;
+                        }
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("No active parent categories found");
+                    }
                 }
 
-                // Convert to JSON
+                // If no revenue was found for any category in this time period, show message
+                if (!hasData)
+                {
+                    System.Diagnostics.Debug.WriteLine("No category revenue data found for the selected time period");
+                }
+
+                // Convert to JSON - Ensure no null values in the list
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
                 CategoryNames = serializer.Serialize(categoryNames);
                 CategoryRevenueData = serializer.Serialize(categoryRevenues);
+
+                // Display a message if no data found
+                if (lblMessage != null)
+                {
+                    lblMessage.Visible = !hasData && categoryNames.Count == 0;
+                }
 
                 System.Diagnostics.Debug.WriteLine($"Category names: {CategoryNames}");
                 System.Diagnostics.Debug.WriteLine($"Category revenue data: {CategoryRevenueData}");
@@ -1823,13 +1778,16 @@ namespace OnlinePastryShop.Pages
                 System.Diagnostics.Debug.WriteLine($"Error loading category revenue data: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
-                // Set default empty data on error
+                // Set empty arrays on error - no fallback data
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
-                List<string> emptyNames = new List<string> { "No Data Available" };
-                List<decimal> emptyData = new List<decimal> { 0 };
+                CategoryNames = serializer.Serialize(new List<string>());
+                CategoryRevenueData = serializer.Serialize(new List<decimal>());
 
-                CategoryNames = serializer.Serialize(emptyNames);
-                CategoryRevenueData = serializer.Serialize(emptyData);
+                // Show message that no data is available
+                if (lblMessage != null)
+                {
+                    lblMessage.Visible = true;
+                }
             }
         }
 
@@ -1852,6 +1810,9 @@ namespace OnlinePastryShop.Pages
                 List<string> productNames = new List<string>();
                 List<int> productQuantities = new List<int>();
 
+                // Track if any data was found
+                bool hasData = false;
+
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
                     connection.Open();
@@ -1859,25 +1820,26 @@ namespace OnlinePastryShop.Pages
 
                     // Query to get top 5 products by quantity sold for the selected time period
                     string query = @"
-                        SELECT 
-                            p.NAME AS ProductName,
-                            NVL(SUM(od.QUANTITY), 0) AS TotalQuantity
-                        FROM 
-                            PRODUCTS p
-                        LEFT JOIN 
-                            ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
-                        LEFT JOIN 
-                            ORDERS o ON od.ORDERID = o.ORDERID AND
-                            o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') 
-                                AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
-                            AND o.ISACTIVE = 1
-                        WHERE 
-                            p.ISACTIVE = 1
-                        GROUP BY 
-                            p.NAME
-                        ORDER BY 
-                            TotalQuantity DESC
-                        FETCH FIRST 5 ROWS ONLY";
+                        SELECT * FROM (
+                            SELECT 
+                                p.NAME AS ProductName,
+                                NVL(SUM(NVL(od.QUANTITY, 0)), 0) AS TotalQuantity
+                            FROM 
+                                PRODUCTS p
+                            LEFT JOIN 
+                                ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
+                            LEFT JOIN 
+                                ORDERS o ON od.ORDERID = o.ORDERID AND
+                                o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') 
+                                    AND TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999
+                                AND o.ISACTIVE = 1
+                            WHERE 
+                                p.ISACTIVE = 1
+                            GROUP BY 
+                                p.NAME
+                            ORDER BY 
+                                TotalQuantity DESC
+                        ) WHERE ROWNUM <= 5";
 
                     System.Diagnostics.Debug.WriteLine($"Executing query: {query}");
 
@@ -1888,75 +1850,45 @@ namespace OnlinePastryShop.Pages
 
                         using (OracleDataReader reader = command.ExecuteReader())
                         {
-                            bool hasData = false;
-
                             while (reader.Read())
                             {
-                                hasData = true;
                                 string productName = reader.GetString(0);
                                 int quantity = reader.GetInt32(1);
 
-                                // Only add products with quantity > 0
+                                // Only add products with quantity > 0 for this time period
                                 if (quantity > 0)
                                 {
                                     productNames.Add(productName);
                                     productQuantities.Add(quantity);
+                                    hasData = true;
 
                                     System.Diagnostics.Debug.WriteLine($"Product data: {productName} = {quantity} units");
-                                }
-                            }
-
-                            // If no data was found or no products with quantity > 0, use empty arrays
-                            if (!hasData || productNames.Count == 0)
-                            {
-                                System.Diagnostics.Debug.WriteLine("No top products data found for the selected time period");
-
-                                // Try another query with a broader date range to get at least some products
-                                string fallbackQuery = @"
-                                    SELECT 
-                                        p.NAME AS ProductName,
-                                        COUNT(*) AS TotalCount
-                                    FROM 
-                                        PRODUCTS p
-                                    WHERE 
-                                        p.ISACTIVE = 1
-                                    GROUP BY 
-                                        p.NAME
-                                    ORDER BY 
-                                        p.NAME
-                                    FETCH FIRST 5 ROWS ONLY";
-
-                                using (OracleCommand fallbackCmd = new OracleCommand(fallbackQuery, connection))
-                                {
-                                    using (OracleDataReader fallbackReader = fallbackCmd.ExecuteReader())
-                                    {
-                                        while (fallbackReader.Read())
-                                        {
-                                            string productName = fallbackReader.GetString(0);
-
-                                            productNames.Add(productName);
-                                            productQuantities.Add(0); // No sales for these products in the selected period
-
-                                            System.Diagnostics.Debug.WriteLine($"Fallback product: {productName} (0 units)");
-                                        }
-                                    }
-                                }
-
-                                // If we still have no products, just show a placeholder
-                                if (productNames.Count == 0)
-                                {
-                                    productNames.Add("No Products Sold");
-                                    productQuantities.Add(0);
                                 }
                             }
                         }
                     }
                 }
 
-                // Convert to JSON
+                // If no data was found for the selected time period, use empty arrays
+                if (!hasData)
+                {
+                    System.Diagnostics.Debug.WriteLine("No top products data found for the selected time period");
+                    
+                    // Empty arrays indicate no data - will display appropriately
+                    productNames = new List<string>();
+                    productQuantities = new List<int>();
+                }
+
+                // Convert to JSON - ensure we have valid data
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
                 TopProductNames = serializer.Serialize(productNames);
                 TopProductQuantities = serializer.Serialize(productQuantities);
+
+                // Update message visibility
+                if (lblMessage != null)
+                {
+                    lblMessage.Visible = !hasData && !lblMessage.Visible; // Only show if not already visible
+                }
 
                 System.Diagnostics.Debug.WriteLine($"Top product names: {TopProductNames}");
                 System.Diagnostics.Debug.WriteLine($"Top product quantities: {TopProductQuantities}");
@@ -1966,13 +1898,16 @@ namespace OnlinePastryShop.Pages
                 System.Diagnostics.Debug.WriteLine($"Error loading top products data: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
-                // Set empty arrays
+                // Set empty arrays on error - no fallback data
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
-                List<string> emptyNames = new List<string>() { "No Data Available" };
-                List<int> emptyQuantities = new List<int>() { 0 };
+                TopProductNames = serializer.Serialize(new List<string>());
+                TopProductQuantities = serializer.Serialize(new List<int>());
 
-                TopProductNames = serializer.Serialize(emptyNames);
-                TopProductQuantities = serializer.Serialize(emptyQuantities);
+                // Show message that no data is available
+                if (lblMessage != null)
+                {
+                    lblMessage.Visible = true;
+                }
             }
         }
 
@@ -2009,7 +1944,7 @@ namespace OnlinePastryShop.Pages
                             {
                                 // Get inventory status counts
                                 int inStock = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
-                                int lowStock = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+                                int lowStock = reader.IsDBNull(2) ? 0 : reader.GetInt32(1);
                                 int outOfStock = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
 
                                 inventoryStatus.Add(inStock);
@@ -2067,28 +2002,32 @@ namespace OnlinePastryShop.Pages
 
                     // Get product performance based on orders in the selected time period
                     string query = @"
-                        SELECT 
-                            p.NAME AS ProductName,
-                            NVL(AVG(5), 0) AS AverageRating,
-                            COUNT(DISTINCT o.ORDERID) AS TotalOrders,
-                            NVL(SUM(od.QUANTITY), 0) AS TotalQuantity,
-                            NVL(ROUND((NVL(SUM(od.QUANTITY), 0) / NVL(p.STOCKQUANTITY, 1)) * 100, 2), 0) AS ConversionRate
-                        FROM 
-                            PRODUCTS p
-                        LEFT JOIN 
-                            ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
-                        LEFT JOIN 
-                            ORDERS o ON od.ORDERID = o.ORDERID AND 
-                            o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND 
-                            TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999 AND
-                            o.ISACTIVE = 1
-                        WHERE 
-                            p.ISACTIVE = 1
-                        GROUP BY 
-                            p.NAME, p.STOCKQUANTITY
-                        ORDER BY 
-                            TotalQuantity DESC
-                        FETCH FIRST 5 ROWS ONLY";
+                        SELECT * FROM (
+                            SELECT 
+                                p.NAME AS ProductName,
+                                NVL(AVG(5), 0) AS AverageRating,
+                                COUNT(DISTINCT o.ORDERID) AS TotalOrders,
+                                NVL(SUM(od.QUANTITY), 0) AS TotalQuantity,
+                                CASE 
+                                    WHEN NVL(p.STOCKQUANTITY, 0) = 0 THEN 0
+                                    ELSE NVL(ROUND((NVL(SUM(od.QUANTITY), 0) / p.STOCKQUANTITY) * 100, 2), 0)
+                                END AS ConversionRate
+                            FROM 
+                                PRODUCTS p
+                            LEFT JOIN 
+                                ORDERDETAILS od ON p.PRODUCTID = od.PRODUCTID
+                            LEFT JOIN 
+                                ORDERS o ON od.ORDERID = o.ORDERID AND 
+                                o.ORDERDATE BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND 
+                                TO_DATE(:endDate, 'YYYY-MM-DD') + 0.99999 AND
+                                o.ISACTIVE = 1
+                            WHERE 
+                                p.ISACTIVE = 1
+                            GROUP BY 
+                                p.NAME, p.STOCKQUANTITY
+                            ORDER BY 
+                                TotalQuantity DESC
+                        ) WHERE ROWNUM <= 5";
 
                     System.Diagnostics.Debug.WriteLine($"Executing query: {query}");
 
@@ -2106,7 +2045,7 @@ namespace OnlinePastryShop.Pages
                                 hasData = true;
 
                                 string productName = reader.GetString(0);
-                                decimal averageRating = reader.IsDBNull(1) ? 0 : reader.GetDecimal(1);
+                                decimal averageRating = reader.IsDBNull(2) ? 0 : reader.GetDecimal(1);
                                 int totalOrders = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
                                 int totalQuantity = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
                                 decimal conversionRate = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4);
@@ -2132,18 +2071,19 @@ namespace OnlinePastryShop.Pages
                                 System.Diagnostics.Debug.WriteLine("No product rating data found, using fallback query");
 
                                 string fallbackQuery = @"
-                                    SELECT 
-                                        NAME,
-                                        0 AS AverageRating,
-                                        0 AS TotalReviews,
-                                        0 AS ConversionRate
-                                    FROM 
-                                        PRODUCTS 
-                                    WHERE 
-                                        ISACTIVE = 1
-                                    ORDER BY 
-                                        NAME
-                                    FETCH FIRST 5 ROWS ONLY";
+                                    SELECT * FROM (
+                                        SELECT 
+                                            NAME,
+                                            0 AS AverageRating,
+                                            0 AS TotalReviews,
+                                            0 AS ConversionRate
+                                        FROM 
+                                            PRODUCTS 
+                                        WHERE 
+                                            ISACTIVE = 1
+                                        ORDER BY 
+                                            NAME
+                                    ) WHERE ROWNUM <= 5";
 
                                 using (OracleCommand fallbackCmd = new OracleCommand(fallbackQuery, connection))
                                 {
@@ -2204,7 +2144,7 @@ namespace OnlinePastryShop.Pages
                         TotalReviews = 0,
                         ConversionRate = 0
                     }
-};
+                };
             }
         }
 

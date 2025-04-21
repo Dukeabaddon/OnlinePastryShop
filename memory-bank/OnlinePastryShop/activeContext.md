@@ -1,106 +1,107 @@
 # Active Context
 
 ## Current Focus
-We are currently focusing on enhancing the security and user authentication system of the Online Pastry Shop application. The main areas of work include:
+We are currently focused on optimizing the website's appearance, particularly with background images and branding elements. The most recent tasks involved:
 
-1. Securing admin-only pages with proper session validation
-2. Implementing role-based access control
-3. Fixing login/logout functionality across all user types
-4. Testing authentication flows
-5. Improving password security
+1. Changing all instances of "Pastry Palace" to "Royal Pastries" throughout the site
+2. Fixing the hero section in the Contact.aspx page where the header banner was missing
+3. Addressing the wallpaper image display issue in Menu.aspx, ensuring it's visible on all devices
+4. Adjusting the wallpaper image in Menu.aspx to be positioned at the bottom rather than the top
 
 ## Recent Changes
+- Completed brand name update from "Pastry Palace" to "Royal Pastries" across the site
+- Fixed the Contact page hero section to properly display the animated circles and brown overlay
+- Corrected the Menu page wallpaper image, ensuring it displays correctly and is positioned at the bottom
+- Made various responsive design improvements for mobile layouts
 
-### Authentication System Implementation
-- ✅ Implemented user login with database validation
-- ✅ Added session management to store user information (UserID, FirstName, LastName, UserRole)
-- ✅ Created role-based redirects (Admin → Dashboard, Customer → Homepage)
-- ✅ Implemented session verification to prevent unauthorized dashboard access
-- ✅ Updated UI to show user initials for logged-in users
-- ✅ Added dropdown menu with profile, orders, and logout options
-- ✅ Implemented logout functionality to clear sessions
-- ✅ Implemented user registration functionality with validation
+## Next Steps
+After completing the visual adjustments:
+1. Review and ensure consistent branding across all pages
+2. Test responsiveness on various device sizes
+3. Fix any remaining UI issues in the menu and product pages
+4. Implement proper password hashing for enhanced security
+5. Complete user profile page functionality
+6. Continue the checkout process implementation
 
-### Dashboard Security
-- ✅ Added session validation in Dashboard.aspx.cs Page_Load method
-- ✅ Implemented role checking to ensure only admin users can access the dashboard
-- ✅ Added redirection to Login.aspx for unauthenticated users
-- ✅ Added redirection to Default.aspx for non-admin users
+## Active Decisions and Considerations
 
-### Login System
-- ✅ Implemented ValidateUser method to check credentials against database
-- ✅ Created session variables on successful login
-- ✅ Set up role-based redirects after login
-- ✅ Added special handling for admin123 and qwen123 passwords
-- ✅ Fixed double hashing issue to ensure consistent password hashing across the application
+### Design Decisions
+- The brand color (#96744F) should be used consistently across all pages
+- Hero images should have a consistent style with gradient overlays
+- Background images should be positioned appropriately for each page context
+- Ensure text remains readable against background images with proper contrast
+- Mobile responsiveness must be maintained with all UI changes
 
-### Sign-up System
-- ✅ Implemented complete user registration functionality
-- ✅ Added validation for unique username, email, and phone number
-- ✅ Implemented server-side password validation
-- ✅ Added success feedback with toast notification
-- ✅ Created automatic tab switching to login after successful registration
-- ✅ Added proper error handling and user feedback for registration issues
+### Technical Decisions
+- Using the background-position property to adjust image placement
+- Ensuring all brand name references are updated in both visual elements and alt text
+- Maintaining responsive design principles across all viewport sizes
+- Converting internal CSS to Tailwind CSS where possible to maintain consistent styling approach
 
-### Admin Master Page Improvements
-- ✅ Replaced static HTML logout link with ASP.NET LinkButton
-- ✅ Implemented lnkAdminLogout_Click handler to properly clear sessions
-- ✅ Added exception handling for robust logout processing
-- ✅ Ensured proper redirection to Default.aspx after admin logout
-- ✅ Fixed issue where admin could "log out" without ending session
+## Current Focus
 
-## Current Issues
+We are currently focused on enhancing the user experience and completing core pages:
 
-### Password Security
-- Current implementation uses SHA256 without salt
-- No salt used in the password hashing process
-- SHA256 implementation could be improved with industry-standard practices
+- ✅ **Brand Identity Update**: Updated the brand name from "Pastry Palace" to "Royal Pastries" across the site
+- ✅ **Visual Consistency**: Ensured background images and hero sections are consistent across pages
+- ✅ **About Page Implementation**: The About page has been successfully implemented with sections for Filipino heritage, core values, team profiles, and store information
+- ✅ **Contact Page Implementation**: The Contact page is fully implemented with all necessary sections - hero section, contact methods, bakery information, contact form, map section, FAQs, and newsletter signup
+- ✅ **User Authentication MVP**: Successfully implemented the complete user authentication system with role-based access control, session management, and UI updates for logged-in users
+- 🔄 **Menu Page Optimization**: Continuing work on the Menu page to optimize product display and filtering by categories
+- 🔄 **Image Handling Enhancement**: Improving how product images are displayed and served
+- 🔄 **CSS Standardization**: Converting internal CSS to Tailwind CSS in both Menu and Contact pages to maintain consistent styling approach throughout the application
 
-### Session Management
-- No "Remember Me" functionality implemented yet
-- No automatic session timeout handling
-- No account recovery process
-- No token-based authentication option for API calls
+## Recent UI/UX Fixes
+1. **Contact Page Hero Section**:
+   - Fixed missing header banner in Contact.aspx
+   - Restored animated circles and brown overlay for visual consistency
 
-### User Interface
-- No password strength meter during registration
-- Limited client-side validation for registration form
-- No visual feedback during login process
+2. **Menu Page Wallpaper**:
+   - Fixed wallpaper image display issue in Menu.aspx
+   - Adjusted background position to center bottom
+   - Ensured image is displayed correctly on all devices
 
-### Security Concerns
-- No CSRF protection implemented
-- No account lockout mechanism for failed login attempts
-- No two-factor authentication option
-- No audit logging for security events
+3. **Brand Name Updates**:
+   - Changed all instances of "Pastry Palace" to "Royal Pastries"
+   - Updated references in headings, paragraphs, and button labels
+   - Maintained consistent styling across renamed elements
 
 ## Next Steps
 
 ### Short-term Goals
-1. Implement proper SHA256 password hashing with salt
-2. Add password strength requirements
-3. Create "Remember Me" functionality
-4. Add account recovery options
-5. Enhance error messages for login failures
+- Review all other pages for potential background image issues
+- Implement proper password hashing for enhanced security
+- Develop the user profile page functionality
+- Add "Remember Me" option to the login form
+- Create account recovery functionality
+- Update the address and contact information across all pages
 
 ### Medium-term Goals
-1. Create user profile management page
-2. Implement email verification for new accounts
-3. Add two-factor authentication option
-4. Implement automatic session timeout
-5. Create admin user management interface
+- Implement the shopping cart functionality
+- Connect cart to the backend
+- Set up the order processing system
+- Integrate payment gateway
+- Implement email notifications
+
+## Current Decisions and Considerations
+
+### Design Decisions
+- Using the brand colors (#96744F) consistently across all pages
+- Employing circular profile images for team members with descriptive badges
+- Implementing a clean, modern design with card-based layouts
+- Using circular user initials for logged-in users with a dropdown menu
+- Ensuring form fields are properly labeled and validated
+- Using Tailwind CSS exclusively for styling, avoiding internal CSS
+
+### Technical Decisions
+- Using ASP.NET Repeaters for data binding to display dynamic content
+- Using session variables to manage user state across pages
+- Implementing role-based access control for security
+- Using vanilla JavaScript for client-side functionality to minimize dependencies
+- Planning to enhance password security with proper hashing in the next phase
 
 ## Open Questions
-1. What password hashing algorithm should we implement? (Currently leaning toward SHA256 with salt)
-2. How should we handle "Remember Me" functionality? (Cookie-based vs extended session)
-3. How should we structure the user profile page?
-4. What level of password complexity should we require?
-5. Should we implement automatic account lockout after failed attempts?
-
-## Decision Points
-- Decided to implement session verification on all admin pages
-- Chose to use UserRole session variable for role-based access control
-- Opted for a dropdown menu for user account management
-- Selected simple initials display for authenticated users
-- Fixed admin logout to properly clear sessions and redirect to Default.aspx
-- Chose to implement different logout redirects based on user role (Login.aspx for customers, Default.aspx for admins)
-- Standardized password hashing to use hex encoding across all parts of the application
+- What password hashing algorithm should we implement?
+- How should we structure the user profile page?
+- What features should be included in the account recovery system?
+- Should we implement automatic session timeout after inactivity?

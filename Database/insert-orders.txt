@@ -1,0 +1,63 @@
+SET SERVEROUTPUT ON
+DECLARE
+  v_userid    NUMBER;
+  v_orderid   NUMBER;
+  v_price     NUMBER;
+  v_date      DATE := TRUNC(SYSDATE);
+BEGIN
+  -- 1) get duke’s USERID
+  SELECT userid 
+    INTO v_userid 
+    FROM users 
+   WHERE username = 'duke';
+
+  FOR i IN 0..9 LOOP
+    -- 2) pull the real price for PRODUCTID = i+1
+    SELECT price
+      INTO v_price
+      FROM products
+     WHERE productid = i + 1;
+
+    -- 3) insert the order, let ORDERS_TRIGGER fire,
+    --    and RETURNING grab the new ORDERID
+    INSERT INTO orders (
+      userid,
+      orderdate,
+      totalamount,
+      shippingaddress,    
+      status,             
+      paymentmethod       
+    ) VALUES (
+      v_userid,
+      v_date - i,
+      v_price,
+      '123 Main St, Quezon City',  
+      DEFAULT,
+      DEFAULT
+    )
+    RETURNING orderid
+      INTO v_orderid;
+
+    -- 4) now insert the detail—ORDERDETAILS_TRIGGER will set ORDERDETAILID
+    INSERT INTO orderdetails (
+      orderid,
+      productid,
+      quantity,
+      price,
+      -- costprice is nullable; omit or supply if you need it
+      costprice,
+      isactive
+    ) VALUES (
+      v_orderid,
+      i + 1,
+      1,
+      v_price,
+      NULL,
+      DEFAULT
+    );
+  END LOOP;
+
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('Inserted 10 orders and details for user DUKE');
+END;
+/

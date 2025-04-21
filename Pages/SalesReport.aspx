@@ -210,7 +210,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <% if (ProductRatings != null) { %>
+                            <% if (ProductRatings != null && ProductRatings.Count > 0) { %>
                                 <% foreach (var product in ProductRatings) { %>
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -218,15 +218,15 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
-                                                <div class="text-sm text-gray-900 mr-2"><%= product.AverageRating.ToString("0.0") %></div>
+                                                <div class="text-sm text-gray-900 mr-2"><%= (product.AverageRating > 0 ? product.AverageRating.ToString("0.0") : "0.0") %></div>
                                                 <div class="flex text-yellow-400">
                                                     <% for (int i = 1; i <= 5; i++) { %>
-                                                        <% if (i <= Math.Floor(product.AverageRating)) { %>
+                                                        <% if (product.AverageRating > 0 && i <= Math.Floor(product.AverageRating)) { %>
                                                             <!-- Full star -->
                                                             <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
                                                                 <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                                                             </svg>
-                                                        <% } else if (i <= Math.Ceiling(product.AverageRating) && product.AverageRating % 1 != 0) { %>
+                                                        <% } else if (product.AverageRating > 0 && i <= Math.Ceiling(product.AverageRating) && product.AverageRating % 1 != 0) { %>
                                                             <!-- Half star -->
                                                             <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
                                                                 <defs>
@@ -302,21 +302,38 @@
                 if (inventoryStatusChart) inventoryStatusChart.destroy();
 
                 // Set conversion rate bar widths
-                document.querySelectorAll('.conversion-bar').forEach(function (bar) {
-                    const conversion = parseFloat(bar.getAttribute('data-conversion') || 0);
-                    const width = Math.min(conversion, 100);
-                    console.log('Setting conversion bar width to: ' + width + '%');
-                    bar.style.width = width + '%';
-                });
+                try {
+                    document.querySelectorAll('.conversion-bar').forEach(function (bar) {
+                        const conversion = parseFloat(bar.getAttribute('data-conversion') || 0);
+                        const width = Math.min(conversion, 100);
+                        console.log('Setting conversion bar width to: ' + width + '%');
+                        bar.style.width = width + '%';
+                    });
+                } catch (conversionError) {
+                    console.error('Error setting conversion bars:', conversionError);
+                }
 
                 // Access the chart data from global variables set by server
-                const salesTrendLabels = chartData.salesTrendLabels || [];
-                const salesTrendData = chartData.salesTrendData || [];
-                const categoryNames = chartData.categoryNames || [];
-                const categoryRevenueData = chartData.categoryRevenueData || [];
-                const topProductNames = chartData.topProductNames || [];
-                const topProductQuantities = chartData.topProductQuantities || [];
-                const inventoryStatusData = chartData.inventoryStatusData || [0, 0, 0];
+                // Default to empty arrays if data is missing or invalid
+                try {
+                    var salesTrendLabels = Array.isArray(chartData.salesTrendLabels) ? chartData.salesTrendLabels : [];
+                    var salesTrendData = Array.isArray(chartData.salesTrendData) ? chartData.salesTrendData : [];
+                    var categoryNames = Array.isArray(chartData.categoryNames) ? chartData.categoryNames : [];
+                    var categoryRevenueData = Array.isArray(chartData.categoryRevenueData) ? chartData.categoryRevenueData : [];
+                    var topProductNames = Array.isArray(chartData.topProductNames) ? chartData.topProductNames : [];
+                    var topProductQuantities = Array.isArray(chartData.topProductQuantities) ? chartData.topProductQuantities : [];
+                    var inventoryStatusData = Array.isArray(chartData.inventoryStatusData) ? chartData.inventoryStatusData : [0, 0, 0];
+                } catch (dataError) {
+                    console.error('Error parsing chart data:', dataError);
+                    // Fallback to empty values
+                    salesTrendLabels = [];
+                    salesTrendData = [];
+                    categoryNames = [];
+                    categoryRevenueData = [];
+                    topProductNames = [];
+                    topProductQuantities = [];
+                    inventoryStatusData = [0, 0, 0];
+                }
 
                 console.log('Chart data loaded:', {
                     salesTrendLabels,
@@ -328,44 +345,55 @@
                 // Sales Trend Chart
                 const salesTrendCtx = document.getElementById('salesTrendChart');
                 if (salesTrendCtx) {
-                    salesTrendChart = new Chart(salesTrendCtx, {
-                        type: 'line',
-                        data: {
-                            labels: salesTrendLabels,
-                            datasets: [{
-                                label: 'Revenue',
-                                data: salesTrendData,
-                                backgroundColor: 'rgba(212, 59, 106, 0.2)',
-                                borderColor: 'rgba(212, 59, 106, 1)',
-                                borderWidth: 2,
-                                tension: 0.3,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        callback: function (value) {
-                                            return '$' + value;
+                    try {
+                        // Check if we have actual data
+                        if (salesTrendLabels.length === 0) {
+                            // Display a "No data" message instead of an empty chart
+                            salesTrendCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-500">No data available for the selected time period</p></div>';
+                        } else {
+                            salesTrendChart = new Chart(salesTrendCtx, {
+                                type: 'line',
+                                data: {
+                                    labels: salesTrendLabels,
+                                    datasets: [{
+                                        label: 'Revenue',
+                                        data: salesTrendData,
+                                        backgroundColor: 'rgba(212, 59, 106, 0.2)',
+                                        borderColor: 'rgba(212, 59, 106, 1)',
+                                        borderWidth: 2,
+                                        tension: 0.3,
+                                        fill: true
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            ticks: {
+                                                callback: function (value) {
+                                                    return '₱' + value;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function (context) {
+                                                    return 'Revenue: ₱' + context.raw;
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                            },
-                            plugins: {
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            return 'Revenue: $' + context.raw;
-                                        }
-                                    }
-                                }
-                            }
+                            });
                         }
-                    });
+                    } catch (chartError) {
+                        console.error('Error creating sales trend chart:', chartError);
+                        salesTrendCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-red-500">Unable to load sales trend chart</p></div>';
+                    }
                 } else {
                     console.error('Sales trend chart canvas not found');
                 }
@@ -373,41 +401,52 @@
                 // Category Revenue Chart
                 const categoryRevenueCtx = document.getElementById('categoryRevenueChart');
                 if (categoryRevenueCtx) {
-                    categoryRevenueChart = new Chart(categoryRevenueCtx, {
-                        type: 'pie',
-                        data: {
-                            labels: categoryNames,
-                            datasets: [{
-                                data: categoryRevenueData,
-                                backgroundColor: [
-                                    'rgba(212, 59, 106, 0.8)',
-                                    'rgba(54, 162, 235, 0.8)',
-                                    'rgba(75, 192, 192, 0.8)',
-                                    'rgba(255, 206, 86, 0.8)',
-                                    'rgba(153, 102, 255, 0.8)',
-                                    'rgba(255, 159, 64, 0.8)'
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            const value = context.raw;
-                                            const label = context.label || '';
-                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                            const percentage = Math.round((value / total) * 100);
-                                            return label + ': $' + value + ' (' + percentage + '%)';
+                    try {
+                        // Check if we have actual data
+                        if (categoryNames.length === 0) {
+                            // Display a "No data" message instead of an empty chart
+                            categoryRevenueCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-500">No data available for the selected time period</p></div>';
+                        } else {
+                            categoryRevenueChart = new Chart(categoryRevenueCtx, {
+                                type: 'pie',
+                                data: {
+                                    labels: categoryNames,
+                                    datasets: [{
+                                        data: categoryRevenueData,
+                                        backgroundColor: [
+                                            'rgba(212, 59, 106, 0.8)',
+                                            'rgba(54, 162, 235, 0.8)',
+                                            'rgba(75, 192, 192, 0.8)',
+                                            'rgba(255, 206, 86, 0.8)',
+                                            'rgba(153, 102, 255, 0.8)',
+                                            'rgba(255, 159, 64, 0.8)'
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function (context) {
+                                                    const value = context.raw;
+                                                    const label = context.label || '';
+                                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                    const percentage = Math.round((value / total) * 100);
+                                                    return label + ': ₱' + value + ' (' + percentage + '%)';
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                            }
+                            });
                         }
-                    });
+                    } catch (chartError) {
+                        console.error('Error creating category revenue chart:', chartError);
+                        categoryRevenueCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-red-500">Unable to load category revenue chart</p></div>';
+                    }
                 } else {
                     console.error('Category revenue chart canvas not found');
                 }
@@ -415,34 +454,45 @@
                 // Top Products Chart
                 const topProductsCtx = document.getElementById('topProductsChart');
                 if (topProductsCtx) {
-                    topProductsChart = new Chart(topProductsCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: topProductNames,
-                            datasets: [{
-                                label: 'Units Sold',
-                                data: topProductQuantities,
-                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            indexAxis: 'y',
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    display: false
+                    try {
+                        // Check if we have actual data
+                        if (topProductNames.length === 0) {
+                            // Display a "No data" message instead of an empty chart
+                            topProductsCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-500">No data available for the selected time period</p></div>';
+                        } else {
+                            topProductsChart = new Chart(topProductsCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: topProductNames,
+                                    datasets: [{
+                                        label: 'Units Sold',
+                                        data: topProductQuantities,
+                                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    indexAxis: 'y',
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        x: {
+                                            beginAtZero: true
+                                        }
+                                    }
                                 }
-                            },
-                            scales: {
-                                x: {
-                                    beginAtZero: true
-                                }
-                            }
+                            });
                         }
-                    });
+                    } catch (chartError) {
+                        console.error('Error creating top products chart:', chartError);
+                        topProductsCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-red-500">Unable to load top products chart</p></div>';
+                    }
                 } else {
                     console.error('Top products chart canvas not found');
                 }
@@ -450,36 +500,47 @@
                 // Inventory Status Chart
                 const inventoryStatusCtx = document.getElementById('inventoryStatusChart');
                 if (inventoryStatusCtx) {
-                    inventoryStatusChart = new Chart(inventoryStatusCtx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['In Stock', 'Low Stock', 'Out of Stock'],
-                            datasets: [{
-                                label: 'Inventory Status',
-                                data: inventoryStatusData,
-                                backgroundColor: [
-                                    'rgba(75, 192, 192, 0.7)',
-                                    'rgba(255, 206, 86, 0.7)',
-                                    'rgba(255, 99, 132, 0.7)'
-                                ],
-                                borderColor: [
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(255, 99, 132, 1)'
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'right'
+                    try {
+                        // Check if we have actual data
+                        if (inventoryStatusData.length === 0) {
+                            // Display a "No data" message instead of an empty chart
+                            inventoryStatusCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-500">No data available for the selected time period</p></div>';
+                        } else {
+                            inventoryStatusChart = new Chart(inventoryStatusCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+                                    datasets: [{
+                                        label: 'Inventory Status',
+                                        data: inventoryStatusData,
+                                        backgroundColor: [
+                                            'rgba(75, 192, 192, 0.7)',
+                                            'rgba(255, 206, 86, 0.7)',
+                                            'rgba(255, 99, 132, 0.7)'
+                                        ],
+                                        borderColor: [
+                                            'rgba(75, 192, 192, 1)',
+                                            'rgba(255, 206, 86, 1)',
+                                            'rgba(255, 99, 132, 1)'
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right'
+                                        }
+                                    }
                                 }
-                            }
+                            });
                         }
-                    });
+                    } catch (chartError) {
+                        console.error('Error creating inventory status chart:', chartError);
+                        inventoryStatusCtx.parentNode.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-red-500">Unable to load inventory status chart</p></div>';
+                    }
                 } else {
                     console.error('Inventory status chart canvas not found');
                 }
