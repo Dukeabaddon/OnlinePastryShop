@@ -147,7 +147,7 @@
         }
         
         .product-card:hover {
-            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
         
         /* Success modal */
@@ -215,11 +215,11 @@
             <!-- Breadcrumb Navigation -->
             <div class="breadcrumb">
                 <div class="breadcrumb-item">
-                    <a href="/Pages/Default.aspx">Home</a>
+                    <a href="Default.aspx">Home</a>
                 </div>
                 <span class="breadcrumb-separator">/</span>
                 <div class="breadcrumb-item">
-                    <a href="/Pages/Menu.aspx">Menu</a>
+                    <a href="Menu.aspx">Menu</a>
                 </div>
                 <span class="breadcrumb-separator">/</span>
                 <div class="breadcrumb-item text-black">

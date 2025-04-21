@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
+using System.Data;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -14,6 +15,24 @@ namespace OnlinePastryShop.Pages
 {
     public partial class Login : System.Web.UI.Page
     {
+        // Constants for login attempts
+        private const int MAX_LOGIN_ATTEMPTS = 5;
+        private const int LOCKOUT_DURATION_MINUTES = 5;
+        
+        // Login form controls
+        protected TextBox txtLoginUsername;
+        protected TextBox txtLoginPassword;
+        protected CheckBox chkRememberMe;
+        
+        // Registration form controls
+        protected TextBox txtRegisterFirstname;
+        protected TextBox txtRegisterLastname;
+        protected TextBox txtRegisterUsername;
+        protected TextBox txtRegisterEmail;
+        protected TextBox txtRegisterPhone;
+        protected TextBox txtRegisterPassword;
+        protected TextBox txtRegisterConfirmPassword;
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             // Check if user is already logged in

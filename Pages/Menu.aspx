@@ -203,7 +203,7 @@
 
             products.forEach(product => {
                 const productCard = document.createElement('div');
-                productCard.className = 'rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-white flex flex-col h-full';
+                productCard.className = 'rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg bg-white flex flex-col h-full';
                 
                 // Determine image source - use base64 if available, otherwise use default
                 let imgSrc = '';
@@ -232,7 +232,7 @@
                                 data-product-id="${product.ProductId}" 
                                 ${product.StockQuantity <= 0 ? 'disabled' : ''}>
                             View Product
-                        </button>
+                        </a>
                     </div>
                 `;
                 
@@ -248,27 +248,27 @@
                 }
             });
             
+            // Add event listeners to all view product buttons
+            document.querySelectorAll('.view-product-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute('data-product-id');
+                    console.log(`View button clicked for product ID: ${productId}`);
+                    window.location.href = "/Pages/ProductDetails.aspx?id=" + productId;
+                });
+            });
+            
             // Make sure products grid is visible and loading spinner is hidden
             productsGrid.style.display = 'grid';
             document.getElementById('productsLoading').style.display = 'none';
         }
 
         // Function to view product details (will be implemented later)
-        function viewProduct(productId, event) {
-            // Prevent default action if event is provided
-            if (event) {
-                event.preventDefault();
-            }
-            
+        function viewProduct(productId) {
             // Just log the action for now
             console.log(`View product: ${productId}`);
-            
-            // Use relative path instead of absolute
-            var detailsUrl = "ProductDetails.aspx?id=" + productId;
-            console.log("Redirecting to:", detailsUrl);
-            
             // Redirect to product detail page
-            window.location.href = detailsUrl;
+            window.location.href = `/Pages/ProductDetails.aspx?id=${productId}`;
         }
         
         // Function to add product to cart
